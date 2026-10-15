@@ -1,0 +1,10 @@
+/.build/
+/.runs/
+/node_modules/
+/app/target/
+/guest/target/
+/load/target/
+/application/.celld/
+/application/.wrangler/
+__pycache__/
+.DS_Store

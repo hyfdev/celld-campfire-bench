@@ -1,0 +1,7 @@
+{
+  "auth": "SELECT id, name FROM users WHERE token = ?",
+  "member": "SELECT unread FROM members WHERE user_id = ?",
+  "version": "SELECT version FROM room_meta WHERE id = 1",
+  "messages": "SELECT m.id, m.user_id, u.name, m.body, m.created_at FROM messages m JOIN users u ON u.id = m.user_id ORDER BY m.id DESC LIMIT 50",
+  "insert": "INSERT INTO messages(user_id, body, created_at) VALUES (?, ?, 1700000000 + (SELECT version FROM room_meta WHERE id = 1)) RETURNING id, created_at"
+}

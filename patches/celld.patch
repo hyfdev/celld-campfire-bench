@@ -1,0 +1,1032 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 09b2f25..d6d59a9 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -2,6 +2,15 @@
+ # It is not intended for manual editing.
+ version = 4
+ 
++[[package]]
++name = "addr2line"
++version = "0.26.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "59317f77929f0e679d39364702289274de2f0f0b22cbf50b2b8cff2169a0b27a"
++dependencies = [
++ "gimli",
++]
++
+ [[package]]
+ name = "adler2"
+ version = "2.0.1"
+@@ -87,6 +96,12 @@ version = "1.0.104"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
+ 
++[[package]]
++name = "arbitrary"
++version = "1.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3bc62ac97cc33321f50863d514c3bc38a453947a8f9e781137e47c7401020aed"
++
+ [[package]]
+ name = "async-trait"
+ version = "0.1.91"
+@@ -98,6 +113,15 @@ dependencies = [
+  "syn 3.0.3",
+ ]
+ 
++[[package]]
++name = "atomic-polyfill"
++version = "1.0.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8cf2bce30dfe09ef0bfaef228b9d414faaf7e563035494d7fe092dba54b300f4"
++dependencies = [
++ "critical-section",
++]
++
+ [[package]]
+ name = "atomic-waker"
+ version = "1.1.2"
+@@ -245,6 +269,15 @@ name = "bumpalo"
+ version = "3.20.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
++dependencies = [
++ "allocator-api2",
++]
++
++[[package]]
++name = "byteorder"
++version = "1.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
+ 
+ [[package]]
+ name = "bytes"
+@@ -329,6 +362,7 @@ dependencies = [
+  "pbkdf2",
+  "percent-encoding",
+  "pkcs8",
++ "postcard",
+  "rand 0.8.7",
+  "regex",
+  "reqwest",
+@@ -354,7 +388,9 @@ dependencies = [
+  "url",
+  "urlpattern",
+  "v8",
++ "wasmtime",
+  "webpki-roots",
++ "workers-chat-app",
+  "x25519-dalek",
+ ]
+ 
+@@ -448,6 +484,15 @@ dependencies = [
+  "libloading",
+ ]
+ 
++[[package]]
++name = "cobs"
++version = "0.3.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0fa961b519f0b462e3a3b4a34b64d119eeaca1d59af726fe450bbba07a9fc0a1"
++dependencies = [
++ "thiserror 2.0.19",
++]
++
+ [[package]]
+ name = "const-oid"
+ version = "0.9.6"
+@@ -499,6 +544,15 @@ dependencies = [
+  "libm",
+ ]
+ 
++[[package]]
++name = "cpp_demangle"
++version = "0.5.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0667304c32ea56cb4cd6d2d7c0cfe9a2f8041229db8c033af7f8d69492429def"
++dependencies = [
++ "cfg-if",
++]
++
+ [[package]]
+ name = "cpufeatures"
+ version = "0.2.17"
+@@ -517,6 +571,152 @@ dependencies = [
+  "libc",
+ ]
+ 
++[[package]]
++name = "cranelift-assembler-x64"
++version = "0.136.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f6d504c8c7ba3f3accaf8e98b7096beb98e1a271404357744c7e9e730c6865ff"
++dependencies = [
++ "cranelift-assembler-x64-meta",
++]
++
++[[package]]
++name = "cranelift-assembler-x64-meta"
++version = "0.136.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "c065757905596bc06e82969ebd7b92d691b7fd710a7e9e8181ae0c30dab588d0"
++dependencies = [
++ "cranelift-srcgen",
++]
++
++[[package]]
++name = "cranelift-bforest"
++version = "0.136.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "06c9b7896b744283c68051c6fa53dff5919bdca5f3ad30f2502cbe03346fc27c"
++dependencies = [
++ "cranelift-entity",
++ "wasmtime-internal-core",
++]
++
++[[package]]
++name = "cranelift-bitset"
++version = "0.136.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2d44fd93e9b7d5d76846a5d7e96f4f31c84e7c84079bf69e2bf17e5d08f8d607"
++dependencies = [
++ "serde",
++ "serde_derive",
++ "wasmtime-internal-core",
++]
++
++[[package]]
++name = "cranelift-codegen"
++version = "0.136.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "24cca39a8327756e489ee65c7f2ff79a6f7c8f2837f83fef046d1899c781c59d"
++dependencies = [
++ "bumpalo",
++ "cranelift-assembler-x64",
++ "cranelift-bforest",
++ "cranelift-bitset",
++ "cranelift-codegen-meta",
++ "cranelift-codegen-shared",
++ "cranelift-control",
++ "cranelift-entity",
++ "cranelift-isle",
++ "gimli",
++ "hashbrown 0.17.1",
++ "libm",
++ "log",
++ "postcard",
++ "pulley-interpreter",
++ "regalloc2",
++ "rustc-hash",
++ "serde",
++ "serde_derive",
++ "sha2",
++ "smallvec",
++ "target-lexicon",
++ "wasmtime-internal-core",
++]
++
++[[package]]
++name = "cranelift-codegen-meta"
++version = "0.136.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "efc14dc232222671dc863495e6c406e8e4d34ffbc32968223e5d4ad20ea78647"
++dependencies = [
++ "cranelift-assembler-x64-meta",
++ "cranelift-codegen-shared",
++ "cranelift-srcgen",
++ "heck",
++ "pulley-interpreter",
++]
++
++[[package]]
++name = "cranelift-codegen-shared"
++version = "0.136.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0e41f75410da6cce8601330137d73718f679db81cb790a33de3871b5c90a0de3"
++
++[[package]]
++name = "cranelift-control"
++version = "0.136.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0c2616c6d01c14921ac9289ef65eb7702d9c760dfdc4537a8ee5bf38ea2832c6"
++dependencies = [
++ "arbitrary",
++]
++
++[[package]]
++name = "cranelift-entity"
++version = "0.136.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "589be6584f586f8b21fe17e68cb10505d1cb9a3aa42af1173b8024a12f3ec96d"
++dependencies = [
++ "cranelift-bitset",
++ "serde",
++ "serde_derive",
++ "wasmtime-internal-core",
++]
++
++[[package]]
++name = "cranelift-frontend"
++version = "0.136.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "413f3f1d97d6157bd2c4e2edf1f22966a849b8d524834558e563c5a4a3bc5791"
++dependencies = [
++ "cranelift-codegen",
++ "hashbrown 0.17.1",
++ "log",
++ "smallvec",
++ "target-lexicon",
++]
++
++[[package]]
++name = "cranelift-isle"
++version = "0.136.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2b46ea04636aa506eb49e5a61c54270314912de7f1c33ad7f7c2c57cb0784e23"
++
++[[package]]
++name = "cranelift-native"
++version = "0.136.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6286df9a36f4563b1f191809a05efd6b5fb457a2e6cb727588f483ebbf8e0516"
++dependencies = [
++ "cranelift-codegen",
++ "libc",
++ "target-lexicon",
++]
++
++[[package]]
++name = "cranelift-srcgen"
++version = "0.136.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "fc173168f291ff3b95b5d0769d6a05b1eaef5e6d74c2600affab8396b4e7b420"
++
+ [[package]]
+ name = "crc"
+ version = "3.4.0"
+@@ -551,6 +751,12 @@ dependencies = [
+  "cfg-if",
+ ]
+ 
++[[package]]
++name = "critical-section"
++version = "1.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b"
++
+ [[package]]
+ name = "crossbeam-channel"
+ version = "0.5.16"
+@@ -843,6 +1049,18 @@ dependencies = [
+  "zeroize",
+ ]
+ 
++[[package]]
++name = "embedded-io"
++version = "0.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ef1a6892d9eef45c8fa6b9e0086428a2cca8491aca8f787c534a3d6d0bcb3ced"
++
++[[package]]
++name = "embedded-io"
++version = "0.6.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "edd0f118536f44f5ccd48bcb8b111bdc3de888b58c74639dfb034a357d0f206d"
++
+ [[package]]
+ name = "encoding_rs"
+ version = "0.8.35"
+@@ -1128,6 +1346,18 @@ dependencies = [
+  "polyval",
+ ]
+ 
++[[package]]
++name = "gimli"
++version = "0.33.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0bf7f043f89559805f8c7cacc432749b2fa0d0a0a9ee46ce47164ed5ba7f126c"
++dependencies = [
++ "fnv",
++ "hashbrown 0.16.1",
++ "indexmap",
++ "stable_deref_trait",
++]
++
+ [[package]]
+ name = "glob"
+ version = "0.3.4"
+@@ -1185,6 +1415,15 @@ dependencies = [
+  "zerocopy",
+ ]
+ 
++[[package]]
++name = "hash32"
++version = "0.2.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b0c35f58762feb77d74ebe43bdbc3210f09be9fe6742234d573bacc26ed92b67"
++dependencies = [
++ "byteorder",
++]
++
+ [[package]]
+ name = "hashbrown"
+ version = "0.14.5"
+@@ -1194,6 +1433,12 @@ dependencies = [
+  "ahash",
+ ]
+ 
++[[package]]
++name = "hashbrown"
++version = "0.16.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100"
++
+ [[package]]
+ name = "hashbrown"
+ version = "0.17.1"
+@@ -1203,6 +1448,8 @@ dependencies = [
+  "allocator-api2",
+  "equivalent",
+  "foldhash",
++ "serde",
++ "serde_core",
+ ]
+ 
+ [[package]]
+@@ -1214,6 +1461,26 @@ dependencies = [
+  "hashbrown 0.14.5",
+ ]
+ 
++[[package]]
++name = "heapless"
++version = "0.7.17"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cdc6457c0eb62c71aac4bc17216026d8410337c4126773b9c5daba343f17964f"
++dependencies = [
++ "atomic-polyfill",
++ "hash32",
++ "rustc_version",
++ "serde",
++ "spin 0.9.9",
++ "stable_deref_trait",
++]
++
++[[package]]
++name = "heck"
++version = "0.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
++
+ [[package]]
+ name = "hkdf"
+ version = "0.12.4"
+@@ -1535,6 +1802,8 @@ checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
+ dependencies = [
+  "equivalent",
+  "hashbrown 0.17.1",
++ "serde",
++ "serde_core",
+ ]
+ 
+ [[package]]
+@@ -1653,6 +1922,12 @@ dependencies = [
+  "spin 0.9.9",
+ ]
+ 
++[[package]]
++name = "leb128fmt"
++version = "0.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
++
+ [[package]]
+ name = "libc"
+ version = "0.2.189"
+@@ -1753,6 +2028,12 @@ dependencies = [
+  "twox-hash",
+ ]
+ 
++[[package]]
++name = "mach2"
++version = "0.6.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "dae608c151f68243f2b000364e1f7b186d9c29845f7d2d85bd31b9ad77ad552b"
++
+ [[package]]
+ name = "matchers"
+ version = "0.2.0"
+@@ -1784,6 +2065,15 @@ version = "2.8.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+ 
++[[package]]
++name = "memfd"
++version = "0.6.6"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "57804b2c9b69967f1536a56f86297e367a33b19e98852ed624b84551cdbc0d90"
++dependencies = [
++ "rustix 1.1.4",
++]
++
+ [[package]]
+ name = "mime"
+ version = "0.3.17"
+@@ -1960,6 +2250,18 @@ dependencies = [
+  "libm",
+ ]
+ 
++[[package]]
++name = "object"
++version = "0.40.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "dd229a0361b9d0d4396176e02d65897f487eebeab7caa6d443855ee152ca0b9c"
++dependencies = [
++ "crc32fast",
++ "hashbrown 0.17.1",
++ "indexmap",
++ "memchr",
++]
++
+ [[package]]
+ name = "object_store"
+ version = "0.12.5"
+@@ -2261,6 +2563,19 @@ dependencies = [
+  "universal-hash",
+ ]
+ 
++[[package]]
++name = "postcard"
++version = "1.1.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6764c3b5dd454e283a30e6dfe78e9b31096d9e32036b5d1eaac7a6119ccb9a24"
++dependencies = [
++ "cobs",
++ "embedded-io 0.4.0",
++ "embedded-io 0.6.1",
++ "heapless",
++ "serde",
++]
++
+ [[package]]
+ name = "potential_utf"
+ version = "0.1.5"
+@@ -2321,6 +2636,29 @@ dependencies = [
+  "unicode-ident",
+ ]
+ 
++[[package]]
++name = "pulley-interpreter"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "21c6285a6d0e71302c567546cb1e4c39dd8477a2a0910e098f4d30cdb7da907f"
++dependencies = [
++ "cranelift-bitset",
++ "log",
++ "pulley-macros",
++ "wasmtime-internal-core",
++]
++
++[[package]]
++name = "pulley-macros"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "292caa820c675e563d62b2cfb3fbe78908bcf7603096b5487272860db3e5d9ef"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn 2.0.119",
++]
++
+ [[package]]
+ name = "quick-xml"
+ version = "0.38.4"
+@@ -2502,6 +2840,21 @@ dependencies = [
+  "bitflags",
+ ]
+ 
++[[package]]
++name = "regalloc2"
++version = "0.15.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "757712e8e61590d6d4f5d563483755538b5aa13467837a3b41cd9832509a7f85"
++dependencies = [
++ "allocator-api2",
++ "bumpalo",
++ "hashbrown 0.17.1",
++ "log",
++ "rustc-hash",
++ "serde",
++ "smallvec",
++]
++
+ [[package]]
+ name = "regex"
+ version = "1.13.1"
+@@ -2643,6 +2996,12 @@ dependencies = [
+  "smallvec",
+ ]
+ 
++[[package]]
++name = "rustc-demangle"
++version = "0.1.28"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b74b56ffa8bb2830709a538c2cbcae9aa062db0d2a42563bfb09bdaae44020eb"
++
+ [[package]]
+ name = "rustc-hash"
+ version = "2.1.3"
+@@ -2858,6 +3217,10 @@ name = "semver"
+ version = "1.0.28"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8a7852d02fc848982e0c167ef163aaff9cd91dc640ba85e263cb1ce46fae51cd"
++dependencies = [
++ "serde",
++ "serde_core",
++]
+ 
+ [[package]]
+ name = "seq-macro"
+@@ -2875,6 +3238,16 @@ dependencies = [
+  "serde_derive",
+ ]
+ 
++[[package]]
++name = "serde_bytes"
++version = "0.11.19"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a5d440709e79d88e51ac01c4b72fc6cb7314017bb7da9eeff678aa94c10e3ea8"
++dependencies = [
++ "serde",
++ "serde_core",
++]
++
+ [[package]]
+ name = "serde_core"
+ version = "1.0.229"
+@@ -3026,6 +3399,9 @@ name = "smallvec"
+ version = "1.15.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8ed6a63f02c8539c91a8685a86f4099661ba3da017932f6ebbea6de3f0fa7c90"
++dependencies = [
++ "serde",
++]
+ 
+ [[package]]
+ name = "socket2"
+@@ -3042,6 +3418,9 @@ name = "spin"
+ version = "0.9.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3763264f6b73151db08c50ff20d7d8a0b8796e021cdea7ceedad07b80155fa0e"
++dependencies = [
++ "lock_api",
++]
+ 
+ [[package]]
+ name = "spin"
+@@ -3137,6 +3516,12 @@ dependencies = [
+  "syn 2.0.119",
+ ]
+ 
++[[package]]
++name = "target-lexicon"
++version = "0.13.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
++
+ [[package]]
+ name = "tempfile"
+ version = "3.27.0"
+@@ -3184,6 +3569,15 @@ dependencies = [
+  "writeable",
+ ]
+ 
++[[package]]
++name = "termcolor"
++version = "1.4.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755"
++dependencies = [
++ "winapi-util",
++]
++
+ [[package]]
+ name = "thiserror"
+ version = "1.0.69"
+@@ -3761,6 +4155,16 @@ dependencies = [
+  "unicode-ident",
+ ]
+ 
++[[package]]
++name = "wasm-encoder"
++version = "0.258.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f64765e43c000fae008a48db8b288e175e237fc9ce20a26586836878c1bee89f"
++dependencies = [
++ "leb128fmt",
++ "wasmparser",
++]
++
+ [[package]]
+ name = "wasm-streams"
+ version = "0.4.2"
+@@ -3774,6 +4178,200 @@ dependencies = [
+  "web-sys",
+ ]
+ 
++[[package]]
++name = "wasmparser"
++version = "0.258.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "fe9269dd817e0e7021bf534ccd9761bc2d64778b6708e41228b8439d75eaa0b1"
++dependencies = [
++ "bitflags",
++ "hashbrown 0.17.1",
++ "indexmap",
++ "semver",
++ "serde",
++]
++
++[[package]]
++name = "wasmprinter"
++version = "0.258.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "14a457ba8670a3db3d357c1aeac3ed4fe378a76054a221789f0df0ea507e292b"
++dependencies = [
++ "anyhow",
++ "termcolor",
++ "wasmparser",
++]
++
++[[package]]
++name = "wasmtime"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "c28a746e47c5683ec1233967948c729c18e978a59fda2b964ac6d8fae9f8f3f8"
++dependencies = [
++ "addr2line",
++ "async-trait",
++ "bitflags",
++ "bumpalo",
++ "cc",
++ "futures",
++ "libc",
++ "log",
++ "mach2",
++ "memfd",
++ "object",
++ "once_cell",
++ "postcard",
++ "pulley-interpreter",
++ "rustix 1.1.4",
++ "serde",
++ "serde_derive",
++ "smallvec",
++ "target-lexicon",
++ "wasmparser",
++ "wasmtime-environ",
++ "wasmtime-internal-core",
++ "wasmtime-internal-cranelift",
++ "wasmtime-internal-fiber",
++ "wasmtime-internal-jit-debug",
++ "wasmtime-internal-jit-icache-coherence",
++ "wasmtime-internal-unwinder",
++ "wasmtime-internal-versioned-export-macros",
++ "windows-sys 0.61.2",
++]
++
++[[package]]
++name = "wasmtime-environ"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "bad97c3c8f3d80de1aa1e6995b6fcf66673b7e388bca0c80bde63e4051210434"
++dependencies = [
++ "anyhow",
++ "cpp_demangle",
++ "cranelift-bforest",
++ "cranelift-bitset",
++ "cranelift-entity",
++ "gimli",
++ "hashbrown 0.17.1",
++ "indexmap",
++ "log",
++ "object",
++ "postcard",
++ "rustc-demangle",
++ "semver",
++ "serde",
++ "serde_derive",
++ "sha2",
++ "smallvec",
++ "target-lexicon",
++ "wasm-encoder",
++ "wasmparser",
++ "wasmprinter",
++ "wasmtime-internal-component-util",
++ "wasmtime-internal-core",
++]
++
++[[package]]
++name = "wasmtime-internal-component-util"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "c42ffe2ad5d7990853601aaeb51af97ca2f6dd54f5f55345b7d036834af3fe9d"
++
++[[package]]
++name = "wasmtime-internal-core"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9f24a558f82f07e4e76a8b848288901d9f663e4e95c25f6d73627daca5f4ce93"
++dependencies = [
++ "anyhow",
++ "hashbrown 0.17.1",
++ "libm",
++ "serde",
++]
++
++[[package]]
++name = "wasmtime-internal-cranelift"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "974fd5dbc539ccc2d676499262e0fc445aa6da8b6370ca6eec13c1031e256b2c"
++dependencies = [
++ "cranelift-codegen",
++ "cranelift-control",
++ "cranelift-entity",
++ "cranelift-frontend",
++ "cranelift-native",
++ "gimli",
++ "itertools 0.14.0",
++ "log",
++ "object",
++ "pulley-interpreter",
++ "smallvec",
++ "target-lexicon",
++ "thiserror 2.0.19",
++ "wasmparser",
++ "wasmtime-environ",
++ "wasmtime-internal-core",
++ "wasmtime-internal-unwinder",
++ "wasmtime-internal-versioned-export-macros",
++]
++
++[[package]]
++name = "wasmtime-internal-fiber"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "aef18909d086959f1e2b4360e8164ae2c426c93bc29014a5ca2df00b952cf79f"
++dependencies = [
++ "cc",
++ "libc",
++ "rustix 1.1.4",
++ "wasmtime-environ",
++ "wasmtime-internal-versioned-export-macros",
++ "windows-sys 0.61.2",
++]
++
++[[package]]
++name = "wasmtime-internal-jit-debug"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6a077f592728c8d9be8013e47a7ae34586aac00e0b857734eb967450d08f39bb"
++dependencies = [
++ "cc",
++ "wasmtime-internal-versioned-export-macros",
++]
++
++[[package]]
++name = "wasmtime-internal-jit-icache-coherence"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6ed19a4085fa63674ebdcfd217d76f2f5bd8088b35d1fd14444d60d2d3303f19"
++dependencies = [
++ "libc",
++ "wasmtime-internal-core",
++ "windows-sys 0.61.2",
++]
++
++[[package]]
++name = "wasmtime-internal-unwinder"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "5978e43aa5e9a3a03ebea8a4d4a015c92144268167abb27d99ab1b53224b28ae"
++dependencies = [
++ "cranelift-codegen",
++ "log",
++ "object",
++ "wasmtime-environ",
++]
++
++[[package]]
++name = "wasmtime-internal-versioned-export-macros"
++version = "49.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f1f1e49d9125fa0eb3465ad8b866899f149a3c02a6bdcfb8a6f56c09a04a0260"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn 2.0.119",
++]
++
+ [[package]]
+ name = "web-sys"
+ version = "0.3.103"
+@@ -4082,6 +4680,15 @@ version = "0.57.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "1ebf944e87a7c253233ad6766e082e3cd714b5d03812acc24c318f549614536e"
+ 
++[[package]]
++name = "workers-chat-app"
++version = "0.1.0"
++dependencies = [
++ "serde",
++ "serde_bytes",
++ "serde_json",
++]
++
+ [[package]]
+ name = "writeable"
+ version = "0.6.3"
+diff --git a/Cargo.toml b/Cargo.toml
+index 13ad034..f0df522 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -3,6 +3,7 @@
+ [workspace]
+ resolver = "2"
+ members = ["crates/*"]
++exclude = ["research/workers-chat/app", "research/workers-chat/guest"]
+ 
+ # Size-tuned: fat LTO prunes unused dependency code, panic=abort drops
+ # unwind tables. opt-level "s" (not "z") — measure RPS before trading further.
+diff --git a/crates/celld/Cargo.toml b/crates/celld/Cargo.toml
+index 98c9ac9..ab4dd0a 100644
+--- a/crates/celld/Cargo.toml
++++ b/crates/celld/Cargo.toml
+@@ -20,7 +20,13 @@ check-cfg = ["cfg(celld_internal_tests)", "cfg(celld_proxy_internals)"]
+ [lints.clippy]
+ disallowed_macros = "forbid"
+ 
++[features]
++research-chat = ["dep:workers-chat-app", "dep:postcard", "dep:wasmtime"]
++
+ [dependencies]
++workers-chat-app = { path = "../../research/workers-chat/app", optional = true }
++postcard = { version = "1", features = ["alloc"], optional = true }
++wasmtime = { version = "=49.0.0", default-features = false, features = ["anyhow", "cranelift", "runtime", "std"], optional = true }
+ async-trait.workspace = true
+ chrono.workspace = true
+ aes.workspace = true
+diff --git a/crates/celld/js.rs b/crates/celld/js.rs
+index ec40b41..eea1be4 100644
+--- a/crates/celld/js.rs
++++ b/crates/celld/js.rs
+@@ -2189,6 +2189,8 @@ pub struct CellStorage<'a> {
+ 
+ pub struct Worker {
+     inner: Option<WorkerIsolate>,
++    #[cfg(feature = "research-chat")]
++    direct: Option<crate::research_chat::DirectRuntime>,
+ }
+ 
+ pub struct WorkerIsolate {
+@@ -4155,10 +4157,21 @@ pub struct HeapBytes {
+ }
+ 
+ impl Worker {
++    #[cfg(feature = "research-chat")]
++    pub(crate) fn take_direct_task(
++        &mut self,
++    ) -> Option<futures_util::future::BoxFuture<'static, ()>> {
++        self.direct.as_mut().and_then(|direct| direct.task.take())
++    }
++
+     /// The heap V8 reports for this isolate. Takes the isolate lock, so the
+     /// caller must hold the pool's permit for this worker, exactly as a turn
+     /// does; `None` once the isolate has been freed.
+     pub fn heap_bytes(&self) -> Option<HeapBytes> {
++        #[cfg(feature = "research-chat")]
++        if let Some(direct) = &self.direct {
++            return Some(direct.heap_bytes());
++        }
+         let inner = self.inner.as_ref()?;
+         let (mut locker, _cells) = inner.lock();
+         let statistics = locker.get_heap_statistics();
+@@ -4178,6 +4191,11 @@ impl Worker {
+         job: crate::WorkerJob,
+         trace: Option<crate::telemetry::TraceContext>,
+     ) -> (Option<InFlight>, Vec<Op>) {
++        #[cfg(feature = "research-chat")]
++        if let Some(direct) = &mut self.direct {
++            direct.worker(job);
++            return (None, Vec::new());
++        }
+         let Some(inner) = self.inner.as_mut() else {
+             return (None, Vec::new());
+         };
+@@ -5805,6 +5823,13 @@ impl Worker {
+     }
+ 
+     pub fn load_config(config: Arc<WorkerConfig>) -> Result<Worker> {
++        #[cfg(feature = "research-chat")]
++        if let Some(direct) = crate::research_chat::DirectRuntime::selected(&config.script_name)? {
++            return Ok(Worker {
++                inner: None,
++                direct: Some(direct),
++            });
++        }
+         let src = config.src.as_str();
+         let script_name = config.script_name.as_str();
+         let do_classes = config.do_classes.as_slice();
+@@ -6082,6 +6107,8 @@ impl Worker {
+         install_heap_collection_observer_for_test(&mut isolate);
+         settle_isolate_heap(&mut isolate);
+         Ok(Worker {
++            #[cfg(feature = "research-chat")]
++            direct: None,
+             inner: Some(WorkerIsolate {
+                 // Every setup scope above has closed, so nothing is entered
+                 // on top of this isolate and it can be handed over.
+@@ -6135,6 +6162,10 @@ impl Worker {
+         cell: &str,
+         storage: Option<CellStorage<'_>>,
+     ) -> Result<celld_logic::wake::AlarmSnapshot> {
++        #[cfg(feature = "research-chat")]
++        if let Some(direct) = &mut self.direct {
++            return direct.own_cell(cell, storage);
++        }
+         let compat = self.inner.as_ref().expect("live worker isolate").compat;
+         let (mut locker, _cells) = self.lock();
+         v8::scope!(let hs, &mut *locker);
+@@ -6152,6 +6183,10 @@ impl Worker {
+     /// The pool calls this when completed adoptions reach the resident limit,
+     /// because collecting after every adoption slows activation.
+     pub(crate) fn settle_heap(&mut self) {
++        #[cfg(feature = "research-chat")]
++        if self.direct.is_some() {
++            return;
++        }
+         let (mut locker, _cells) = self.lock();
+         settle_isolate_heap(&mut locker);
+     }
+@@ -6257,6 +6292,10 @@ impl Worker {
+     }
+ 
+     pub fn set_id_name(&mut self, scope: &str, name: &str) -> Result<()> {
++        #[cfg(feature = "research-chat")]
++        if let Some(direct) = &mut self.direct {
++            return direct.set_id_name(scope, name);
++        }
+         let (mut locker, _cells) = self.lock();
+         v8::scope!(let hs, &mut *locker);
+         let realm = self.realm(hs);
+@@ -6275,6 +6314,11 @@ impl Worker {
+         job: CellJob,
+         trace: Option<crate::telemetry::TraceContext>,
+     ) -> (Option<InFlight>, Vec<Op>) {
++        #[cfg(feature = "research-chat")]
++        if let Some(direct) = &mut self.direct {
++            direct.cell(job);
++            return (None, Vec::new());
++        }
+         let Some(inner) = self.inner.as_mut() else {
+             return (None, Vec::new());
+         };
+diff --git a/crates/celld/lib.rs b/crates/celld/lib.rs
+index c3ecb1e..45abba7 100644
+--- a/crates/celld/lib.rs
++++ b/crates/celld/lib.rs
+@@ -311,3 +311,6 @@ pub fn worker_compat(metadata: &serde_json::Value) -> js::Compat {
+         queue_json_messages: switch("queue_json_messages", "queue_v8_messages", "2024-03-18"),
+     }
+ }
++#[cfg(feature = "research-chat")]
++#[path = "../../research/workers-chat/host.rs"]
++pub mod research_chat;
+diff --git a/crates/celld/runtime.rs b/crates/celld/runtime.rs
+index 74941d5..ae6a731 100644
+--- a/crates/celld/runtime.rs
++++ b/crates/celld/runtime.rs
+@@ -2256,7 +2256,20 @@ async fn drive_worker(
+ ) {
+     let mut ops = Ops::new();
+ 
+-    let (begun, started) = slot.turn(|worker| worker.turn_begin(job, trace)).await;
++    let (begun, started, direct) = slot
++        .turn(|worker| {
++            let (begun, started) = worker.turn_begin(job, trace);
++            #[cfg(feature = "research-chat")]
++            let direct = worker.take_direct_task();
++            #[cfg(not(feature = "research-chat"))]
++            let direct: Option<futures_util::future::BoxFuture<'static, ()>> = None;
++            (begun, started, direct)
++        })
++        .await;
++    if let Some(direct) = direct {
++        let _ = tokio::time::timeout(budget, direct).await;
++        return;
++    }
+     // Nothing is in flight; the reply already carries the error.
+     let Some(mut entry) = begun else {
+         drop(started);
