@@ -1,0 +1,21 @@
+{
+  "name": "celld-campfire-bench",
+  "private": true,
+  "scripts": {
+    "build": "python3 bench/build.py",
+    "validate": "python3 bench/run.py --phase validate",
+    "bench": "python3 bench/run.py --phase all --seconds 5 --rounds 3 --concurrencies 1,32,128",
+    "report": "python3 bench/report.py",
+    "results:check": "python3 bench/report.py --check"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.33.0",
+      "onFail": "download"
+    }
+  }
+}

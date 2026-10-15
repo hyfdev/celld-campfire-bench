@@ -3,6 +3,7 @@ import json
 import pathlib
 import shutil
 import subprocess
+import tempfile
 import tomllib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -37,14 +38,18 @@ def run(command, cwd=ROOT):
     subprocess.run(list(map(str, command)), cwd=cwd, check=True)
 
 
+def clone_source(lock):
+    run(["git", "init", "--quiet", CELLD_SOURCE])
+    run(["git", "remote", "add", "origin", lock["repository"]], CELLD_SOURCE)
+    run(["git", "fetch", "--depth", "1", "origin", lock["revision"]], CELLD_SOURCE)
+    run(["git", "checkout", "--detach", "FETCH_HEAD"], CELLD_SOURCE)
+
+
 def prepare_source():
     lock = json.loads((ROOT / "celld.json").read_text())
     BUILD.mkdir(exist_ok=True)
     if not CELLD_SOURCE.exists():
-        run(["git", "init", "--quiet", CELLD_SOURCE])
-        run(["git", "remote", "add", "origin", lock["repository"]], CELLD_SOURCE)
-        run(["git", "fetch", "--depth", "1", "origin", lock["revision"]], CELLD_SOURCE)
-        run(["git", "checkout", "--detach", "FETCH_HEAD"], CELLD_SOURCE)
+        clone_source(lock)
     revision = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=CELLD_SOURCE, text=True,
     ).strip()
@@ -58,10 +63,16 @@ def prepare_source():
     if applies.returncode == 0:
         run(["git", "apply", patch], CELLD_SOURCE)
     else:
-        subprocess.run(
+        applied = subprocess.run(
             ["git", "apply", "--reverse", "--check", str(patch)],
-            cwd=CELLD_SOURCE, check=True,
+            cwd=CELLD_SOURCE, capture_output=True, text=True,
         )
+        if applied.returncode != 0:
+            backup = pathlib.Path(tempfile.mkdtemp(prefix="celld-backup-", dir=BUILD)) / "celld"
+            CELLD_SOURCE.rename(backup)
+            print(f"Preserved generated checkout at {backup}", flush=True)
+            clone_source(lock)
+            run(["git", "apply", patch], CELLD_SOURCE)
     destination = CELLD_SOURCE / "research/workers-chat"
     destination.mkdir(parents=True, exist_ok=True)
     for name in ("app", "application"):

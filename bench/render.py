@@ -5,7 +5,32 @@ def relative(value, baseline, spec):
     return f"{value:{spec}} ({value / baseline:.2f}×)"
 
 
-def render(raw, cold_data, s):
+def compile_cache_results(compile_cache, raw_link):
+    data, rows = compile_cache
+    labels = {'js': 'JavaScript / V8', 'wasm': 'Rust Wasm / Wasmtime: cache disabled',
+              'wasm-cached': 'Rust Wasm / Wasmtime: cache hit', 'native': 'Native Rust'}
+    baseline = next(r for r in rows if r['engine'] == 'js')
+    wasm = next(r for r in rows if r['engine'] == 'wasm')
+    cached = next(r for r in rows if r['engine'] == 'wasm-cached')
+    lines = [
+        '### Process startup with a compilation cache', '',
+        f"Separate matched run on {data['cpu']}, {data['memory_bytes']/2**30:g} GiB RAM, `{data['platform']}`: {data['rounds']} fresh processes per configuration, with the same celld executable and seeded database snapshot. Both Wasm configurations use the same module. The cached configuration uses Wasmtime 49's built-in filesystem compilation cache, populated in a separate process before timing. Filesystem caches remain warm.", '',
+        'The table shows medians as **absolute value (ratio to JS)**, with JS at **1.00×**. Lower values are better. CPU is cumulative server user + system time through the first room response; memory is the process physical footprint immediately after that response.', '',
+        '| Application execution | Process launch → first room page, ms | Server CPU, ms | Process memory after first page, MiB |',
+        '| --- | ---: | ---: | ---: |',
+    ]
+    for row in rows:
+        cells = [relative(row[key], baseline[key], spec) for key, spec in (
+            ('process_to_first_page_ms', '.2f'), ('cpu_ms', '.2f'), ('footprint_mib', '.1f'))]
+        lines.append('| ' + labels[row['engine']] + ' | ' + ' | '.join(cells) + ' |')
+    lines += ['',
+        f"Every cached process records one cache hit and zero misses; the cache-populating process records one miss. Wasm module compilation/loading (`Module::new`) takes {wasm['module_ms']:.2f} ms with caching disabled and {cached['module_ms']:.2f} ms on a cache hit. The full startup table also includes service initialization, object activation, and the first page response.", '',
+        f"The cache stores compiled Wasm code. Application execution, SQL calls, and page caching use the same paths in both Wasm configurations. The throughput tests start after warmup, which already excludes module compilation. [Startup measurements and source hashes]({raw_link}).",
+    ]
+    return '\n'.join(lines)
+
+
+def render(raw, cold_data, s, compile_cache=None):
     names = {'js': 'celld JS', 'wasm': 'celld Wasm', 'native': 'celld native',
              'wasm-v8': 'celld V8 Wasm'}
 
@@ -99,7 +124,10 @@ def render(raw, cold_data, s):
         cold.append('| ' + names[r['engine']] + ' | ' + ' | '.join(cells) + ' |')
 
     checks = s['checks']
-    correctness = f"The reported measurements contain **{checks['http_trials']} HTTP trials, {checks['websocket_trials']} WebSocket trials, and {checks['total_cold_trials']} startup trials**, plus **{checks['dedicated_http_checks']:,} dedicated full-response checks**. The HTTP pressure clients completed {checks['http_requests']:,} operations, including {checks['http_posts']:,} posts. The WebSocket sessions added {checks['websocket_messages']:,} posts, {checks['websocket_deliveries_including_sender']:,} verified frame deliveries, and {checks['websocket_read_acknowledgments']:,} verified HTTP read acknowledgments. All trials passed response and ordering checks; all {checks['database_audits']} post-trial audits passed across all 50 room databases. Source hashes agree across validation, pressure, and startup. Captured source files match their recorded SHA-256 hashes; `recorded_only` lists the executable and original-harness digests retained as provenance.\n\nThe pressure run started at {raw['started_at']} and completed at {raw['completed_at']}. The pressure JSON records the before/after thermal checks. The largest recorded load-client CPU usage was {checks['max_client_cpu_percent_one_core']:.1f}% of one core; clients ran in separate processes on the same machine."
+    correctness = f"The `results.json`, `cold-results.json`, and `validation.json` records contain **{checks['http_trials']} HTTP trials, {checks['websocket_trials']} WebSocket trials, and {checks['total_cold_trials']} startup trials**, plus **{checks['dedicated_http_checks']:,} dedicated full-response checks**. The HTTP pressure clients completed {checks['http_requests']:,} operations, including {checks['http_posts']:,} posts. The WebSocket sessions added {checks['websocket_messages']:,} posts, {checks['websocket_deliveries_including_sender']:,} verified frame deliveries, and {checks['websocket_read_acknowledgments']:,} verified HTTP read acknowledgments. All trials passed response and ordering checks; all {checks['database_audits']} post-trial audits passed across all 50 room databases. Source hashes agree across these three records. Captured source files match their recorded SHA-256 hashes; `recorded_only` lists the executable and original-harness digests retained as provenance."
+    if compile_cache:
+        correctness += f"\n\nThe `compile-cache/` comparison contains **{len(compile_cache[0]['trials'])} additional startup trials** and its own source snapshot from a separate build. Its captured source files match their recorded SHA-256 hashes."
+    correctness += f"\n\nThe pressure run started at {raw['started_at']} and completed at {raw['completed_at']}. The pressure JSON records the before/after thermal checks. The largest recorded load-client CPU usage was {checks['max_client_cpu_percent_one_core']:.1f}% of one core; clients ran in separate processes on the same machine."
 
     http_rows = [r for r in raw['trials'] if not r['case'].startswith('ws-')]
     machine = (f"Tests run on {raw['cpu']} with {raw['logical_cpus']} logical CPUs, "
@@ -118,6 +146,7 @@ def render(raw, cold_data, s):
     }
     report = (Path(__file__).parent / 'report-template.md').read_text()
     for key, text in {'RESULTS_SUMMARY': summary, 'RESULTS_TABLES': '\n'.join(tables),
+                      'COMPILE_CACHE_RESULTS': compile_cache_results(compile_cache, 'compile-cache/cold-cache-results.json') if compile_cache else '',
                       'STARTUP_TABLE': '\n'.join(cold), 'CORRECTNESS_SUMMARY': correctness}.items():
         assert key in report
         report = report.replace(key, text)
@@ -127,7 +156,7 @@ def render(raw, cold_data, s):
     return report
 
 
-def readme_results(summary):
+def readme_results(summary, compile_cache=None):
     labels = {'js': 'JavaScript / V8', 'wasm': 'Rust Wasm / Wasmtime', 'native': 'Native Rust'}
     engines = ('js', 'wasm', 'native')
 
@@ -167,18 +196,22 @@ def readme_results(summary):
         lines.append('| ' + label + ' | ' + ' | '.join(relative(rate, rates[0], ',.0f') for rate in rates) + ' |')
     lines += ['',
         'A WebSocket message includes persistence, broadcast to every participant, and each participant’s HTTP read acknowledgment. Durable posts and these full message rounds have similar throughput across the three implementations: they wait for the same persistence and response/broadcast release mechanism.', '',
-        '### Process startup', '',
-        '| Application execution | Process launch → first room page, ms | Process memory after first page, MiB |',
-        '| --- | ---: | ---: |',
     ]
-    baseline = next(r for r in summary['cold'] if r['engine'] == 'js')
-    for engine in engines:
-        r = next(r for r in summary['cold'] if r['engine'] == engine)
-        cells = [relative(r[key], baseline[key], spec) for key, spec in (
-            ('process_to_first_page_ms', '.2f'), ('footprint_mib', '.1f'))]
-        lines.append('| ' + labels[engine] + ' | ' + ' | '.join(cells) + ' |')
+    if compile_cache:
+        lines.append(compile_cache_results(compile_cache, 'results/2026-10-15/compile-cache/cold-cache-results.json'))
+    else:
+        lines += ['### Process startup', '',
+            '| Application execution | Process launch → first room page, ms | Process memory after first page, MiB |',
+            '| --- | ---: | ---: |']
+        baseline = next(r for r in summary['cold'] if r['engine'] == 'js')
+        for engine in engines:
+            r = next(r for r in summary['cold'] if r['engine'] == engine)
+            cells = [relative(r[key], baseline[key], spec) for key, spec in (
+                ('process_to_first_page_ms', '.2f'), ('footprint_mib', '.1f'))]
+            lines.append('| ' + labels[engine] + ' | ' + ' | '.join(cells) + ' |')
+        lines += ['',
+            'Startup values are medians of ten fresh processes. They include service startup, object activation, and the first room response. Filesystem caches stay warm; Wasmtime compiles the module inside each process and uses no cross-process AOT cache.']
     lines += ['',
-        'Startup values are medians of ten fresh processes. They include service startup, object activation, and the first room response. Filesystem caches stay warm; Wasmtime compiles the module inside each process and uses no cross-process AOT cache.', '',
         'The [complete report](results/2026-10-15/REPORT.md) includes every concurrency, CPU and physical-memory measurements, latency, trial ranges, write rates, correctness checks, and the auxiliary V8 Wasm comparison. Raw data also includes RSS: [pressure](results/2026-10-15/results.json), [startup](results/2026-10-15/cold-results.json), [validation](results/2026-10-15/validation.json).',
     ]
     return '\n'.join(lines)

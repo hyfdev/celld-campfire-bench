@@ -37,15 +37,22 @@ CPU 100% means one fully occupied core; helper threads can take the total above 
 
 A WebSocket message includes persistence, broadcast to every participant, and each participant’s HTTP read acknowledgment. Durable posts and these full message rounds have similar throughput across the three implementations: they wait for the same persistence and response/broadcast release mechanism.
 
-### Process startup
+### Process startup with a compilation cache
 
-| Application execution | Process launch → first room page, ms | Process memory after first page, MiB |
-| --- | ---: | ---: |
-| JavaScript / V8 | 288.80 (1.00×) | 39.2 (1.00×) |
-| Rust Wasm / Wasmtime | 331.33 (1.15×) | 30.7 (0.78×) |
-| Native Rust | 261.19 (0.90×) | 24.6 (0.63×) |
+Separate matched run on Apple M4 Pro, 48 GiB RAM, `macOS-26.5.2-arm64-arm-64bit-Mach-O`: 10 fresh processes per configuration, with the same celld executable and seeded database snapshot. Both Wasm configurations use the same module. The cached configuration uses Wasmtime 49's built-in filesystem compilation cache, populated in a separate process before timing. Filesystem caches remain warm.
 
-Startup values are medians of ten fresh processes. They include service startup, object activation, and the first room response. Filesystem caches stay warm; Wasmtime compiles the module inside each process and uses no cross-process AOT cache.
+The table shows medians as **absolute value (ratio to JS)**, with JS at **1.00×**. Lower values are better. CPU is cumulative server user + system time through the first room response; memory is the process physical footprint immediately after that response.
+
+| Application execution | Process launch → first room page, ms | Server CPU, ms | Process memory after first page, MiB |
+| --- | ---: | ---: | ---: |
+| JavaScript / V8 | 284.46 (1.00×) | 278.90 (1.00×) | 39.9 (1.00×) |
+| Rust Wasm / Wasmtime: cache disabled | 330.20 (1.16×) | 311.40 (1.12×) | 31.1 (0.78×) |
+| Rust Wasm / Wasmtime: cache hit | 259.60 (0.91×) | 243.54 (0.87×) | 28.5 (0.72×) |
+| Native Rust | 259.55 (0.91×) | 242.57 (0.87×) | 25.1 (0.63×) |
+
+Every cached process records one cache hit and zero misses; the cache-populating process records one miss. Wasm module compilation/loading (`Module::new`) takes 66.52 ms with caching disabled and 1.02 ms on a cache hit. The full startup table also includes service initialization, object activation, and the first page response.
+
+The cache stores compiled Wasm code. Application execution, SQL calls, and page caching use the same paths in both Wasm configurations. The throughput tests start after warmup, which already excludes module compilation. [Startup measurements and source hashes](results/2026-10-15/compile-cache/cold-cache-results.json).
 
 The [complete report](results/2026-10-15/REPORT.md) includes every concurrency, CPU and physical-memory measurements, latency, trial ranges, write rates, correctness checks, and the auxiliary V8 Wasm comparison. Raw data also includes RSS: [pressure](results/2026-10-15/results.json), [startup](results/2026-10-15/cold-results.json), [validation](results/2026-10-15/validation.json).
 <!-- benchmark:end -->
@@ -91,6 +98,8 @@ python3 bench/report.py .runs/current --check
 
 The build installs the pinned Rust toolchain and Wasm target through Rustup, fetches the exact celld revision in [`celld.json`](celld.json), applies [`patches/celld.patch`](patches/celld.patch), copies the application and adapter into that generated checkout, and builds the host, Wasm module, and two pressure clients with locked dependencies. Generated source and build outputs live under `.build/`. The patch adds the application's direct Rust/Wasm execution path to celld. All modes use the same patched executable; JS executes through celld's existing Workers APIs.
 
+If the generated checkout uses a different patch, the build preserves it under `.build/celld-backup-*/` and fetches a fresh checkout.
+
 The full suite takes tens of minutes on the recorded machine, in addition to build time. It runs the four modes sequentially, rotating their order between rounds. Ports **19878** and **19879** must be free. The runner owns and stops the processes it launches. Logs, seed snapshots, disposable runtime data, fresh measurement JSON, and captured source files live under `.runs/current/`; recorded results live under `results/2026-10-15/`.
 
 The phases can also run separately:
@@ -103,6 +112,16 @@ python3 bench/run.py --phase cold
 ```
 
 `prepare` creates and audits the persistent seed. `validate` checks full response bytes, invalid input and permissions, cache invalidation, large/escaped messages, ordered WebSocket broadcasts, unread changes, and restart recovery after deleting the local runtime directory. Every pressure trial restores the same seed and ends with an audit of all 50 room databases. `cold` measures ten fresh processes per engine. Build-input and binary hashes are checked before running a phase.
+
+The compilation-cache comparison runs as part of `all`, or independently after building:
+
+```sh
+python3 bench/run.py --phase cold-cache
+python3 bench/report.py .runs/current/compile-cache > .runs/current/compile-cache/REPORT.md
+python3 bench/report.py .runs/current/compile-cache --check
+```
+
+`cold-cache` prepares its own seed and isolated Wasmtime filesystem cache under `.runs/current/compile-cache/`. It populates the cache in one process, then measures ten fresh processes each for JS, Wasmtime with caching disabled, Wasmtime with a verified cache hit, and native Rust. Engine order rotates between rounds. Every process validates the root and first room response. The JSON records CPU time, physical memory, Wasmtime compilation/loading time, cache-hit counters, and source and binary hashes.
 
 To check the published tables and captured source hashes, with no Rust build or package installation:
 
@@ -137,7 +156,7 @@ The comparison measures complete application execution, including its adapters. 
 
 HTTP load clients verify complete read lengths and CRC32 values against an independent Python fixture, check write responses and contiguous versions, and reject reads older than writes acknowledged before dispatch. Database audits check every message, timestamp, user, unread count, version, and SQLite integrity. WebSocket clients verify every frame and read acknowledgment. The complete report describes timing windows, warmup, memory sampling, and the mixed writer's actual rate.
 
-The recorded JSON retains the original metric records and SHA-256 digests. Its `source_snapshot` identifies 24 captured application, adapter, runtime, manifest, and lockfile sources. Its `recorded_only` map lists four measured binary digests and two original harness-module digests whose bytes are retained as hashes. The portable runner packages the workload and resource meter under `bench/`. Fresh runs capture their own sources and binary digests. Rebuilding produces new binaries and a new measurement dataset.
+The recorded pressure, original startup, and validation JSON retain their original metric records and SHA-256 digests. Their shared `source_snapshot` identifies 24 captured application, adapter, runtime, manifest, and lockfile sources. Their `recorded_only` map lists four measured binary digests and two original harness-module digests whose bytes are retained as hashes. The compilation-cache comparison captures its own build and source snapshot under `results/2026-10-15/compile-cache/`. The portable runner packages the workload and resource meter under `bench/`. Fresh runs capture their own sources and binary digests. Rebuilding produces new binaries and a new measurement dataset.
 
 The native implementation is trusted code and supplies no sandbox for untrusted native programs. The Wasm adapters limit memory and storage scope; the prototype implements this application's buffered HTTP, SQL, object calls, and WebSocket operations. Tenant CPU interruption and the general asynchronous Workers API are outside its scope. These measurements cover one node and local persistence.
 

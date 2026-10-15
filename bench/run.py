@@ -41,10 +41,13 @@ ESBUILD = str(ROOT / "node_modules/.bin/esbuild")
 
 def env(engine):
     values = {k: v for k, v in os.environ.items() if not k.startswith("CELLD_")}
+    values.pop("WORKERS_CHAT_COMPILE_CACHE", None)
     values.update({"CELLD_ESBUILD": ESBUILD, "CELLD_TOKIO_THREADS": "1", "CELLD_MAX_STATELESS_ISOLATES": "1", "CELLD_MAX_CELL_REQUESTS": "256",
                    "CELLD_NODE": "workers-chat-local", "CELLD_INTERNAL_DEV_STORE": str(STATE / "objects.sqlite3"),
-                   "CELLD_WATCH": str(STATE / "runtime"), "WORKERS_CHAT_ENGINE": engine,
+                   "CELLD_WATCH": str(STATE / "runtime"), "WORKERS_CHAT_ENGINE": "wasm" if engine == "wasm-cached" else engine,
                    "WORKERS_CHAT_WASM": str(GUEST), "RUST_LOG": "error"})
+    if engine == "wasm-cached":
+        values["WORKERS_CHAT_COMPILE_CACHE"] = str(RUNS / "wasmtime-cache")
     for key in ("AWS_DEFAULT_REGION", "AWS_REGION", "S3_ENDPOINT"):
         values.pop(key, None)
     return values
@@ -453,9 +456,74 @@ def cold(rounds):
     (RUNS/"cold-results.json").write_text(json.dumps(result,indent=2)+"\n")
 
 
+def cache_startup_trial(engine, label):
+    with server(engine, label) as s:
+        before = time.perf_counter()
+        checked_read(s["connection"], 1, 1, False, hit=False)
+        end = time.perf_counter()
+        memory = usage(s["process"].pid)
+        events = [json.loads(line.split("CHAT_WASMTIME_MODULE ", 1)[1])
+                  for line in s["log"].read_text().splitlines()
+                  if line.startswith("CHAT_WASMTIME_MODULE ")]
+        assert len(events) == int(engine in ("wasm", "wasm-cached")), events
+        return {"engine": engine,
+                "process_to_root_ms": (s["ready_at"] - s["spawned_at"]) * 1000,
+                "first_room_ms": (end - before) * 1000,
+                "process_to_first_page_ms": (end - s["spawned_at"]) * 1000,
+                "cpu_ms": (memory["user_ns"] + memory["system_ns"]) / 1e6,
+                "memory": memory, "wasmtime": events[0] if events else None,
+                "root_validated": True, "first_page_validated": True}
+
+
+def cold_cache(rounds):
+    global RUNS, PROJECT, STATE
+    previous = RUNS, PROJECT, STATE
+    RUNS = RUNS / "compile-cache"
+    PROJECT = RUNS / "app"
+    STATE = PROJECT / ".celld/dev"
+    try:
+        prepare()
+        cache_directory = RUNS / "wasmtime-cache"
+        if cache_directory.exists():
+            shutil.rmtree(cache_directory)
+        result = {"complete": False, **provenance(),
+                  "started_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                  "platform": platform.platform(),
+                  "cpu": subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"], text=True).strip(),
+                  "memory_bytes": int(subprocess.check_output(["sysctl", "-n", "hw.memsize"], text=True)),
+                  "logical_cpus": int(subprocess.check_output(["sysctl", "-n", "hw.logicalcpu"], text=True)),
+                  "mach_timebase": {"numer": TIMEBASE.numer, "denom": TIMEBASE.denom},
+                  "cache": "Wasmtime 49 built-in filesystem compilation cache",
+                  "rounds": rounds, "trials": []}
+        population = cache_startup_trial("wasm-cached", "cold-cache-populate")
+        assert population["wasmtime"]["cache_enabled"]
+        assert population["wasmtime"]["cache_hits"] == 0 and population["wasmtime"]["cache_misses"] == 1
+        result["cache_population"] = population
+        engines = ["js", "wasm", "wasm-cached", "native"]
+        for trial in range(rounds):
+            order = engines[trial % len(engines):] + engines[:trial % len(engines)]
+            for engine in order:
+                row = cache_startup_trial(engine, f"cold-cache-{trial}-{engine}")
+                if engine == "wasm-cached":
+                    assert row["wasmtime"]["cache_enabled"]
+                    assert row["wasmtime"]["cache_hits"] == 1 and row["wasmtime"]["cache_misses"] == 0, row
+                elif engine == "wasm":
+                    assert not row["wasmtime"]["cache_enabled"]
+                    assert row["wasmtime"]["cache_hits"] == row["wasmtime"]["cache_misses"] == 0
+                row["trial"] = trial
+                result["trials"].append(row)
+                (RUNS / "cold-cache-results.json").write_text(json.dumps(result, indent=2) + "\n")
+                print(f"Startup {engine:12} round={trial}: {row['process_to_first_page_ms']:.2f}ms CPU={row['cpu_ms']:.2f}ms memory={row['memory']['footprint_bytes']/2**20:.1f}MiB", flush=True)
+        result["complete"] = True
+        result["completed_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        (RUNS / "cold-cache-results.json").write_text(json.dumps(result, indent=2) + "\n")
+    finally:
+        RUNS, PROJECT, STATE = previous
+
+
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument("--phase",choices=["prepare","validate","bench","cold","all"],default="all")
+    parser.add_argument("--phase",choices=["prepare","validate","bench","cold","cold-cache","all"],default="all")
     parser.add_argument("--seconds",type=float,default=5)
     parser.add_argument("--rounds",type=int,default=3)
     parser.add_argument("--concurrencies",default="1,32,128")
@@ -466,6 +534,7 @@ def main():
     if args.phase in ("validate","all"):validate()
     if args.phase in ("bench","all"):benchmark(args.seconds,args.rounds,[int(c)for c in args.concurrencies.split(",")])
     if args.phase in ("cold","all"):cold(10)
+    if args.phase in ("cold-cache","all"):cold_cache(10)
 
 
 if __name__=="__main__":main()

@@ -572,8 +572,27 @@ impl DirectWasm {
             if compiled.is_none() {
                 let mut config = wasmtime::Config::new();
                 config.cranelift_opt_level(wasmtime::OptLevel::Speed);
+                let cache = if let Some(path) = std::env::var_os("WORKERS_CHAT_COMPILE_CACHE") {
+                    let mut cache_config = wasmtime::CacheConfig::new();
+                    cache_config.with_directory(std::path::PathBuf::from(path));
+                    Some(wasmtime::Cache::new(cache_config)?)
+                } else {
+                    None
+                };
+                config.cache(cache.clone());
                 let engine = wasmtime::Engine::new(&config)?;
+                let started = std::time::Instant::now();
                 let module = wasmtime::Module::new(&engine, bytes)?;
+                let module_ms = started.elapsed().as_secs_f64() * 1000.0;
+                eprintln!(
+                    "CHAT_WASMTIME_MODULE {}",
+                    serde_json::json!({
+                        "module_ms": module_ms,
+                        "cache_enabled": cache.is_some(),
+                        "cache_hits": cache.as_ref().map_or(0, |c| c.cache_hits()),
+                        "cache_misses": cache.as_ref().map_or(0, |c| c.cache_misses()),
+                    })
+                );
                 *compiled = Some((engine, module));
             }
             compiled.as_ref().unwrap().clone()

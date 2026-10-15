@@ -4,6 +4,14 @@ import pathlib
 import statistics
 
 
+def verify_sources(root, data):
+    assert set(data["recorded_only"]) <= set(data["sources"])
+    snapshot = root / data["source_snapshot"]
+    for path, digest in data["sources"].items():
+        if path not in data["recorded_only"]:
+            assert hashlib.sha256((snapshot / path).read_bytes()).hexdigest() == digest, path
+
+
 def load(directory):
     root = pathlib.Path(directory)
     results = json.loads((root / "results.json").read_text())
@@ -14,12 +22,7 @@ def load(directory):
     assert results["sources"] == cold["sources"] == validation["sources"]
     assert results["source_snapshot"] == cold["source_snapshot"] == validation["source_snapshot"]
     assert results["recorded_only"] == cold["recorded_only"] == validation["recorded_only"]
-    assert set(results["recorded_only"]) <= set(results["sources"])
-    snapshot = root / results["source_snapshot"]
-    for path, digest in results["sources"].items():
-        if path in results["recorded_only"]:
-            continue
-        assert hashlib.sha256((snapshot / path).read_bytes()).hexdigest() == digest, path
+    verify_sources(root, results)
     for row in results["trials"]:
         assert not row["errors"], row
         assert row["database_audit"]["integrity"] == "ok", row
@@ -77,3 +80,42 @@ def load(directory):
         "total_cold_trials": len(cold["trials"]),
     }
     return results, cold, validation, aggregate
+
+
+def load_compile_cache(directory):
+    root = pathlib.Path(directory)
+    path = root / "cold-cache-results.json"
+    if not path.is_file():
+        return None
+    data = json.loads(path.read_text())
+    assert data["complete"], "Compilation-cache measurements are incomplete"
+    verify_sources(root, data)
+    population = data["cache_population"]
+    assert population["root_validated"] and population["first_page_validated"]
+    assert population["wasmtime"]["cache_enabled"]
+    assert (population["wasmtime"]["cache_hits"], population["wasmtime"]["cache_misses"]) == (0, 1)
+    engines = ("js", "wasm", "wasm-cached", "native")
+    expected = {(engine, trial) for engine in engines for trial in range(data["rounds"])}
+    assert len(data["trials"]) == len(expected)
+    assert {(r["engine"], r["trial"]) for r in data["trials"]} == expected
+    for r in data["trials"]:
+        assert r["root_validated"] and r["first_page_validated"]
+        assert r["cpu_ms"] == (r["memory"]["user_ns"] + r["memory"]["system_ns"]) / 1e6
+        if r["engine"] in ("wasm", "wasm-cached"):
+            module = r["wasmtime"]
+            cached = r["engine"] == "wasm-cached"
+            assert module["cache_enabled"] == cached and module["module_ms"] > 0
+            assert (module["cache_hits"], module["cache_misses"]) == ((1, 0) if cached else (0, 0))
+        else:
+            assert r["wasmtime"] is None
+    rows = []
+    for engine in engines:
+        trials = [r for r in data["trials"] if r["engine"] == engine]
+        row = {"engine": engine}
+        for key in ("process_to_first_page_ms", "cpu_ms"):
+            row[key] = statistics.median(r[key] for r in trials)
+        row["footprint_mib"] = statistics.median(r["memory"]["footprint_bytes"] / 2**20 for r in trials)
+        if engine in ("wasm", "wasm-cached"):
+            row["module_ms"] = statistics.median(r["wasmtime"]["module_ms"] for r in trials)
+        rows.append(row)
+    return data, rows

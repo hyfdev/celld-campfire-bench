@@ -188,6 +188,8 @@ Each message is persisted and broadcast, then every participant sends an HTTP re
 
 ## Startup
 
+### Compilation caching disabled
+
 Each engine is tested 10 times with a fresh service process and the seeded persistent snapshot. The runner polls for a validated root response at 1 ms intervals, then requests and validates the first room's HTML page. Filesystem caches stay warm. The Wasmtime module cache lasts only inside each process; there is no serialized/AOT cache between trials. The first-room column includes object activation, storage opening, application initialization, and the HTTP response after the root is ready. The total column measures complete process launch through that room response, rather than an isolated function cold start. Values are medians of 10 trials; time columns are aggregated independently. The memory reading is taken after that first page, rather than the maximum of a timed pressure run.
 
 | Execution | Process → root ms | First room after root ms | Process → first page ms; trial range | Physical MiB after first page |
@@ -197,9 +199,28 @@ Each engine is tested 10 times with a fresh service process and the seeded persi
 | celld native | 237.37 (0.92×) | 23.80 (0.77×) | 261.19 (0.90×)<br>252.39–273.42 | 24.6 (0.63×) |
 | celld V8 Wasm | 237.18 (0.92×) | 25.62 (0.83×) | 262.38 (0.91×)<br>259.88–273.62 | 30.8 (0.79×) |
 
+### Process startup with a compilation cache
+
+Separate matched run on Apple M4 Pro, 48 GiB RAM, `macOS-26.5.2-arm64-arm-64bit-Mach-O`: 10 fresh processes per configuration, with the same celld executable and seeded database snapshot. Both Wasm configurations use the same module. The cached configuration uses Wasmtime 49's built-in filesystem compilation cache, populated in a separate process before timing. Filesystem caches remain warm.
+
+The table shows medians as **absolute value (ratio to JS)**, with JS at **1.00×**. Lower values are better. CPU is cumulative server user + system time through the first room response; memory is the process physical footprint immediately after that response.
+
+| Application execution | Process launch → first room page, ms | Server CPU, ms | Process memory after first page, MiB |
+| --- | ---: | ---: | ---: |
+| JavaScript / V8 | 284.46 (1.00×) | 278.90 (1.00×) | 39.9 (1.00×) |
+| Rust Wasm / Wasmtime: cache disabled | 330.20 (1.16×) | 311.40 (1.12×) | 31.1 (0.78×) |
+| Rust Wasm / Wasmtime: cache hit | 259.60 (0.91×) | 243.54 (0.87×) | 28.5 (0.72×) |
+| Native Rust | 259.55 (0.91×) | 242.57 (0.87×) | 25.1 (0.63×) |
+
+Every cached process records one cache hit and zero misses; the cache-populating process records one miss. Wasm module compilation/loading (`Module::new`) takes 66.52 ms with caching disabled and 1.02 ms on a cache hit. The full startup table also includes service initialization, object activation, and the first page response.
+
+The cache stores compiled Wasm code. Application execution, SQL calls, and page caching use the same paths in both Wasm configurations. The throughput tests start after warmup, which already excludes module compilation. [Startup measurements and source hashes](compile-cache/cold-cache-results.json).
+
 ## Correctness and provenance
 
-The reported measurements contain **180 HTTP trials, 24 WebSocket trials, and 40 startup trials**, plus **2,852 dedicated full-response checks**. The HTTP pressure clients completed 8,515,105 operations, including 90,791 posts. The WebSocket sessions added 7,077 posts, 123,141 verified frame deliveries, and 123,141 verified HTTP read acknowledgments. All trials passed response and ordering checks; all 204 post-trial audits passed across all 50 room databases. Source hashes agree across validation, pressure, and startup. Captured source files match their recorded SHA-256 hashes; `recorded_only` lists the executable and original-harness digests retained as provenance.
+The `results.json`, `cold-results.json`, and `validation.json` records contain **180 HTTP trials, 24 WebSocket trials, and 40 startup trials**, plus **2,852 dedicated full-response checks**. The HTTP pressure clients completed 8,515,105 operations, including 90,791 posts. The WebSocket sessions added 7,077 posts, 123,141 verified frame deliveries, and 123,141 verified HTTP read acknowledgments. All trials passed response and ordering checks; all 204 post-trial audits passed across all 50 room databases. Source hashes agree across these three records. Captured source files match their recorded SHA-256 hashes; `recorded_only` lists the executable and original-harness digests retained as provenance.
+
+The `compile-cache/` comparison contains **40 additional startup trials** and its own source snapshot from a separate build. Its captured source files match their recorded SHA-256 hashes.
 
 The pressure run started at 2026-10-15T05:01:30Z and completed at 2026-10-15T05:41:42Z. The pressure JSON records the before/after thermal checks. The largest recorded load-client CPU usage was 68.3% of one core; clients ran in separate processes on the same machine.
 

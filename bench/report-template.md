@@ -59,9 +59,13 @@ RESULTS_TABLES
 
 ## Startup
 
+### Compilation caching disabled
+
 Each engine is tested STARTUP_ROUNDS times with a fresh service process and the seeded persistent snapshot. The runner polls for a validated root response at 1 ms intervals, then requests and validates the first room's HTML page. Filesystem caches stay warm. The Wasmtime module cache lasts only inside each process; there is no serialized/AOT cache between trials. The first-room column includes object activation, storage opening, application initialization, and the HTTP response after the root is ready. The total column measures complete process launch through that room response, rather than an isolated function cold start. Values are medians of STARTUP_ROUNDS trials; time columns are aggregated independently. The memory reading is taken after that first page, rather than the maximum of a timed pressure run.
 
 STARTUP_TABLE
+
+COMPILE_CACHE_RESULTS
 
 ## Correctness and provenance
 
