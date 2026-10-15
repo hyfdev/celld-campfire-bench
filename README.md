@@ -9,29 +9,31 @@ The experiment asks how application execution changes throughput, CPU use, memor
 
 Recorded on 2026-10-15: Apple M4 Pro, 14 logical CPUs, 48 GiB RAM, macOS 26.5.2 arm64. Each HTTP case runs for five seconds at 1, 32, and 128 concurrent clients, with three rounds and a fresh server process per trial. The tables show medians.
 
-### Uncached HTML: 32 concurrent clients
+Each client waits for a complete response before sending its next request; 32 concurrent clients allow up to 32 requests in flight. Each measurement shows **absolute value (ratio to JS)** for the same workload and client count. JS is **1.00×**; a memory ratio of **0.45×** means 45% of JS's memory. Ratios use the unrounded medians. Higher throughput is better; lower CPU time, memory, latency, and startup time are better.
 
-Each request authenticates a user, checks room membership, queries the latest 50 messages, and renders HTML. Higher requests/s is better; lower CPU time, memory, and latency are better.
+### Server-rendered HTML (without in-memory page caching): 32 concurrent clients
+
+Each request authenticates a user, checks room membership, queries the latest 50 messages, and renders HTML. Only the generated full-page cache is disabled; database and operating-system caches remain active.
 
 | Application execution | Requests/s | CPU % | CPU µs/request | Process memory MiB | p99 ms |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| JavaScript / V8 | **2,573** | 113.1 | 439.8 | 113.7 | 18.94 |
-| Rust Wasm / Wasmtime | **8,066** | 128.2 | 159.0 | 51.0 | 5.71 |
-| Native Rust | **10,771** | 134.4 | 124.8 | 46.2 | 4.45 |
+| JavaScript / V8 | **2,573 (1.00×)** | 113.1 (1.00×) | 439.8 (1.00×) | 113.7 (1.00×) | 18.94 (1.00×) |
+| Rust Wasm / Wasmtime | **8,066 (3.14×)** | 128.2 (1.13×) | 159.0 (0.36×) | 51.0 (0.45×) | 5.71 (0.30×) |
+| Native Rust | **10,771 (4.19×)** | 134.4 (1.19×) | 124.8 (0.28×) | 46.2 (0.41×) | 4.45 (0.23×) |
 
-For this read, Rust Wasm delivers **3.14× JavaScript's throughput**, consumes **64% less CPU time per request**, and uses **55% less process memory**. Its throughput is **75% of native Rust's**.
+For this read, Rust Wasm delivers **3.14× JavaScript's throughput**, consumes **64% less CPU time per request**, and uses **55% less process memory**.
 
-CPU 100% means one fully occupied core; helper threads can take the total above 100%. CPU time per request compares efficiency at equal work. Memory is the whole server process: the median of the sampled peak physical footprints, in MiB.
+CPU 100% means one fully occupied core; helper threads can take the total above 100%. The CPU % ratio measures total CPU use at each engine's achieved throughput. CPU time per request compares efficiency at equal work. Memory is the whole server process: the median of the sampled peak physical footprints, in MiB.
 
 ### Other application paths
 
 | Workload | JavaScript / V8 | Rust Wasm / Wasmtime | Native Rust |
 | --- | ---: | ---: | ---: |
-| Uncached JSON, 32 clients (requests/s) | 3,215 | 10,988 | 14,258 |
-| Cached HTML, 32 clients (requests/s) | 5,051 | 25,808 | 29,312 |
-| Durable posts, 32 clients (requests/s) | 356 | 377 | 368 |
-| WebSocket: 1 room, 32 listeners (messages/s) | 40 | 42 | 42 |
-| WebSocket: 5 rooms, 8 listeners each (messages/s) | 76 | 75 | 76 |
+| Uncached JSON, 32 clients (requests/s) | 3,215 (1.00×) | 10,988 (3.42×) | 14,258 (4.44×) |
+| Cached HTML, 32 clients (requests/s) | 5,051 (1.00×) | 25,808 (5.11×) | 29,312 (5.80×) |
+| Durable posts, 32 clients (requests/s) | 356 (1.00×) | 377 (1.06×) | 368 (1.03×) |
+| WebSocket: 1 room, 32 listeners (messages/s) | 40 (1.00×) | 42 (1.06×) | 42 (1.04×) |
+| WebSocket: 5 rooms, 8 listeners each (messages/s) | 76 (1.00×) | 75 (0.98×) | 76 (1.00×) |
 
 A WebSocket message includes persistence, broadcast to every participant, and each participant’s HTTP read acknowledgment. Durable posts and these full message rounds have similar throughput across the three implementations: they wait for the same persistence and response/broadcast release mechanism.
 
@@ -39,9 +41,9 @@ A WebSocket message includes persistence, broadcast to every participant, and ea
 
 | Application execution | Process launch → first room page, ms | Process memory after first page, MiB |
 | --- | ---: | ---: |
-| JavaScript / V8 | 288.80 | 39.2 |
-| Rust Wasm / Wasmtime | 331.33 | 30.7 |
-| Native Rust | 261.19 | 24.6 |
+| JavaScript / V8 | 288.80 (1.00×) | 39.2 (1.00×) |
+| Rust Wasm / Wasmtime | 331.33 (1.15×) | 30.7 (0.78×) |
+| Native Rust | 261.19 (0.90×) | 24.6 (0.63×) |
 
 Startup values are medians of ten fresh processes. They include service startup, object activation, and the first room response. Filesystem caches stay warm; Wasmtime compiles the module inside each process and uses no cross-process AOT cache.
 

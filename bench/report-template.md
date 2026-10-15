@@ -29,11 +29,11 @@ MACHINE_SETUP The host/native release build uses optimization level 3, thin LTO,
 
 Celld uses one Tokio executor thread, one stateless slot, and its existing 32-cells-per-slot placement policy. Its ownership actor, blocking I/O, and engine helper threads remain active. This is not a process restricted to one CPU core. The per-cell in-flight limit is 256, above the test's maximum HTTP_IN_FLIGHT HTTP requests in flight. Every timed trial starts a fresh process and restores the same seeded persistent snapshot.
 
-Each HTTP case runs at HTTP_CONCURRENCIES simultaneous closed-loop clients for TARGET_SECONDS seconds, followed by draining its outstanding requests. ROUND_SETUP Warmup checks 2,000 reads across every room, four users, and both formats. Posting and WebSocket cases also warm 1,000 writes, 20 per room. No page-cache warmup is applied to the uncached cases. Cached reads still authenticate, check membership, and read the room version: three application SQL calls; a miss adds the message query. The cache limit is 1 MiB per room and all writes invalidate its version.
+Each HTTP case runs at HTTP_CONCURRENCIES simultaneous closed-loop clients for TARGET_SECONDS seconds, followed by draining its outstanding requests. Each client waits for its complete response before sending the next request; 32 clients allow up to 32 requests in flight. ROUND_SETUP Warmup checks 2,000 reads across every room, four users, and both formats. Posting and WebSocket cases also warm 1,000 writes, 20 per room. The uncached cases bypass the application's generated-response cache; database and operating-system caches remain active. Cached reads still authenticate, check membership, and read the room version: three application SQL calls; a miss adds the message query. The cache limit is 1 MiB per room and all writes invalidate its version.
 
 | Case | Work |
 | --- | --- |
-| Uncached HTML | Select and render the latest 50 messages for every request |
+| Server-rendered HTML (without in-memory page caching) | Select and render the latest 50 messages for every request |
 | Uncached JSON | Select and serialize the latest 50 messages for every request |
 | Cached HTML | Authenticate and check the version, then return cached page bytes |
 | Post | Authenticate, parse JSON, insert, update version/unread counts, wait for durability |
@@ -52,6 +52,8 @@ Memory is the whole server process, including engine state, application caches, 
 HTTP latency covers dispatch through receipt of the complete response, including waiting behind other requests. These are closed-loop capacity measurements at the stated concurrency, not latency guarantees under a fixed offered request rate. Tables report medians of trial throughputs, CPU values, memory maxima, and p99 values. Throughput ranges show the minimum and maximum of those trials.
 
 ## Results
+
+Each measurement cell shows **absolute value (ratio to JS)** for the same workload and client count, with JS at **1.00×**. A memory ratio of **0.45×** means 45% of JS's memory. Ratios use the unrounded medians; trial ranges remain absolute. Higher throughput is better; lower CPU time, memory, latency, and startup time are better. CPU % ratios describe total CPU use at each engine's achieved throughput.
 
 RESULTS_TABLES
 
