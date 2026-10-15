@@ -1,60 +1,53 @@
 # celld-campfire-bench
 
-A reproducible comparison of **JavaScript, Rust Wasm, and native Rust** running the same chat workload inside [celld](https://github.com/denoland/celld). The application uses a stateless Worker entry handler and one Durable Object per room. This repository contains the application, runtime adapter, build patch, validated load clients, and recorded measurements.
+A reproducible comparison of **JavaScript, Rust Wasm, and native Rust** running the same chat workload inside [celld](https://github.com/denoland/celld). The application uses a stateless Worker entry handler and one Durable Object per room.
 
-The experiment asks how application execution changes throughput, CPU use, memory, and startup while keeping celld's object routing, scheduling, storage, and durability mechanisms shared. **Celld itself is a native Rust executable in every mode. Only the Rust application's Wasm variants are compiled to Wasm.**
+**Celld itself is a native Rust executable in every mode. Only the Rust application's Wasm variants are compiled to Wasm.**
 
 <!-- benchmark:start -->
 ## Results
 
-Recorded on 2026-10-15: Apple M4 Pro, 14 logical CPUs, 48 GiB RAM, macOS 26.5.2 arm64. Each HTTP case runs for five seconds at 1, 32, and 128 concurrent clients, with three rounds and a fresh server process per trial. The tables show medians.
-
-Each client waits for a complete response before sending its next request; 32 concurrent clients allow up to 32 requests in flight. Each measurement shows **absolute value (ratio to JS)** for the same workload and client count. JS is **1.00×**; a memory ratio of **0.45×** means 45% of JS's memory. Ratios use the unrounded medians. Higher throughput is better; lower CPU time, memory, latency, and startup time are better.
+Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64 · 2026-10-15. Medians of three 5-second trials.
 
 ### Server-rendered HTML (without in-memory page caching): 32 concurrent clients
 
-Each request authenticates a user, checks room membership, queries the latest 50 messages, and renders HTML. Only the generated full-page cache is disabled; database and operating-system caches remain active.
+Each request authenticates a user, checks membership, and renders the latest 50 messages. Database and operating-system caches remain active.
 
-| Application execution | Requests/s | CPU % | CPU µs/request | Process memory MiB | p99 ms |
+| Application execution | Requests/s | CPU % (100% = 1 core) | CPU µs/request | Peak process memory MiB | p99 ms |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| JavaScript / V8 | **2,573 (1.00×)** | 113.1 (1.00×) | 439.8 (1.00×) | 113.7 (1.00×) | 18.94 (1.00×) |
+| JavaScript / V8 (baseline) | **2,573 (1.00×)** | 113.1 (1.00×) | 439.8 (1.00×) | 113.7 (1.00×) | 18.94 (1.00×) |
 | Rust Wasm / Wasmtime | **8,066 (3.14×)** | 128.2 (1.13×) | 159.0 (0.36×) | 51.0 (0.45×) | 5.71 (0.30×) |
 | Native Rust | **10,771 (4.19×)** | 134.4 (1.19×) | 124.8 (0.28×) | 46.2 (0.41×) | 4.45 (0.23×) |
 
-For this read, Rust Wasm delivers **3.14× JavaScript's throughput**, consumes **64% less CPU time per request**, and uses **55% less process memory**.
+### Other chat operations
 
-CPU 100% means one fully occupied core; helper threads can take the total above 100%. The CPU % ratio measures total CPU use at each engine's achieved throughput. CPU time per request compares efficiency at equal work. Memory is the whole server process: the median of the sampled peak physical footprints, in MiB.
-
-### Other application paths
-
-| Workload | JavaScript / V8 | Rust Wasm / Wasmtime | Native Rust |
+| HTTP operation: requests/s, 32 concurrent clients | JavaScript / V8 (baseline) | Rust Wasm / Wasmtime | Native Rust |
 | --- | ---: | ---: | ---: |
-| Uncached JSON, 32 clients (requests/s) | 3,215 (1.00×) | 10,988 (3.42×) | 14,258 (4.44×) |
-| Cached HTML, 32 clients (requests/s) | 5,051 (1.00×) | 25,808 (5.11×) | 29,312 (5.80×) |
-| Durable posts, 32 clients (requests/s) | 356 (1.00×) | 377 (1.06×) | 368 (1.03×) |
-| WebSocket: 1 room, 32 listeners (messages/s) | 40 (1.00×) | 42 (1.06×) | 42 (1.04×) |
-| WebSocket: 5 rooms, 8 listeners each (messages/s) | 76 (1.00×) | 75 (0.98×) | 76 (1.00×) |
+| Read messages as JSON (no response cache) | 3,215 (1.00×) | 10,988 (3.42×) | 14,258 (4.44×) |
+| Read HTML with in-memory page caching | 5,051 (1.00×) | 25,808 (5.11×) | 29,312 (5.80×) |
+| Post a message; reply after saving it | 356 (1.00×) | 377 (1.06×) | 368 (1.03×) |
 
-A WebSocket message includes persistence, broadcast to every participant, and each participant’s HTTP read acknowledgment. Durable posts and these full message rounds have similar throughput across the three implementations: they wait for the same persistence and response/broadcast release mechanism.
+Each WebSocket message is saved and broadcast; the producer waits for every participant's HTTP read acknowledgment.
+
+| WebSocket setup: messages/s | JavaScript / V8 (baseline) | Rust Wasm / Wasmtime | Native Rust |
+| --- | ---: | ---: | ---: |
+| 1 room, 32 listeners | 40 (1.00×) | 42 (1.06×) | 42 (1.04×) |
+| 5 rooms, 8 listeners each | 76 (1.00×) | 75 (0.98×) | 76 (1.00×) |
 
 ### Process startup with a compilation cache
 
-Separate matched run on Apple M4 Pro, 48 GiB RAM, `macOS-26.5.2-arm64-arm-64bit-Mach-O`: 10 fresh processes per configuration, with the same celld executable and seeded database snapshot. Both Wasm configurations use the same module. The cached configuration uses Wasmtime 49's built-in filesystem compilation cache, populated in a separate process before timing. Filesystem caches remain warm.
+Apple M4 Pro, 48 GiB RAM, `macOS-26.5.2-arm64-arm-64bit-Mach-O`. Medians of 10 fresh processes per configuration. The executable and seed are shared; both Wasm modes use the same module. Wasmtime's compilation cache is populated before timing; filesystem caches stay warm.
 
-The table shows medians as **absolute value (ratio to JS)**, with JS at **1.00×**. Lower values are better. CPU is cumulative server user + system time through the first room response; memory is the process physical footprint immediately after that response.
-
-| Application execution | Process launch → first room page, ms | Server CPU, ms | Process memory after first page, MiB |
+| Application execution | Launch → first room page, ms | CPU time through first page, ms | Process memory after page, MiB |
 | --- | ---: | ---: | ---: |
-| JavaScript / V8 | 284.46 (1.00×) | 278.90 (1.00×) | 39.9 (1.00×) |
+| JavaScript / V8 (baseline) | 284.46 (1.00×) | 278.90 (1.00×) | 39.9 (1.00×) |
 | Rust Wasm / Wasmtime: cache disabled | 330.20 (1.16×) | 311.40 (1.12×) | 31.1 (0.78×) |
 | Rust Wasm / Wasmtime: cache hit | 259.60 (0.91×) | 243.54 (0.87×) | 28.5 (0.72×) |
 | Native Rust | 259.55 (0.91×) | 242.57 (0.87×) | 25.1 (0.63×) |
 
-Every cached process records one cache hit and zero misses; the cache-populating process records one miss. Wasm module compilation/loading (`Module::new`) takes 66.52 ms with caching disabled and 1.02 ms on a cache hit. The full startup table also includes service initialization, object activation, and the first page response.
+Wasm module compile/load: **66.52 ms → 1.02 ms** on a cache hit. All 10 cached trials hit the cache. Throughput tests exclude compilation through warmup. [Raw data](results/2026-10-15/compile-cache/cold-cache-results.json).
 
-The cache stores compiled Wasm code. Application execution, SQL calls, and page caching use the same paths in both Wasm configurations. The throughput tests start after warmup, which already excludes module compilation. [Startup measurements and source hashes](results/2026-10-15/compile-cache/cold-cache-results.json).
-
-The [complete report](results/2026-10-15/REPORT.md) includes every concurrency, CPU and physical-memory measurements, latency, trial ranges, write rates, correctness checks, and the auxiliary V8 Wasm comparison. Raw data also includes RSS: [pressure](results/2026-10-15/results.json), [startup](results/2026-10-15/cold-results.json), [validation](results/2026-10-15/validation.json).
+[Complete report](results/2026-10-15/REPORT.md) · Raw data: [throughput](results/2026-10-15/results.json), [startup](results/2026-10-15/cold-results.json), [validation](results/2026-10-15/validation.json).
 <!-- benchmark:end -->
 
 ## What runs
@@ -62,25 +55,27 @@ The [complete report](results/2026-10-15/REPORT.md) includes every concurrency, 
 | Mode | Application execution | SQL and WebSocket calls |
 | --- | --- | --- |
 | `js` | JavaScript in V8 | Existing Workers and Durable Object APIs |
-| `wasm` | Rust compiled to Wasm, executed by embedded Wasmtime 49 | Typed Wasm imports call native Rust functions; request execution and these calls use no JS function/value interface |
+| `wasm` | Rust compiled to Wasm, executed by Wasmtime 49 | Wasm imports → native Rust bindings; no JS bridge |
 | `native` | The same Rust business source compiled into celld | Direct Rust trait calls; a trusted-code reference |
 
-The auxiliary `wasm-v8` mode executes the same Wasm module in V8. It executes no JS application source, but its host calls use V8's native function/value interface. The full reproduction command includes this recorded auxiliary comparison; the README tables focus on the three primary modes.
+The auxiliary `wasm-v8` mode hosts Wasm in V8 and exposes bindings through V8's native callbacks; its measurements are in the [complete report](results/2026-10-15/REPORT.md).
 
 ```mermaid
-flowchart TD
-    CLIENT[HTTP and WebSocket clients] --> IN[Native celld: request admission]
-    IN --> ENTRY[Application entry handler]
-    ENTRY --> ROUTER[celld named-object routing and scheduling]
-    ROUTER --> ROOM[Application room handler: one Durable Object per room]
-    ROOM --> HOST[Native celld: SQLite and WebSocket operations]
-    HOST --> DURABLE[Persist writes before releasing dependent responses and broadcasts]
-    DURABLE --> CLIENT
+flowchart LR
+    subgraph MEASURED["Measured modes in this benchmark"]
+        R0["Request"] --> H0["celld Rust host"]
+        H0 --> JS["JS Worker / room handlers (V8)"]
+        H0 --> WASM["Rust Wasm Worker / room handlers (Wasmtime)"]
+        H0 --> NATIVE["Native Rust Worker / room handlers"]
+        JS --> JB["JS bindings"] --> STORE["celld SQL / WebSocket"]
+        WASM --> WI["Rust host imports: no JS bridge"] --> STORE
+        NATIVE --> STORE
+    end
+    subgraph STANDARD["Standard Wasm Worker: celld / Cloudflare Workers (reference)"]
+        R1["Request"] --> J1["JS Worker entry"] --> W1["Wasm application"]
+        W1 --> J2["JS bindings"] --> H1["Native host"]
+    end
 ```
-
-The selected engine executes both application handlers. JavaScript has its own implementation; all Rust modes share [`app/src/lib.rs`](app/src/lib.rs), SQL, schema, data, and cache policy. The Rust adapter in [`host.rs`](host.rs) submits real celld object calls and retains celld's ownership, activation, per-cell scheduling, SQLite cursors, write/observed positions, WebSocket registry, LTX persistence, and output gates.
-
-The application implements demo login, membership checks, 50 rooms with 1,000 seeded messages each, HTML/JSON history, posting, unread counts, a page cache, and live WebSocket broadcasts. Messages include Chinese, emoji, URLs, newlines, and HTML characters. The scope is this runnable Workers-style chat workload. Full Campfire database/cookie compatibility, rich text, uploads, search, Web Push, and bot integrations are outside it.
 
 ## Reproduce
 
@@ -154,9 +149,9 @@ All modes use one Tokio executor thread, one stateless slot, celld's 32-cells-pe
 
 The comparison measures complete application execution, including its adapters. JS uses SQL cursor wrappers and per-socket sends. The Rust adapters transfer typed SQL rows and expose a host broadcast operation. The resulting performance differences include application code, runtime bookkeeping, API design, data conversion, and generated machine code.
 
-HTTP load clients verify complete read lengths and CRC32 values against an independent Python fixture, check write responses and contiguous versions, and reject reads older than writes acknowledged before dispatch. Database audits check every message, timestamp, user, unread count, version, and SQLite integrity. WebSocket clients verify every frame and read acknowledgment. The complete report describes timing windows, warmup, memory sampling, and the mixed writer's actual rate.
+Load clients verify response contents, message ordering, and WebSocket deliveries. Measurement methods and validation details are in the [complete report](results/2026-10-15/REPORT.md#measurement).
 
-The recorded pressure, original startup, and validation JSON retain their original metric records and SHA-256 digests. Their shared `source_snapshot` identifies 24 captured application, adapter, runtime, manifest, and lockfile sources. Their `recorded_only` map lists four measured binary digests and two original harness-module digests whose bytes are retained as hashes. The compilation-cache comparison captures its own build and source snapshot under `results/2026-10-15/compile-cache/`. The portable runner packages the workload and resource meter under `bench/`. Fresh runs capture their own sources and binary digests. Rebuilding produces new binaries and a new measurement dataset.
+Raw measurements include binary hashes and source snapshots. The compilation-cache comparison has its own build and snapshot under `results/2026-10-15/compile-cache/`.
 
 The native implementation is trusted code and supplies no sandbox for untrusted native programs. The Wasm adapters limit memory and storage scope; the prototype implements this application's buffered HTTP, SQL, object calls, and WebSocket operations. Tenant CPU interruption and the general asynchronous Workers API are outside its scope. These measurements cover one node and local persistence.
 

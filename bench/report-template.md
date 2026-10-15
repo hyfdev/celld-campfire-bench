@@ -1,7 +1,5 @@
 # celld-campfire-bench: JavaScript, Rust Wasm, and native Rust
 
-RESULTS_SUMMARY
-
 ## The application and execution paths
 
 The measured application is a Workers chat service with a stateless entry handler and one named Durable Object per room. It provides demo login, room membership, HTML and JSON history, posting, unread counts, page caching, and live WebSocket broadcasts. Each of 50 rooms starts with 1,000 messages. Reads authenticate a user, check membership, and select the latest 50 messages. Posting parses JSON and inserts a message; a SQLite trigger increments the room version and the other members' unread counts. Messages include Chinese, emoji, URLs, newlines, and HTML characters requiring escaping.
@@ -34,9 +32,9 @@ Each HTTP case runs at HTTP_CONCURRENCIES simultaneous closed-loop clients for T
 | Case | Work |
 | --- | --- |
 | Server-rendered HTML (without in-memory page caching) | Select and render the latest 50 messages for every request |
-| Uncached JSON | Select and serialize the latest 50 messages for every request |
-| Cached HTML | Authenticate and check the version, then return cached page bytes |
-| Post | Authenticate, parse JSON, insert, update version/unread counts, wait for durability |
+| Read messages as JSON (no response cache) | Select and serialize the latest 50 messages for every request |
+| Read HTML with in-memory page caching | Authenticate and check the version, then return cached page bytes |
+| Post a message; reply after saving it | Authenticate, parse JSON, insert, update version/unread counts, wait for storage confirmation |
 | Mixed | Cached reads, 80% HTML / 20% JSON, plus one writer targeting 100 posts/s |
 
 The mixed writer skips missed timer ticks and waits for each acknowledgment. Its actual rate and the resulting cache-hit ratio are reported. Mixed tests therefore do not impose an identical completed read/write ratio on every engine. The fixed read-only cases are the cleaner comparison of equal work per request.
@@ -52,8 +50,6 @@ Memory is the whole server process, including engine state, application caches, 
 HTTP latency covers dispatch through receipt of the complete response, including waiting behind other requests. These are closed-loop capacity measurements at the stated concurrency, not latency guarantees under a fixed offered request rate. Tables report medians of trial throughputs, CPU values, memory maxima, and p99 values. Throughput ranges show the minimum and maximum of those trials.
 
 ## Results
-
-Each measurement cell shows **absolute value (ratio to JS)** for the same workload and client count, with JS at **1.00×**. A memory ratio of **0.45×** means 45% of JS's memory. Ratios use the unrounded medians; trial ranges remain absolute. Higher throughput is better; lower CPU time, memory, latency, and startup time are better. CPU % ratios describe total CPU use at each engine's achieved throughput.
 
 RESULTS_TABLES
 
