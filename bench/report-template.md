@@ -4,7 +4,7 @@
 
 The measured application is a Workers chat service with a stateless entry handler and one named Durable Object per room. It provides demo login, room membership, HTML and JSON history, posting, unread counts, page caching, and live WebSocket broadcasts. Each of 50 rooms starts with 1,000 messages. Reads authenticate a user, check membership, and select the latest 50 messages. Posting parses JSON and inserts a message; a SQLite trigger increments the room version and the other members' unread counts. Messages include Chinese, emoji, URLs, newlines, and HTML characters requiring escaping.
 
-This is a small Campfire-style application implemented for this study. The native Rust reference is the same Rust business source compiled into celld. Celld itself is a native executable in every mode; only the Rust application's Wasm variants are compiled to Wasm. The runnable application, architecture diagram, and build commands are in [the README](../../README.md).
+This is a small Campfire-style application implemented for this study. The native Rust reference is the same Rust business source compiled into celld. Celld itself is a native executable in every mode; only the Rust application's Wasm variants are compiled to Wasm. The runnable application and architecture diagram are in [the README](../../README.md).
 
 All four celld variants run in the actual celld daemon and share its stateless admission, named-object routing, ownership, activation, cell scheduling, SQLite cursors, write/observed positions, WebSocket registry, LTX log persistence, and output gates. They use the same SQL, schema, data, and cache policy. Output gates hold a response or broadcast until celld has confirmed the writes it depends on. For this single-node test, the persistence target is celld's SQLite-backed local object store.
 
@@ -71,7 +71,7 @@ The independent Python fixture produces expected response bytes from the seed an
 
 Dedicated checks cover invalid credentials, malformed login types and membership, cache invalidation, multiple users, 50 maximum-length messages, HTML expanding beyond 1 MiB, and 8 KiB messages whose JSON encoding exceeds 32 KiB. Restart validation deletes celld's entire local runtime directory and recovers all rooms from the object store, retaining the checked messages and unread changes.
 
-The full data are [pressure and resources](results.json), [startup](cold-results.json), and [correctness](validation.json). They contain SHA-256 hashes of the measured binaries, guest, application, adapters, clients, and relevant sources and lockfiles. The `source_snapshot` field identifies the captured source files. The `recorded_only` map identifies binary and original-harness hashes whose bytes are not distributed with the data. The portable harness lives under `bench/`. Run phases and build commands are in [the README](../../README.md).
+The full data are [pressure and resources](results.json), [startup](cold-results.json), and [correctness](validation.json). They contain SHA-256 hashes of the measured binaries, guest, application, adapters, clients, and relevant sources and lockfiles. The `source_snapshot` field identifies the captured source files. The `recorded_only` map identifies binary and original-harness hashes whose bytes are not distributed with the data. The portable harness lives under `bench/`. Run phases and build commands are in the [reproduction guide](../../REPRODUCE.md).
 
 ## Practical limits
 
