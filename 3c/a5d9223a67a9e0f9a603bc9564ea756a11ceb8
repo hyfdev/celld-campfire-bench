@@ -1,0 +1,127 @@
+.gitattributes
+  s_16620d36eb10bd::t_5c1274a7db82c3 1
+LICENSE
+  s_16620d36eb10bd::t_d56358a8fc89cf 1-202
+app/Cargo.lock
+  s_16620d36eb10bd::t_5750774ced99d5 1-118
+app/Cargo.toml
+  s_16620d36eb10bd::t_f1796f01c63747 1-12
+app/schema.json
+  s_16620d36eb10bd::t_bb9d4c6c8bb910 1-15
+app/sql.json
+  s_16620d36eb10bd::t_7b9167350aead5 1-7
+app/src/lib.rs
+  s_16620d36eb10bd::t_ca852fab4b6db9 1-507
+application/index.html
+  s_16620d36eb10bd::t_f2fc71858686c4 1-12
+application/worker.js
+  s_16620d36eb10bd::t_03248fe5bad4fd 1-198
+application/wrangler.jsonc
+  s_16620d36eb10bd::t_f5717600712d1c 1-21
+bench/aggregate.py
+  s_16620d36eb10bd::t_06f99356bcdf5b 1-79
+bench/build.py
+  s_16620d36eb10bd::t_c8b07b57e6b6cc 1-118
+bench/fixture.py
+  s_16620d36eb10bd::t_d0c73bc88c9861 1-81
+bench/metrics.py
+  s_16620d36eb10bd::t_0239179fcfa917 1-39
+bench/render.py
+  s_16620d36eb10bd::t_c443d1407264db 1-143
+celld.json
+  s_16620d36eb10bd::t_e645026c378903 1-4
+guest/.cargo/config.toml
+  s_16620d36eb10bd::t_21b186a4fcb201 1-2
+guest/Cargo.lock
+  s_16620d36eb10bd::t_f0b30d49879cb6 1-269
+guest/Cargo.toml
+  s_16620d36eb10bd::t_017ff0d1ab7320 1-19
+guest/src/lib.rs
+  s_16620d36eb10bd::t_93bac340e8602a 1-89
+host.rs
+  s_16620d36eb10bd::t_05f469a644681d 1-952
+load/Cargo.lock
+  s_16620d36eb10bd::t_8f25a206ba1ee4 1-1576
+load/Cargo.toml
+  s_16620d36eb10bd::t_cd8e06b8c819f2 1-25
+load/src/main.rs
+  s_16620d36eb10bd::t_5bca94aa51483a 1-318
+load/src/ws.rs
+  s_16620d36eb10bd::t_8a9811db2d04b1 1-246
+patches/celld.patch
+  s_16620d36eb10bd::t_d1440d745e6036 1-1032
+pnpm-lock.yaml
+  s_16620d36eb10bd::t_9deaaeeb78fd22 1-285
+results/2026-10-15/REPORT.md
+  s_16620d36eb10bd::t_6b7ebe3c80ba62 1-212
+results/2026-10-15/cold-results.json
+  s_16620d36eb10bd::t_97ddf4d818e1e3 1-566
+results/2026-10-15/results.json
+  s_16620d36eb10bd::t_8f4d4df3599b18 1-83768
+results/2026-10-15/sources/Cargo.lock
+  s_16620d36eb10bd::t_abba7a83cc1354 1-4874
+results/2026-10-15/sources/Cargo.toml
+  s_16620d36eb10bd::t_4694627d314b61 1-154
+results/2026-10-15/sources/crates/celld/Cargo.toml
+  s_16620d36eb10bd::t_e43c52bfb24cfd 1-102
+results/2026-10-15/sources/crates/celld/js.rs
+  s_16620d36eb10bd::t_8a3b02257ceb32 1-12726
+results/2026-10-15/sources/crates/celld/lib.rs
+  s_16620d36eb10bd::t_0a1dd230e529e2 1-316
+results/2026-10-15/sources/crates/celld/runtime.rs
+  s_16620d36eb10bd::t_107e28ce88e609 1-3615
+results/2026-10-15/sources/research/native-wasm/chat_fixture.py
+  s_16620d36eb10bd::t_d362f7062bc1e3 1-123
+results/2026-10-15/sources/research/workers-chat/app/Cargo.lock
+  s_16620d36eb10bd::t_abeb2c5749c024 1-118
+results/2026-10-15/sources/research/workers-chat/app/Cargo.toml
+  s_16620d36eb10bd::t_4afe49f2d0cd33 1-12
+results/2026-10-15/sources/research/workers-chat/app/schema.json
+  s_16620d36eb10bd::t_d4ac0e15fe1287 1-15
+results/2026-10-15/sources/research/workers-chat/app/sql.json
+  s_16620d36eb10bd::t_2380024456033d 1-7
+results/2026-10-15/sources/research/workers-chat/app/src/lib.rs
+  s_16620d36eb10bd::t_b5ff4dcfeb0074 1-507
+results/2026-10-15/sources/research/workers-chat/application/index.html
+  s_16620d36eb10bd::t_bd198c901ab0c1 1-12
+results/2026-10-15/sources/research/workers-chat/application/worker.js
+  s_16620d36eb10bd::t_ddaf96380049c6 1-198
+results/2026-10-15/sources/research/workers-chat/application/wrangler.jsonc
+  s_16620d36eb10bd::t_832f89553aaf57 1-21
+results/2026-10-15/sources/research/workers-chat/guest/.cargo/config.toml
+  s_16620d36eb10bd::t_3b86277f468bdb 1-2
+results/2026-10-15/sources/research/workers-chat/guest/Cargo.lock
+  s_16620d36eb10bd::t_e243effc768324 1-269
+results/2026-10-15/sources/research/workers-chat/guest/Cargo.toml
+  s_16620d36eb10bd::t_4fe7a2b865f55e 1-19
+results/2026-10-15/sources/research/workers-chat/guest/src/lib.rs
+  s_16620d36eb10bd::t_6789a0626cef95 1-89
+results/2026-10-15/sources/research/workers-chat/host.rs
+  s_16620d36eb10bd::t_d2b091d1f99007 1-952
+results/2026-10-15/sources/research/workers-chat/load/Cargo.lock
+  s_16620d36eb10bd::t_acba9b9a534461 1-1576
+results/2026-10-15/sources/research/workers-chat/load/Cargo.toml
+  s_16620d36eb10bd::t_fa8f920e08426f 1-25
+results/2026-10-15/sources/research/workers-chat/load/src/main.rs
+  s_16620d36eb10bd::t_b1091cc297d177 1-318
+results/2026-10-15/sources/research/workers-chat/load/src/ws.rs
+  s_16620d36eb10bd::t_ede0dc35570e91 1-246
+results/2026-10-15/validation.json
+  s_16620d36eb10bd::t_a6828e807592d2 1-214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3ca5d9223a67a9e0f9a603bc9564ea756a11ceb8",
+  "prompts": {},
+  "sessions": {
+    "s_16620d36eb10bd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1386f-725d-7830-aa80-a37d4ace492a",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yunfei He <i.heyunfei@gmail.com>"
+    }
+  }
+}
