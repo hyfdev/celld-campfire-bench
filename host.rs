@@ -186,7 +186,7 @@ fn request(
 impl DirectRuntime {
     pub fn selected(script: &str) -> Result<Option<Self>> {
         let mode = std::env::var("WORKERS_CHAT_ENGINE").unwrap_or_else(|_| "js".into());
-        if mode == "js" {
+        if mode == "js" || mode == "wasm-js" {
             return Ok(None);
         }
         anyhow::ensure!(

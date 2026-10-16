@@ -1,0 +1,702 @@
+{
+  "complete": true,
+  "sources": {
+    ".build/host-target/release/celld": "31344872274421cd7de7c81048a06713e01535a154ac2caad951a6b382964b2f",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "f2c72ca2cf4e39ef5d44e52aa8e27c5fe343348f2dfed6a6d2a4ad288ff80b08",
+    ".build/load-target/release/workers-chat-load": "e12b6c1f34057fa24a3b77c147ce5f33718b42d1b5066aabfb005d620d9f6f79",
+    ".build/load-target/release/workers-chat-ws": "aec382e86a71dbeb85e7696f50428596f8ae4ad02a16ac352e7c833e101a40f9",
+    "host.rs": "b537027739678638345ac06e9fee592eb2b03054775ce3432f039918b910a508",
+    "app/src/lib.rs": "b65c32868864cf26348df1d4424e3c20c1c9ccf588168364c25d6c347fccf3c3",
+    "app/sql.json": "c3eb137a07bbe7bd4e206d08893fa0a18fafa75aa25601060f2be6be0c0e4f6c",
+    "app/schema.json": "66c52aa1b2aea84d4c4c6c3c92f511916c7e7807bf9f38213587af0c7e2915b7",
+    "application/worker.js": "440301986d0859fb179f464e2eca774b326d458ad667a14f2e880c3464fbe343",
+    "application/wasm-worker.js": "caf4be1804a9105c2f8b945ef7c41aa29314c8b9220d129ab5338927fadb9a03",
+    "application/index.html": "559661c6b9e32fe4ca1818963f7b18aa7b163e540d754f18c8022715c85ff08b",
+    "application/wrangler.jsonc": "1ba7823fcb23b29ce1b7b0e6a47d4c2875f15e54efdc8285f3a528c335b9cf3a",
+    "guest/src/lib.rs": "52af8d0a3b7ccb10101769256b58d96191241fb6300ae50ae3cadd17d3f430a8",
+    "guest/.cargo/config.toml": "2511de2ff0bf0f36f53f46cd26193fe7202f0be861c8e00ff02824012198f9d4",
+    "load/src/main.rs": "30b3b67f872beefa0d84108cb78d4180b7a23bdc529b694c3cb4fbea96c24dd7",
+    "load/src/ws.rs": "b7c865e751f0b7f110a1c18532a3e12c88c9f3c9c9348d7a0759ff5a1ad3edd0",
+    "app/Cargo.toml": "d29a4e480fda0177222c3025e24c5528f696cabff19a35fbe1d53a9163056320",
+    "app/Cargo.lock": "d01d01fa46e5acb67bb611c85a631f7f80863f275563caf49140b998cc67b4e3",
+    "guest/Cargo.toml": "51d1df7fa66c1f170c933d9489071e3595418fa0a79e14a2695fa035d072595b",
+    "guest/Cargo.lock": "33261853b36859e4f27d7b22c295638aea9f9473e4637f2a98bf316e32f713f8",
+    "load/Cargo.toml": "e01830ab0636a1352072795211c7cfc8deab1080a523e3b6abb10ba001245fdc",
+    "load/Cargo.lock": "2893c1b0fd234277665da158fb2579d0099ffbce8526b9eef74da5c02468fb8f",
+    "bench/run.py": "ee28991ef45a8b78f106a227ec63d968d2136a6079c57ad80371faa955667b49",
+    "bench/fixture.py": "a6521cae7fe6e87dcf2f22ba33f82718c55b00471a8d7849584b2bf617bdd526",
+    "bench/metrics.py": "b2e17183e967460118e0f03e7ef78ca4c3889c3e2b8f5b1b853b883a5b49ca4e",
+    "bench/build.py": "3919c74df68b7bd816dee1155c3414aa99e8e3b63badbf2575d521f2311d5257",
+    "celld.json": "581e2584bb752f14b39e062088f991af194f60abe0130dec1f22b7f9d898abb2",
+    "patches/celld.patch": "c6cdd1c089a0df6f2e8031083aeefe088efb9f8ad0188b8bb4b177c0af0e8fb2",
+    "rust-toolchain.toml": "23794dfc365530e7749b589631e09db35dfbcc58e79b21b4185622406587fe84",
+    "package.json": "4daef5d3b7a2b9a20f0ded2a6208b148314144c5df6f2fa71292d6c5341ac778",
+    "pnpm-lock.yaml": "d5b901396cb4e334eeb7d25a9f047ff2291d5a4fbf8cd5823d4952512a7e9d8e",
+    ".build/build.json": "47ff094f8da9f4838330a12e7112429664d4a4cac0bfd4d8c727acb0cdcc8ce6",
+    ".build/celld/crates/celld/js.rs": "1f70ffa748c75e742a2e77d1eacc91dd21f08baa306055eb12805d520fbb5149",
+    ".build/celld/crates/celld/runtime.rs": "108c40abf09b40ea122c30da8fa0203c60ef291a4fae0c64813c12762cf312f6",
+    ".build/celld/crates/celld/lib.rs": "b8e96798d1b5c580ccc54a54846387d78cadfce4bbaed9457d8b6954ddd2019f",
+    ".build/celld/Cargo.toml": "cce35295402aaf564c393483d1a94e9215c0765a135e138e86f025fea0b49423",
+    ".build/celld/crates/celld/Cargo.toml": "e7c215289b8f6d4fdec3c40a1bcaae842373a906b3cee78f6cf2b60b477f9f76",
+    ".build/celld/Cargo.lock": "32026828bdd14ac63510f9fc2e04d3837e6d07042a111ad27add387f9383b14d"
+  },
+  "source_snapshot": "sources",
+  "recorded_only": {
+    ".build/host-target/release/celld": "Measured binary digest; rebuild from source.",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/workers-chat-load": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/workers-chat-ws": "Measured binary digest; rebuild from source."
+  },
+  "trials": [
+    {
+      "engine": "js",
+      "trial": 0,
+      "process_to_root_ms": 259.94749972596765,
+      "first_room_ms": 30.12879192829132,
+      "process_to_first_page_ms": 290.0802497752011,
+      "memory": {
+        "user_ns": 162605000,
+        "system_ns": 102161125,
+        "rss_bytes": 75759616,
+        "footprint_bytes": 40601952
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 0,
+      "process_to_root_ms": 295.8028339780867,
+      "first_room_ms": 23.555250372737646,
+      "process_to_first_page_ms": 319.37212496995926,
+      "memory": {
+        "user_ns": 198064208,
+        "system_ns": 106842166,
+        "rss_bytes": 59965440,
+        "footprint_bytes": 35390256
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 0,
+      "process_to_root_ms": 250.22208271548152,
+      "first_room_ms": 22.43595803156495,
+      "process_to_first_page_ms": 272.6765829138458,
+      "memory": {
+        "user_ns": 139525916,
+        "system_ns": 102831250,
+        "rss_bytes": 45940736,
+        "footprint_bytes": 25772800
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 0,
+      "process_to_root_ms": 225.92279128730297,
+      "first_room_ms": 26.586958207190037,
+      "process_to_first_page_ms": 252.52220826223493,
+      "memory": {
+        "user_ns": 136044541,
+        "system_ns": 106502708,
+        "rss_bytes": 61800448,
+        "footprint_bytes": 34637408
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 0,
+      "process_to_root_ms": 260.345000308007,
+      "first_room_ms": 39.56116596236825,
+      "process_to_first_page_ms": 299.92904094979167,
+      "memory": {
+        "user_ns": 170587875,
+        "system_ns": 107109083,
+        "rss_bytes": 78446592,
+        "footprint_bytes": 42633664
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 1,
+      "process_to_root_ms": 296.13687517121434,
+      "first_room_ms": 21.5808330103755,
+      "process_to_first_page_ms": 317.73062516003847,
+      "memory": {
+        "user_ns": 196789875,
+        "system_ns": 110959291,
+        "rss_bytes": 57475072,
+        "footprint_bytes": 32883480
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 1,
+      "process_to_root_ms": 225.56558391079307,
+      "first_room_ms": 22.180499974638224,
+      "process_to_first_page_ms": 247.7597501128912,
+      "memory": {
+        "user_ns": 130761208,
+        "system_ns": 90826083,
+        "rss_bytes": 45973504,
+        "footprint_bytes": 25821952
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 1,
+      "process_to_root_ms": 227.74312505498528,
+      "first_room_ms": 23.997458163648844,
+      "process_to_first_page_ms": 251.75041612237692,
+      "memory": {
+        "user_ns": 135860750,
+        "system_ns": 110065166,
+        "rss_bytes": 58998784,
+        "footprint_bytes": 32048760
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 1,
+      "process_to_root_ms": 251.3860003091395,
+      "first_room_ms": 32.65099972486496,
+      "process_to_first_page_ms": 284.0485000051558,
+      "memory": {
+        "user_ns": 163062083,
+        "system_ns": 112140791,
+        "rss_bytes": 79298560,
+        "footprint_bytes": 43420000
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 1,
+      "process_to_root_ms": 258.0129159614444,
+      "first_room_ms": 26.96091588586569,
+      "process_to_first_page_ms": 284.98479118570685,
+      "memory": {
+        "user_ns": 164459625,
+        "system_ns": 102614458,
+        "rss_bytes": 72925184,
+        "footprint_bytes": 38046048
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 2,
+      "process_to_root_ms": 221.75791580229998,
+      "first_room_ms": 20.650167018175125,
+      "process_to_first_page_ms": 242.42299981415272,
+      "memory": {
+        "user_ns": 128680458,
+        "system_ns": 102434583,
+        "rss_bytes": 48267264,
+        "footprint_bytes": 28099304
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 2,
+      "process_to_root_ms": 229.7811657190323,
+      "first_room_ms": 30.428417026996613,
+      "process_to_first_page_ms": 260.22270787507296,
+      "memory": {
+        "user_ns": 139310416,
+        "system_ns": 101155416,
+        "rss_bytes": 59392000,
+        "footprint_bytes": 32261800
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 2,
+      "process_to_root_ms": 259.05829202383757,
+      "first_room_ms": 39.721709210425615,
+      "process_to_first_page_ms": 298.7932921387255,
+      "memory": {
+        "user_ns": 173206750,
+        "system_ns": 118316958,
+        "rss_bytes": 81526784,
+        "footprint_bytes": 45566280
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 2,
+      "process_to_root_ms": 257.76970805600286,
+      "first_room_ms": 28.113500215113163,
+      "process_to_first_page_ms": 285.8967501670122,
+      "memory": {
+        "user_ns": 165013416,
+        "system_ns": 110850166,
+        "rss_bytes": 76398592,
+        "footprint_bytes": 41470280
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 2,
+      "process_to_root_ms": 306.24891677871346,
+      "first_room_ms": 22.118082735687494,
+      "process_to_first_page_ms": 328.3797916956246,
+      "memory": {
+        "user_ns": 203194458,
+        "system_ns": 113488083,
+        "rss_bytes": 57720832,
+        "footprint_bytes": 33129240
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 3,
+      "process_to_root_ms": 226.48037504404783,
+      "first_room_ms": 24.093375075608492,
+      "process_to_first_page_ms": 250.58845803141594,
+      "memory": {
+        "user_ns": 135918375,
+        "system_ns": 96886000,
+        "rss_bytes": 58769408,
+        "footprint_bytes": 31573576
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 3,
+      "process_to_root_ms": 269.49454098939896,
+      "first_room_ms": 40.3109579347074,
+      "process_to_first_page_ms": 309.8205830901861,
+      "memory": {
+        "user_ns": 173665125,
+        "system_ns": 118818291,
+        "rss_bytes": 79773696,
+        "footprint_bytes": 43846032
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 3,
+      "process_to_root_ms": 259.98825021088123,
+      "first_room_ms": 30.00220889225602,
+      "process_to_first_page_ms": 290.008416865021,
+      "memory": {
+        "user_ns": 165169583,
+        "system_ns": 93178333,
+        "rss_bytes": 77545472,
+        "footprint_bytes": 42469728
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 3,
+      "process_to_root_ms": 312.1006661094725,
+      "first_room_ms": 26.39291575178504,
+      "process_to_first_page_ms": 338.51866610348225,
+      "memory": {
+        "user_ns": 205883416,
+        "system_ns": 107542250,
+        "rss_bytes": 57638912,
+        "footprint_bytes": 33063728
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 3,
+      "process_to_root_ms": 226.43670765683055,
+      "first_room_ms": 20.258041098713875,
+      "process_to_first_page_ms": 246.7087907716632,
+      "memory": {
+        "user_ns": 130058791,
+        "system_ns": 105954375,
+        "rss_bytes": 46284800,
+        "footprint_bytes": 26100432
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 4,
+      "process_to_root_ms": 250.7699583657086,
+      "first_room_ms": 35.93383310362697,
+      "process_to_first_page_ms": 286.71804117038846,
+      "memory": {
+        "user_ns": 162367166,
+        "system_ns": 113503166,
+        "rss_bytes": 81313792,
+        "footprint_bytes": 45386032
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 4,
+      "process_to_root_ms": 272.6300419308245,
+      "first_room_ms": 34.72279105335474,
+      "process_to_first_page_ms": 307.36837489530444,
+      "memory": {
+        "user_ns": 160810833,
+        "system_ns": 111941500,
+        "rss_bytes": 79527936,
+        "footprint_bytes": 44632464
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 4,
+      "process_to_root_ms": 295.14050018042326,
+      "first_room_ms": 21.0739579051733,
+      "process_to_first_page_ms": 316.22858298942447,
+      "memory": {
+        "user_ns": 196020250,
+        "system_ns": 108625166,
+        "rss_bytes": 58195968,
+        "footprint_bytes": 33637192
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 4,
+      "process_to_root_ms": 250.0610421411693,
+      "first_room_ms": 21.523500327020884,
+      "process_to_first_page_ms": 271.5972922742367,
+      "memory": {
+        "user_ns": 138900625,
+        "system_ns": 115655625,
+        "rss_bytes": 45907968,
+        "footprint_bytes": 25740008
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 4,
+      "process_to_root_ms": 225.8936669677496,
+      "first_room_ms": 23.818625137209892,
+      "process_to_first_page_ms": 249.72541723400354,
+      "memory": {
+        "user_ns": 135370041,
+        "system_ns": 99280208,
+        "rss_bytes": 59113472,
+        "footprint_bytes": 32065144
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 5,
+      "process_to_root_ms": 241.26387480646372,
+      "first_room_ms": 31.145290937274694,
+      "process_to_first_page_ms": 272.4267076700926,
+      "memory": {
+        "user_ns": 158943583,
+        "system_ns": 115983458,
+        "rss_bytes": 79036416,
+        "footprint_bytes": 43977080
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 5,
+      "process_to_root_ms": 298.19612484425306,
+      "first_room_ms": 19.54237511381507,
+      "process_to_first_page_ms": 317.7530001848936,
+      "memory": {
+        "user_ns": 196133291,
+        "system_ns": 112507083,
+        "rss_bytes": 60391424,
+        "footprint_bytes": 35799832
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 5,
+      "process_to_root_ms": 225.3625406883657,
+      "first_room_ms": 22.083207964897156,
+      "process_to_first_page_ms": 247.45845794677734,
+      "memory": {
+        "user_ns": 131092333,
+        "system_ns": 99457208,
+        "rss_bytes": 46186496,
+        "footprint_bytes": 26018536
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 5,
+      "process_to_root_ms": 254.4696251861751,
+      "first_room_ms": 23.59362505376339,
+      "process_to_first_page_ms": 278.077875263989,
+      "memory": {
+        "user_ns": 141538541,
+        "system_ns": 109932333,
+        "rss_bytes": 61931520,
+        "footprint_bytes": 34784912
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 5,
+      "process_to_root_ms": 248.0133748613298,
+      "first_room_ms": 34.539791755378246,
+      "process_to_first_page_ms": 282.56541676819324,
+      "memory": {
+        "user_ns": 161823625,
+        "system_ns": 105812625,
+        "rss_bytes": 81379328,
+        "footprint_bytes": 45484384
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 6,
+      "process_to_root_ms": 307.19579197466373,
+      "first_room_ms": 25.760541670024395,
+      "process_to_first_page_ms": 332.97012466937304,
+      "memory": {
+        "user_ns": 203857083,
+        "system_ns": 98467583,
+        "rss_bytes": 54640640,
+        "footprint_bytes": 30049048
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 6,
+      "process_to_root_ms": 223.82012475281954,
+      "first_room_ms": 21.45199989899993,
+      "process_to_first_page_ms": 245.28291588649154,
+      "memory": {
+        "user_ns": 129435083,
+        "system_ns": 104110083,
+        "rss_bytes": 45940736,
+        "footprint_bytes": 25805592
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 6,
+      "process_to_root_ms": 232.54120908677578,
+      "first_room_ms": 23.48091686144471,
+      "process_to_first_page_ms": 256.0370839200914,
+      "memory": {
+        "user_ns": 137155125,
+        "system_ns": 113827125,
+        "rss_bytes": 59375616,
+        "footprint_bytes": 32327288
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 6,
+      "process_to_root_ms": 262.0968329720199,
+      "first_room_ms": 37.36933367326856,
+      "process_to_first_page_ms": 299.4772498495877,
+      "memory": {
+        "user_ns": 168889583,
+        "system_ns": 114821583,
+        "rss_bytes": 79331328,
+        "footprint_bytes": 43436360
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 6,
+      "process_to_root_ms": 241.09383299946785,
+      "first_room_ms": 26.789375115185976,
+      "process_to_first_page_ms": 267.89979217574,
+      "memory": {
+        "user_ns": 156120791,
+        "system_ns": 105619833,
+        "rss_bytes": 76513280,
+        "footprint_bytes": 41716088
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 7,
+      "process_to_root_ms": 231.85670794919133,
+      "first_room_ms": 23.6429157666862,
+      "process_to_first_page_ms": 255.51508273929358,
+      "memory": {
+        "user_ns": 133809291,
+        "system_ns": 96106916,
+        "rss_bytes": 45842432,
+        "footprint_bytes": 25674472
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 7,
+      "process_to_root_ms": 231.6330000758171,
+      "first_room_ms": 24.28258303552866,
+      "process_to_first_page_ms": 255.9293331578374,
+      "memory": {
+        "user_ns": 141212458,
+        "system_ns": 106781750,
+        "rss_bytes": 59293696,
+        "footprint_bytes": 32130680
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 7,
+      "process_to_root_ms": 249.2668330669403,
+      "first_room_ms": 33.88420771807432,
+      "process_to_first_page_ms": 283.1618329510093,
+      "memory": {
+        "user_ns": 164602291,
+        "system_ns": 115015291,
+        "rss_bytes": 79069184,
+        "footprint_bytes": 43223440
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 7,
+      "process_to_root_ms": 250.900040846318,
+      "first_room_ms": 29.8827919177711,
+      "process_to_first_page_ms": 280.798832885921,
+      "memory": {
+        "user_ns": 159996041,
+        "system_ns": 108788833,
+        "rss_bytes": 75481088,
+        "footprint_bytes": 40618336
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 7,
+      "process_to_root_ms": 289.9814173579216,
+      "first_room_ms": 22.641499992460012,
+      "process_to_first_page_ms": 312.63525038957596,
+      "memory": {
+        "user_ns": 194654708,
+        "system_ns": 103640000,
+        "rss_bytes": 58359808,
+        "footprint_bytes": 33768216
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 8,
+      "process_to_root_ms": 246.8154588714242,
+      "first_room_ms": 25.979083962738514,
+      "process_to_first_page_ms": 272.8072088211775,
+      "memory": {
+        "user_ns": 142656000,
+        "system_ns": 106848708,
+        "rss_bytes": 58884096,
+        "footprint_bytes": 31802952
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 8,
+      "process_to_root_ms": 252.41991598159075,
+      "first_room_ms": 33.9151662774384,
+      "process_to_first_page_ms": 286.3484160043299,
+      "memory": {
+        "user_ns": 163832041,
+        "system_ns": 118151541,
+        "rss_bytes": 79085568,
+        "footprint_bytes": 43190600
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 8,
+      "process_to_root_ms": 242.83566558733582,
+      "first_room_ms": 33.15545804798603,
+      "process_to_first_page_ms": 276.0065826587379,
+      "memory": {
+        "user_ns": 157961500,
+        "system_ns": 91728791,
+        "rss_bytes": 73940992,
+        "footprint_bytes": 38914304
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 8,
+      "process_to_root_ms": 292.95066744089127,
+      "first_room_ms": 22.273624781519175,
+      "process_to_first_page_ms": 315.23558404296637,
+      "memory": {
+        "user_ns": 195710125,
+        "system_ns": 110543708,
+        "rss_bytes": 59965440,
+        "footprint_bytes": 35373848
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 8,
+      "process_to_root_ms": 224.37399998307228,
+      "first_room_ms": 22.37404091283679,
+      "process_to_first_page_ms": 246.76345800980926,
+      "memory": {
+        "user_ns": 130945458,
+        "system_ns": 108826583,
+        "rss_bytes": 48496640,
+        "footprint_bytes": 28328680
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 9,
+      "process_to_root_ms": 265.6586249358952,
+      "first_room_ms": 36.878000013530254,
+      "process_to_first_page_ms": 302.5499591603875,
+      "memory": {
+        "user_ns": 169825708,
+        "system_ns": 120650000,
+        "rss_bytes": 78675968,
+        "footprint_bytes": 42699152
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 9,
+      "process_to_root_ms": 239.67387527227402,
+      "first_room_ms": 26.42304077744484,
+      "process_to_first_page_ms": 266.11175015568733,
+      "memory": {
+        "user_ns": 155572833,
+        "system_ns": 100302666,
+        "rss_bytes": 76267520,
+        "footprint_bytes": 41486688
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 9,
+      "process_to_root_ms": 312.1318747289479,
+      "first_room_ms": 20.987875293940306,
+      "process_to_first_page_ms": 333.1366670317948,
+      "memory": {
+        "user_ns": 204246583,
+        "system_ns": 112733708,
+        "rss_bytes": 57688064,
+        "footprint_bytes": 33112880
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 9,
+      "process_to_root_ms": 227.71875001490116,
+      "first_room_ms": 18.47508316859603,
+      "process_to_first_page_ms": 246.20879208669066,
+      "memory": {
+        "user_ns": 130825916,
+        "system_ns": 101980791,
+        "rss_bytes": 46202880,
+        "footprint_bytes": 26034920
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 9,
+      "process_to_root_ms": 226.73249989748,
+      "first_room_ms": 22.17858424410224,
+      "process_to_first_page_ms": 248.926917091012,
+      "memory": {
+        "user_ns": 136391833,
+        "system_ns": 103633666,
+        "rss_bytes": 58982400,
+        "footprint_bytes": 31917688
+      }
+    }
+  ]
+}

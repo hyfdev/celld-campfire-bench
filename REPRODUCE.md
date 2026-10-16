@@ -1,35 +1,50 @@
-# Reproduce the benchmarks
+# Build and run the benchmark
 
-The resource runner requires **macOS**, Git, Xcode Command Line Tools, Python 3.11+, Rustup, and [Vite+](https://viteplus.dev/). `rust-toolchain.toml` selects Rust 1.96.0 and the Wasm target. The recorded results come from Apple Silicon. Reading and verifying the recorded reports needs only Python 3.11+ and works on other operating systems.
+## Requirements
+
+The resource measurements require **macOS**, Git, Xcode Command Line Tools, Python 3.11+, Rustup, and [Vite+](https://viteplus.dev/). The recorded runs use Apple Silicon. [`rust-toolchain.toml`](rust-toolchain.toml) selects Rust 1.96.0 and the Wasm target.
+
+## Build
 
 From the repository root:
 
 ```sh
 vp install --frozen-lockfile
 python3 bench/build.py
-python3 bench/run.py --phase all --seconds 5 --rounds 3 --concurrencies 1,32,128
+```
+
+The build installs the Rust toolchain and Wasm target, fetches the exact celld revision in [`celld.json`](celld.json), applies [`patches/celld.patch`](patches/celld.patch), and builds celld, the Rust Wasm module, and both load generators with locked dependencies. Generated source and binaries live under `.build/`. A generated checkout with a different patch is preserved under `.build/celld-backup-*/`.
+
+All five modes use the same celld executable. All three Wasm modes use the same module. `wasm-js` imports it through celld's standard Worker deployment loader; the direct Wasm modes load it from Rust.
+
+## Run the suite
+
+This matches the recorded 32-client comparison:
+
+```sh
+python3 bench/run.py --phase all --seconds 5 --rounds 3 --concurrencies 32
 python3 bench/report.py .runs/current > .runs/current/REPORT.md
 python3 bench/report.py .runs/current --check
 ```
 
-The build installs the pinned Rust toolchain and Wasm target through Rustup, fetches the exact celld revision in [`celld.json`](celld.json), applies [`patches/celld.patch`](patches/celld.patch), copies the application and adapter into that generated checkout, and builds the host, Wasm module, and two pressure clients with locked dependencies. Generated source and build outputs live under `.build/`. The patch adds the application's direct Rust/Wasm execution path to celld. All modes use the same patched executable; JS executes through celld's existing Workers APIs.
+The suite takes tens of minutes in addition to build time. Ports **19878** and **19879** must be free. The five runtimes run one at a time, with their order rotated between rounds. The runner stops the processes it launches. Logs, database snapshots, measurements, and copies of the measured sources live under `.runs/current/`.
 
-If the generated checkout uses a different patch, the build preserves it under `.build/celld-backup-*/` and fetches a fresh checkout.
+For additional client counts, use `--concurrencies 1,32,128`.
 
-The full suite takes tens of minutes on the recorded machine, in addition to build time. It runs the four modes sequentially, rotating their order between rounds. Ports **19878** and **19879** must be free. The runner owns and stops the processes it launches. Logs, seed snapshots, disposable runtime data, fresh measurement JSON, and captured source files live under `.runs/current/`; recorded results live under `results/2026-10-15/`.
-
-The phases can also run separately:
+## Run individual phases
 
 ```sh
 python3 bench/run.py --phase prepare
 python3 bench/run.py --phase validate
-python3 bench/run.py --phase bench --seconds 5 --rounds 3 --concurrencies 1,32,128
+python3 bench/run.py --phase bench --seconds 5 --rounds 3 --concurrencies 32
 python3 bench/run.py --phase cold
 ```
 
-`prepare` creates and audits the persistent seed. `validate` checks full response bytes, invalid input and permissions, cache invalidation, large/escaped messages, ordered WebSocket broadcasts, unread changes, and restart recovery after deleting the local runtime directory. Every pressure trial restores the same seed and ends with an audit of all 50 room databases. `cold` measures ten fresh processes per engine. Build-input and binary hashes are checked before running a phase.
+`prepare` creates JS and JS-to-Wasm deployment snapshots with matching data: 50 rooms, each with 1,000 messages. `validate` checks complete response bytes, permissions, cache invalidation, large and escaped messages, WebSocket ordering, unread counts, and recovery after deleting the local runtime directory. Each load trial restores its deployment snapshot and ends by checking all 50 room databases. `cold` measures ten fresh processes per runtime. Every phase checks build-input and binary hashes before running.
 
-The compilation-cache comparison runs as part of `all`, or independently after building:
+## Compare the Wasm compilation cache
+
+This runs as part of `all`, or separately after building:
 
 ```sh
 python3 bench/run.py --phase cold-cache
@@ -37,16 +52,47 @@ python3 bench/report.py .runs/current/compile-cache > .runs/current/compile-cach
 python3 bench/report.py .runs/current/compile-cache --check
 ```
 
-`cold-cache` prepares its own seed and isolated Wasmtime filesystem cache under `.runs/current/compile-cache/`. It populates the cache in one process, then measures ten fresh processes each for JS, Wasmtime with caching disabled, Wasmtime with a verified cache hit, and native Rust. Engine order rotates between rounds. Every process validates the root and first room response. The JSON records CPU time, physical memory, Wasmtime compilation/loading time, cache-hit counters, and source and binary hashes.
+`cold-cache` creates its own deployment snapshots and a Wasmtime compiled-code cache under `.runs/current/compile-cache/`. It saves compiled machine code before timing, verifies cache hits, and measures ten fresh processes per configuration. Filesystem caches stay warm.
 
-To check the published tables and captured source hashes, with no Rust build or package installation:
+## Verify the published results
+
+These checks require only Python 3.11+ and work on other operating systems:
 
 ```sh
 python3 bench/report.py --check
+python3 bench/report.py results/2026-10-16/compile-cache --check
 ```
 
-To regenerate the complete recorded report:
+To regenerate the published reports:
 
 ```sh
-python3 bench/report.py > results/2026-10-15/REPORT.md
+python3 bench/report.py > results/2026-10-16/REPORT.md
+python3 bench/report.py results/2026-10-16/compile-cache > results/2026-10-16/compile-cache/REPORT.md
 ```
+
+## Open the chat app
+
+After building, start the JavaScript implementation:
+
+```sh
+CELLD_ESBUILD="$PWD/node_modules/.bin/esbuild" \
+WORKERS_CHAT_ENGINE=js \
+WORKERS_CHAT_WASM="$PWD/.build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm" \
+.build/host-target/release/celld dev application --port 19878 --no-watch
+```
+
+Open `http://127.0.0.1:19878/`. Demo users are 1 through 7; user N has password `password-N`. Select `wasm`, `native`, or `wasm-v8` through `WORKERS_CHAT_ENGINE` for a direct Rust-hosted implementation. Stop the process before switching.
+
+To open the Wasm implementation with JS bindings, create a separate local deployment:
+
+```sh
+mkdir -p .build/wasm-js-app
+cp application/wrangler.jsonc .build/wasm-js-app/
+cp application/wasm-worker.js .build/wasm-js-app/worker.js
+cp .build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm .build/wasm-js-app/chat.wasm
+CELLD_ESBUILD="$PWD/node_modules/.bin/esbuild" \
+WORKERS_CHAT_ENGINE=wasm-js \
+.build/host-target/release/celld dev .build/wasm-js-app --port 19878 --no-watch
+```
+
+The browser app commands use celld's development configuration. The benchmark runner sets the measured thread count, client count, and runtime configuration.

@@ -1,126 +1,118 @@
 # celld-campfire-bench
 
-A reproducible comparison of **JavaScript, Rust Wasm, and native Rust** running the same chat workload inside [celld](https://github.com/denoland/celld). The application uses a stateless Worker entry handler and one Durable Object per room.
+A reproducible comparison of **JavaScript, Rust Wasm, and native Rust** running the same chat workload inside [celld](https://github.com/denoland/celld). A stateless Worker routes requests to one Durable Object per chat room; each object stores messages in SQLite.
 
 **Celld itself is a native Rust executable in every mode. Only the Rust application's Wasm variants are compiled to Wasm.**
 
 <!-- benchmark:start -->
 ## Results
 
-Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64 · 2026-10-15. Medians of three 5-second trials.
+Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64 · 2026-10-16. Medians of three 5-second trials.
 
-### Server-rendered HTML (without in-memory page caching): 32 concurrent clients
+### Server-rendered HTML (without in-memory page caching): 32 simultaneous clients
 
-Each request authenticates a user, checks membership, and renders the latest 50 messages. Database and operating-system caches remain active.
+Each request authenticates a user, checks room membership, and renders the latest 50 messages. Database and operating-system caches remain active.
 
-| Application execution | Requests/s | CPU % (100% = 1 core) | CPU µs/request | Peak process memory MiB | p99 ms |
+| Application runtime | Total requests/s | CPU use (%; 100% = 1 core) | CPU time/request (µs) | Peak process memory (MiB) | p99 response time (ms) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| JavaScript / V8 (baseline) | **2,573 (1.00×)** | 113.1 (1.00×) | 439.8 (1.00×) | 113.7 (1.00×) | 18.94 (1.00×) |
-| Rust Wasm / Wasmtime | **8,066 (3.14×)** | 128.2 (1.13×) | 159.0 (0.36×) | 51.0 (0.45×) | 5.71 (0.30×) |
-| Native Rust | **10,771 (4.19×)** | 134.4 (1.19×) | 124.8 (0.28×) | 46.2 (0.41×) | 4.45 (0.23×) |
+| JavaScript / V8 (baseline) | **2,655 (1.00×)** | 113.3 (1.00×) | 426.8 (1.00×) | 114.9 (1.00×) | 17.28 (1.00×) |
+| Rust Wasm / V8 + JS bindings | **2,545 (0.96×)** | 116.4 (1.03×) | 457.5 (1.07×) | 119.9 (1.04×) | 18.35 (1.06×) |
+| Rust Wasm / V8 + direct host calls | **7,738 (2.91×)** | 127.0 (1.12×) | 164.3 (0.38×) | 62.5 (0.54×) | 6.00 (0.35×) |
+| Rust Wasm / Wasmtime + direct host calls | **8,127 (3.06×)** | 127.0 (1.12×) | 156.3 (0.37×) | 52.1 (0.45×) | 5.76 (0.33×) |
+| Native Rust | **11,093 (4.18×)** | 133.6 (1.18×) | 120.4 (0.28×) | 52.9 (0.46×) | 4.37 (0.25×) |
 
-### Other chat operations
+p99 response time: 99% of requests in a trial finished within this time.
 
-| HTTP operation: requests/s, 32 concurrent clients | JavaScript / V8 (baseline) | Rust Wasm / Wasmtime | Native Rust |
+### HTTP chat throughput (total requests/s): 32 simultaneous clients
+
+| Request | JavaScript / V8 (baseline) | Rust Wasm / V8 + JS bindings | Rust Wasm / V8 + direct host calls | Rust Wasm / Wasmtime + direct host calls | Native Rust |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Read messages as JSON (no response cache) | 3,299 (1.00×) | 2,832 (0.86×) | 11,493 (3.48×) | 10,883 (3.30×) | 14,222 (4.31×) |
+| Server-rendered HTML (with in-memory page caching) | 5,116 (1.00×) | 4,737 (0.93×) | 24,454 (4.78×) | 26,512 (5.18×) | 29,788 (5.82×) |
+| Post a message; reply after saving it | 343 (1.00×) | 325 (0.95×) | 315 (0.92×) | 315 (0.92×) | 334 (0.97×) |
+
+### WebSocket chat throughput (total messages/s)
+
+Each room has one sender plus the receiving connections below. The sender waits for storage, broadcast, and every participant's HTTP read confirmation before sending the next message.
+
+| Rooms and receiving connections | JavaScript / V8 (baseline) | Rust Wasm / V8 + JS bindings | Rust Wasm / V8 + direct host calls | Rust Wasm / Wasmtime + direct host calls | Native Rust |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 1 room, 32 receiving connections | 40 (1.00×) | 38 (0.96×) | 41 (1.04×) | 38 (0.94×) | 42 (1.05×) |
+| 5 rooms, 8 receiving connections per room | 75 (1.00×) | 76 (1.02×) | 71 (0.95×) | 74 (0.99×) | 73 (0.97×) |
+
+### Process startup and the Wasm compilation cache
+
+Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64. Medians of 10 fresh processes per row, starting from the same room data. The cached Wasmtime row loads machine code saved before timing. Filesystem caches stay warm.
+
+| Application runtime | Start → first room response (ms) | CPU time to first room response (ms) | Process memory after first room response (MiB) |
 | --- | ---: | ---: | ---: |
-| Read messages as JSON (no response cache) | 3,215 (1.00×) | 10,988 (3.42×) | 14,258 (4.44×) |
-| Read HTML with in-memory page caching | 5,051 (1.00×) | 25,808 (5.11×) | 29,312 (5.80×) |
-| Post a message; reply after saving it | 356 (1.00×) | 377 (1.06×) | 368 (1.03×) |
+| JavaScript / V8 (baseline) | 289.96 (1.00×) | 265.26 (1.00×) | 39.5 (1.00×) |
+| Rust Wasm / V8 + JS bindings | 301.52 (1.04×) | 285.15 (1.07×) | 42.3 (1.07×) |
+| Rust Wasm / V8 + direct host calls | 271.82 (0.94×) | 245.77 (0.93×) | 30.9 (0.78×) |
+| Rust Wasm / Wasmtime: compile at startup | 324.56 (1.12×) | 326.18 (1.23×) | 32.1 (0.81×) |
+| Rust Wasm / Wasmtime: reuse compiled module | 269.17 (0.93×) | 247.56 (0.93×) | 28.3 (0.71×) |
+| Native Rust | 253.20 (0.87×) | 240.01 (0.90×) | 24.8 (0.63×) |
 
-Each WebSocket message is saved and broadcast; the producer waits for every participant's HTTP read acknowledgment.
+Wasm module compilation/loading: **66.21 ms → 1.03 ms** when reusing compiled code. All 10 cached trials hit the cache. Load tests exclude startup and compilation. [Raw data](results/2026-10-16/compile-cache/cold-cache-results.json).
 
-| WebSocket setup: messages/s | JavaScript / V8 (baseline) | Rust Wasm / Wasmtime | Native Rust |
-| --- | ---: | ---: | ---: |
-| 1 room, 32 listeners | 40 (1.00×) | 42 (1.06×) | 42 (1.04×) |
-| 5 rooms, 8 listeners each | 76 (1.00×) | 75 (0.98×) | 76 (1.00×) |
-
-### Process startup with a compilation cache
-
-Apple M4 Pro, 48 GiB RAM, `macOS-26.5.2-arm64-arm-64bit-Mach-O`. Medians of 10 fresh processes per configuration. The executable and seed are shared; both Wasm modes use the same module. Wasmtime's compilation cache is populated before timing; filesystem caches stay warm.
-
-| Application execution | Launch → first room page, ms | CPU time through first page, ms | Process memory after page, MiB |
-| --- | ---: | ---: | ---: |
-| JavaScript / V8 (baseline) | 284.46 (1.00×) | 278.90 (1.00×) | 39.9 (1.00×) |
-| Rust Wasm / Wasmtime: cache disabled | 330.20 (1.16×) | 311.40 (1.12×) | 31.1 (0.78×) |
-| Rust Wasm / Wasmtime: cache hit | 259.60 (0.91×) | 243.54 (0.87×) | 28.5 (0.72×) |
-| Native Rust | 259.55 (0.91×) | 242.57 (0.87×) | 25.1 (0.63×) |
-
-Wasm module compile/load: **66.52 ms → 1.02 ms** on a cache hit. All 10 cached trials hit the cache. Throughput tests exclude compilation through warmup. [Raw data](results/2026-10-15/compile-cache/cold-cache-results.json).
-
-[Complete report](results/2026-10-15/REPORT.md) · Raw data: [throughput](results/2026-10-15/results.json), [startup](results/2026-10-15/cold-results.json), [validation](results/2026-10-15/validation.json).
+[Complete report](results/2026-10-16/REPORT.md) · Raw data: [load tests](results/2026-10-16/results.json), [startup](results/2026-10-16/cold-results.json), [validation](results/2026-10-16/validation.json).
 <!-- benchmark:end -->
 
-## What runs
+## Request and binding paths
 
-| Mode | Application execution | SQL and WebSocket calls |
+| Mode | Application code | SQL and WebSocket access |
 | --- | --- | --- |
-| `js` | JavaScript in V8 | Existing Workers and Durable Object APIs |
-| `wasm` | Rust compiled to Wasm, executed by Wasmtime 49 | Wasm imports → native Rust bindings; no JS bridge |
-| `native` | The same Rust business source compiled into celld | Direct Rust trait calls; a trusted-code reference |
-
-The auxiliary `wasm-v8` mode hosts Wasm in V8 and exposes bindings through V8's native callbacks; its measurements are in the [complete report](results/2026-10-15/REPORT.md).
+| `js` | JavaScript in V8 | JS Worker and Durable Object APIs |
+| `wasm-js` | Rust Wasm in V8 | [JS Worker entry and JS bindings](application/wasm-worker.js) |
+| `wasm-v8` | The same Wasm module in V8 | Rust callbacks through V8; no JS source execution |
+| `wasm` | The same Wasm module in Wasmtime 49 | Rust host imports; no JS execution |
+| `native` | The same Rust source compiled natively | Direct Rust calls |
 
 ```mermaid
 flowchart LR
-    subgraph MEASURED["Measured modes in this benchmark"]
-        R0["Request"] --> H0["celld Rust host"]
-        H0 --> JS["JS Worker / room handlers (V8)"]
-        H0 --> WASM["Rust Wasm Worker / room handlers (Wasmtime)"]
-        H0 --> NATIVE["Native Rust Worker / room handlers"]
-        JS --> JB["JS bindings"] --> STORE["celld SQL / WebSocket"]
-        WASM --> WI["Rust host imports: no JS bridge"] --> STORE
-        NATIVE --> STORE
-    end
-    subgraph STANDARD["Standard Wasm Worker: celld / Cloudflare Workers (reference)"]
-        R1["Request"] --> J1["JS Worker entry"] --> W1["Wasm application"]
-        W1 --> J2["JS bindings"] --> H1["Native host"]
-    end
+    REQUEST["Request"] --> HOST["celld Rust host"]
+    HOST --> JS["js: JS Worker / room handlers (V8)"]
+    JS --> JSAPI["JS bindings"]
+    HOST --> SHIM["wasm-js: JS Worker / room wrappers (V8)"]
+    SHIM --> WASMJS["Rust Wasm (V8)"] --> JSAPI
+    HOST --> WASMV8["wasm-v8: Rust Wasm (V8)"] --> CALLBACKS["Rust callbacks through V8"]
+    HOST --> WASMTIME["wasm: Rust Wasm (Wasmtime)"] --> IMPORTS["Rust host imports"]
+    HOST --> NATIVE["native: Rust handlers"]
+    JSAPI --> STORE["celld SQLite / WebSocket"]
+    CALLBACKS --> STORE
+    IMPORTS --> STORE
+    NATIVE --> STORE
 ```
+
+`wasm-js` measures a standard Wasm Worker on celld: JS Worker → Rust Wasm → JS bindings. All three Wasm modes use the same module. SQLite runs outside Wasm in every mode. These are local celld measurements; Cloudflare Workers is an architecture reference.
 
 ## Reproduce
 
-[Build and run the benchmarks](REPRODUCE.md).
+[Build, run the benchmarks, or open the chat app](REPRODUCE.md).
 
-## Open the application
+## What the numbers measure
 
-After building, start the JS mode:
+CPU and memory cover the entire celld server process, including runtime state, application caches, SQLite, and network buffers. Helper threads can make CPU use exceed one core.
 
-```sh
-CELLD_ESBUILD="$PWD/node_modules/.bin/esbuild" \
-WORKERS_CHAT_ENGINE=js \
-WORKERS_CHAT_WASM="$PWD/.build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm" \
-.build/host-target/release/celld dev application --port 19878 --no-watch
-```
+The two V8 Wasm modes share the engine, module, business logic, and binary data format. Their difference includes the JS Worker entry, SQL cursor wrappers, conversion of SQL rows, and per-socket sends. These are measurements of the complete paths on celld.
 
-Open `http://127.0.0.1:19878/`. Demo users are 1 through 7; user N has password `password-N`. Select `wasm`, `native`, or `wasm-v8` through `WORKERS_CHAT_ENGINE` to open another implementation. Stop the process before switching. This command serves the interactive app; the benchmark runner sets the measured concurrency and runtime configuration.
+The test uses one node and local persistence. Native Rust runs as trusted code. The direct Wasm prototype implements this application's HTTP, SQL, object calls, and WebSocket operations; tenant CPU enforcement and the complete asynchronous Workers API are outside its scope.
 
-## Reading the measurements
-
-All modes use one Tokio executor thread, one stateless slot, celld's 32-cells-per-slot policy, and a per-cell in-flight limit of 256. Ownership, blocking I/O, and engine helper threads remain active. The process can use more than one CPU core. The persistence target is celld's SQLite-backed local object store on a single node.
-
-The comparison measures complete application execution, including its adapters. JS uses SQL cursor wrappers and per-socket sends. The Rust adapters transfer typed SQL rows and expose a host broadcast operation. The resulting performance differences include application code, runtime bookkeeping, API design, data conversion, and generated machine code.
-
-Load clients verify response contents, message ordering, and WebSocket deliveries. Measurement methods and validation details are in the [complete report](results/2026-10-15/REPORT.md#measurement).
-
-Raw measurements include binary hashes and source snapshots. The compilation-cache comparison has its own build and snapshot under `results/2026-10-15/compile-cache/`.
-
-The native implementation is trusted code and supplies no sandbox for untrusted native programs. The Wasm adapters limit memory and storage scope; the prototype implements this application's buffered HTTP, SQL, object calls, and WebSocket operations. Tenant CPU interruption and the general asynchronous Workers API are outside its scope. These measurements cover one node and local persistence.
-
-## Layout
+## Repository files
 
 | Path | Contents |
 | --- | --- |
-| `application/` | JS Worker, room Durable Object, Wrangler configuration, and browser UI |
-| `app/` | Shared Rust business logic, SQL, and schema |
-| `guest/` | Rust Wasm entry points and host imports |
-| `host.rs` | Native Rust, Wasmtime, and V8 Wasm integration with celld |
-| `load/` | Validated HTTP and WebSocket pressure clients |
-| `bench/` | Build, fixture, resource meter, experiment runner, and report generator |
-| `patches/celld.patch` | Runtime integration and locked dependencies for the pinned celld source |
-| `results/2026-10-15/` | Recorded measurements, source snapshots, and complete report |
+| `application/` | JS chat implementation, JS-to-Wasm adapter, Worker configuration, and browser UI |
+| `app/` | Rust chat logic, SQL, and database schema |
+| `guest/` | Rust Wasm entry points and imports for host functions |
+| `host.rs` | Rust host adapters for native Rust, Wasmtime, and direct V8 Wasm |
+| `load/` | HTTP and WebSocket load generators that check responses |
+| `bench/` | Build, data preparation, measurement, and report scripts |
+| `patches/celld.patch` | Integration with the pinned celld source and locked dependencies |
+| `results/` | Recorded measurements, measured source files, and full reports |
 
 ## References
 
-[Basecamp Campfire](https://github.com/basecamp/once-campfire/tree/edbc779f4dfc9b26c36310881711ddc976a9dfc8) supplies the chat-application reference. [Campfire in Rust](https://github.com/basecamp/once-campfire-rust/tree/6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad) illustrates a native implementation and reproducible app-level benchmarks. Their published results use different applications, workloads, and hardware from this repository. The numbers here compare only this celld application under the stated conditions.
+[Basecamp Campfire](https://github.com/basecamp/once-campfire/tree/edbc779f4dfc9b26c36310881711ddc976a9dfc8) supplies the chat-application reference. [Campfire in Rust](https://github.com/basecamp/once-campfire-rust/tree/6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad) illustrates a native implementation and reproducible application benchmarks. Their published results use different applications, workloads, and hardware. The numbers here compare this celld application under the stated conditions.
 
 Runtime base: [celld v0.6.2](https://github.com/denoland/celld/tree/90b43017241f81189453d326d05948f388b34652). License: [Apache-2.0](LICENSE); see [NOTICE](NOTICE) for retained upstream notices.

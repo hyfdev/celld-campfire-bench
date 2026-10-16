@@ -27,7 +27,7 @@ REPO = CELLD_SOURCE
 RUNS = ROOT / ".runs/current"
 PROJECT = RUNS / "app"
 STATE = PROJECT / ".celld/dev"
-ENGINES = ["js", "wasm", "native", "wasm-v8"]
+ENGINES = ["js", "wasm", "native", "wasm-v8", "wasm-js"]
 CASES = ["uncached-html", "uncached-json", "cached-html", "post", "mixed"]
 WS_TEXT = "WebSocket pressure: 你好 👋 <b>& text</b>"
 
@@ -107,7 +107,7 @@ def server(engine, label, restore=True, bootstrap=False):
             probe.listen(1)
     data = STATE
     if restore:
-        restore_directory(RUNS / "seed-celld", data)
+        restore_directory(RUNS / ("seed-wasm-js" if engine == "wasm-js" else "seed-celld"), data)
     if bootstrap:
         command = [str(CELLD), "dev", str(PROJECT), "--port", "19878", "--no-watch"]
         port = 19878
@@ -201,8 +201,9 @@ def audit(data, posts, read_resets=None, created_versions=None):
 
 def prepare():
     PROJECT.mkdir(parents=True, exist_ok=True)
-    for name in ("worker.js", "wrangler.jsonc"):
+    for name in ("worker.js", "wasm-worker.js", "wrangler.jsonc"):
         shutil.copy2(ROOT / "application" / name, PROJECT / name)
+    shutil.copy2(GUEST, PROJECT / "chat.wasm")
     if STATE.exists():
         shutil.rmtree(STATE)
     with server("js", "prepare-deployment", restore=False, bootstrap=True):
@@ -212,6 +213,19 @@ def prepare():
             checked_read(s["connection"], room, json_response=True)
     assert audit(STATE, {})["posts"] == 0
     restore_directory(STATE, RUNS / "seed-celld")
+    config = json.loads((PROJECT / "wrangler.jsonc").read_text())
+    config["main"] = "wasm-worker.js"
+    (PROJECT / "wrangler.jsonc").write_text(json.dumps(config, indent=2) + "\n")
+    try:
+        with server("wasm-js", "prepare-wasm-js-deployment", restore=False, bootstrap=True):
+            pass
+        with server("wasm-js", "prepare-wasm-js", restore=False) as s:
+            for room in range(1, 51):
+                checked_read(s["connection"], room, json_response=True)
+        assert audit(STATE, {})["posts"] == 0
+        restore_directory(STATE, RUNS / "seed-wasm-js")
+    finally:
+        shutil.copy2(ROOT / "application/wrangler.jsonc", PROJECT / "wrangler.jsonc")
     (RUNS / "baseline.json").write_text(json.dumps({"sources": sources(), "datasets": "50 rooms, 1000 messages each"}, indent=2)+"\n")
     print("Prepared and audited the persistent dataset", flush=True)
 
@@ -280,7 +294,8 @@ def validate():
                 checked_read(c,3,1,j,posts[3],cache=True)
                 checked_read(c,3,1,j,posts[3],cache=True,hit=j)
                 checks += 2
-            for user, text in ((1, "\0" * 8192), (2, '\\"\n' * 2730 + "ab")):
+            for user, text in ((1, "\0" * 8192), (2, '\\"\n' * 2730 + "ab"),
+                               (1, "\ufeffLeading BOM: 你好 👋 <b>& text</b>")):
                 posts[4].append((user, text))
                 checked_post(c, 4, user, text, len(posts[4]) + 1)
                 checks += 1
@@ -390,7 +405,7 @@ def timed(engine,case,concurrency,trial,seconds,rooms=None,listeners=None):
 def sources():
     paths=BINARIES + [ROOT/name for name in (
         "host.rs", "app/src/lib.rs", "app/sql.json", "app/schema.json",
-        "application/worker.js", "application/index.html", "application/wrangler.jsonc",
+        "application/worker.js", "application/wasm-worker.js", "application/index.html", "application/wrangler.jsonc",
         "guest/src/lib.rs", "guest/.cargo/config.toml", "load/src/main.rs", "load/src/ws.rs",
         "app/Cargo.toml", "app/Cargo.lock", "guest/Cargo.toml", "guest/Cargo.lock",
         "load/Cargo.toml", "load/Cargo.lock", "bench/run.py", "bench/fixture.py",
@@ -499,7 +514,7 @@ def cold_cache(rounds):
         assert population["wasmtime"]["cache_enabled"]
         assert population["wasmtime"]["cache_hits"] == 0 and population["wasmtime"]["cache_misses"] == 1
         result["cache_population"] = population
-        engines = ["js", "wasm", "wasm-cached", "native"]
+        engines = ["js", "wasm", "wasm-cached", "native", "wasm-v8", "wasm-js"]
         for trial in range(rounds):
             order = engines[trial % len(engines):] + engines[:trial % len(engines)]
             for engine in order:

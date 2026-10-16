@@ -28,7 +28,10 @@ def load(directory):
         assert row["database_audit"]["integrity"] == "ok", row
         assert row["database_audit"]["rooms"] == 50, row
     assert {row["engine"] for row in results["trials"]} == {row["engine"] for row in cold["trials"]} == {row["engine"] for row in validation["engines"]}
-    engines = ["js", "wasm", "native", "wasm-v8"]
+    engines = ["js"]
+    if any(r["engine"] == "wasm-js" for r in results["trials"]):
+        engines.append("wasm-js")
+    engines += ["wasm-v8", "wasm", "native"]
     metrics = ["cpu_us_per_operation", "cpu_percent_one_core", "client_cpu_percent_one_core", "p50_ms", "p99_ms"]
     aggregate = {"http": [], "websocket": [], "cold": [], "checks": {}}
 
@@ -94,7 +97,10 @@ def load_compile_cache(directory):
     assert population["root_validated"] and population["first_page_validated"]
     assert population["wasmtime"]["cache_enabled"]
     assert (population["wasmtime"]["cache_hits"], population["wasmtime"]["cache_misses"]) == (0, 1)
-    engines = ("js", "wasm", "wasm-cached", "native")
+    engines = ["js"]
+    engines += [engine for engine in ("wasm-js", "wasm-v8")
+                if any(r["engine"] == engine for r in data["trials"])]
+    engines += ["wasm", "wasm-cached", "native"]
     expected = {(engine, trial) for engine in engines for trial in range(data["rounds"])}
     assert len(data["trials"]) == len(expected)
     assert {(r["engine"], r["trial"]) for r in data["trials"]} == expected
