@@ -1,0 +1,211 @@
+README.md
+  s_0c67a750076943::t_87eea519c3a654 8,10,18-23,29-33,39-42,50-56,58,60,94,115
+REPRODUCE.md
+  s_0c67a750076943::t_e313eb69c54e79 9,13,18,30,63,69-70
+bench/render.py
+  s_e51134701ed91b::t_01d7a13c83d3cf 8,21-22,139,148-152,168,176-177
+results/2026-10-19/REPORT.md
+  s_0c67a750076943::t_eba756e9f06b9d 1-210
+results/2026-10-19/cold-results.json
+  s_0c67a750076943::t_16c454f7a674e7 1-842
+results/2026-10-19/compile-cache/REPORT.md
+  s_0c67a750076943::t_eb8ba8c1772259 1-17
+results/2026-10-19/compile-cache/cold-cache-results.json
+  s_0c67a750076943::t_c213a3d86333e4 1-1385
+results/2026-10-19/compile-cache/sources/.build/build.json
+  s_0c67a750076943::t_fe081cd5064696 1-41
+results/2026-10-19/compile-cache/sources/.build/celld/Cargo.lock
+  s_0c67a750076943::t_9c17772ca4e354 1-4990
+results/2026-10-19/compile-cache/sources/.build/celld/Cargo.toml
+  s_0c67a750076943::t_5279f9ef454773 1-154
+results/2026-10-19/compile-cache/sources/.build/celld/crates/celld/Cargo.toml
+  s_0c67a750076943::t_38ae07ea944a6c 1-102
+results/2026-10-19/compile-cache/sources/.build/celld/crates/celld/js.rs
+  s_0c67a750076943::t_082633945c2d12 1-12726
+results/2026-10-19/compile-cache/sources/.build/celld/crates/celld/lib.rs
+  s_0c67a750076943::t_6d8343e7b19885 1-316
+results/2026-10-19/compile-cache/sources/.build/celld/crates/celld/runtime.rs
+  s_0c67a750076943::t_800cc1c8d723d0 1-3615
+results/2026-10-19/compile-cache/sources/app/Cargo.lock
+  s_0c67a750076943::t_89ae2b37588b90 1-118
+results/2026-10-19/compile-cache/sources/app/Cargo.toml
+  s_0c67a750076943::t_34e28c05b18af7 1-12
+results/2026-10-19/compile-cache/sources/app/schema.json
+  s_0c67a750076943::t_a60b0ac3d92e34 1-15
+results/2026-10-19/compile-cache/sources/app/sql.json
+  s_0c67a750076943::t_7c31870470457d 1-7
+results/2026-10-19/compile-cache/sources/app/src/lib.rs
+  s_0c67a750076943::t_4c5e7f208fbb75 1-507
+results/2026-10-19/compile-cache/sources/application/index.html
+  s_0c67a750076943::t_a7293e1568e200 1-12
+results/2026-10-19/compile-cache/sources/application/wasm-worker.js
+  s_0c67a750076943::t_81451a5c6e6962 1-219
+results/2026-10-19/compile-cache/sources/application/worker.js
+  s_0c67a750076943::t_a96a07e635efb5 1-198
+results/2026-10-19/compile-cache/sources/application/wrangler.jsonc
+  s_0c67a750076943::t_77d9b2fc57f39f 1-21
+results/2026-10-19/compile-cache/sources/bench/build.py
+  s_0c67a750076943::t_56f2e60ef2dbad 1-130
+results/2026-10-19/compile-cache/sources/bench/fixture.py
+  s_0c67a750076943::t_106ebedb797a97 1-81
+results/2026-10-19/compile-cache/sources/bench/metrics.py
+  s_0c67a750076943::t_230d4b6a8a15ba 1-39
+results/2026-10-19/compile-cache/sources/bench/run.py
+  s_0c67a750076943::t_1c41563a7669b9 1-565
+results/2026-10-19/compile-cache/sources/celld.json
+  s_0c67a750076943::t_dc895f806e4c1a 1-4
+results/2026-10-19/compile-cache/sources/experiments/scriptc/.build/celld-build.json
+  s_0c67a750076943::t_67798b3e64b855 1-32
+results/2026-10-19/compile-cache/sources/experiments/scriptc/celld/app.ts
+  s_0c67a750076943::t_7379864bc7f763 1-181
+results/2026-10-19/compile-cache/sources/experiments/scriptc/celld/build.py
+  s_0c67a750076943::t_de09f31bda617e 1-52
+results/2026-10-19/compile-cache/sources/experiments/scriptc/celld/data.ts
+  s_0c67a750076943::t_bc2fa2baac69c6 1-23
+results/2026-10-19/compile-cache/sources/experiments/scriptc/celld/host.rs
+  s_0c67a750076943::t_57714d6f2cd41d 1-340
+results/2026-10-19/compile-cache/sources/experiments/scriptc/celld/run.py
+  s_0c67a750076943::t_40246cc0abbbd6 1-101
+results/2026-10-19/compile-cache/sources/experiments/scriptc/celld/wasm.json
+  s_0c67a750076943::t_544d567cc95dc7 1-43
+results/2026-10-19/compile-cache/sources/experiments/scriptc/results/toolchain.json
+  s_0c67a750076943::t_954707dced53d7 1-13
+results/2026-10-19/compile-cache/sources/guest/.cargo/config.toml
+  s_0c67a750076943::t_333cf4e4f9d635 1-2
+results/2026-10-19/compile-cache/sources/guest/Cargo.lock
+  s_0c67a750076943::t_f7c20ca93cbb62 1-269
+results/2026-10-19/compile-cache/sources/guest/Cargo.toml
+  s_0c67a750076943::t_f0cb96c1669e15 1-19
+results/2026-10-19/compile-cache/sources/guest/src/lib.rs
+  s_0c67a750076943::t_d11f7cbb5cfdec 1-89
+results/2026-10-19/compile-cache/sources/host.rs
+  s_0c67a750076943::t_3878c6dc1c5dc1 1-978
+results/2026-10-19/compile-cache/sources/load/Cargo.lock
+  s_0c67a750076943::t_a10d6ed7b91878 1-1576
+results/2026-10-19/compile-cache/sources/load/Cargo.toml
+  s_0c67a750076943::t_a048a9d6d35195 1-25
+results/2026-10-19/compile-cache/sources/load/src/main.rs
+  s_0c67a750076943::t_989badad12136a 1-318
+results/2026-10-19/compile-cache/sources/load/src/ws.rs
+  s_0c67a750076943::t_866050decd3555 1-246
+results/2026-10-19/compile-cache/sources/package.json
+  s_0c67a750076943::t_fb2dd33274200c 1-21
+results/2026-10-19/compile-cache/sources/patches/celld.patch
+  s_0c67a750076943::t_ef1c60349b3538 1-1250
+results/2026-10-19/compile-cache/sources/pnpm-lock.yaml
+  s_0c67a750076943::t_c17c909b24bc10 1-285
+results/2026-10-19/compile-cache/sources/rust-toolchain.toml
+  s_0c67a750076943::t_9a9fc9dbc8fee2 1-4
+results/2026-10-19/results.json
+  s_0c67a750076943::t_e61833c151e8b4 1-51768
+results/2026-10-19/sources/.build/build.json
+  s_0c67a750076943::t_edf95c62bde2b4 1-41
+results/2026-10-19/sources/.build/celld/Cargo.lock
+  s_0c67a750076943::t_6fe7a985519a3a 1-4990
+results/2026-10-19/sources/.build/celld/Cargo.toml
+  s_0c67a750076943::t_d516b8541ed8fa 1-154
+results/2026-10-19/sources/.build/celld/crates/celld/Cargo.toml
+  s_0c67a750076943::t_4015bc9b425274 1-102
+results/2026-10-19/sources/.build/celld/crates/celld/js.rs
+  s_0c67a750076943::t_e7dc3e97ae9d39 1-12726
+results/2026-10-19/sources/.build/celld/crates/celld/lib.rs
+  s_0c67a750076943::t_3d2c23bd3737f4 1-316
+results/2026-10-19/sources/.build/celld/crates/celld/runtime.rs
+  s_0c67a750076943::t_f06b264173a8ac 1-3615
+results/2026-10-19/sources/app/Cargo.lock
+  s_0c67a750076943::t_c0e2e2a50ec76b 1-118
+results/2026-10-19/sources/app/Cargo.toml
+  s_0c67a750076943::t_23972ed5e6f0f9 1-12
+results/2026-10-19/sources/app/schema.json
+  s_0c67a750076943::t_53bb27095e47ea 1-15
+results/2026-10-19/sources/app/sql.json
+  s_0c67a750076943::t_50229a9545cb0e 1-7
+results/2026-10-19/sources/app/src/lib.rs
+  s_0c67a750076943::t_6a15e252f8c0ad 1-507
+results/2026-10-19/sources/application/index.html
+  s_0c67a750076943::t_d0950a1b592ef8 1-12
+results/2026-10-19/sources/application/wasm-worker.js
+  s_0c67a750076943::t_878ffa44b580fd 1-219
+results/2026-10-19/sources/application/worker.js
+  s_0c67a750076943::t_8c752d574a37f0 1-198
+results/2026-10-19/sources/application/wrangler.jsonc
+  s_0c67a750076943::t_600ec15110f2b6 1-21
+results/2026-10-19/sources/bench/build.py
+  s_0c67a750076943::t_05a9305746a310 1-130
+results/2026-10-19/sources/bench/fixture.py
+  s_0c67a750076943::t_68507e21231c11 1-81
+results/2026-10-19/sources/bench/metrics.py
+  s_0c67a750076943::t_c2c4025f2213e5 1-39
+results/2026-10-19/sources/bench/run.py
+  s_0c67a750076943::t_8d84f07b86fe05 1-565
+results/2026-10-19/sources/celld.json
+  s_0c67a750076943::t_06f6a65f61b14a 1-4
+results/2026-10-19/sources/experiments/scriptc/.build/celld-build.json
+  s_0c67a750076943::t_f1abaf64cffca9 1-32
+results/2026-10-19/sources/experiments/scriptc/celld/app.ts
+  s_0c67a750076943::t_53632ab787d80d 1-181
+results/2026-10-19/sources/experiments/scriptc/celld/build.py
+  s_0c67a750076943::t_80df80dcf49ac3 1-52
+results/2026-10-19/sources/experiments/scriptc/celld/data.ts
+  s_0c67a750076943::t_4eee778eff8f88 1-23
+results/2026-10-19/sources/experiments/scriptc/celld/host.rs
+  s_0c67a750076943::t_4b49408a49ce82 1-340
+results/2026-10-19/sources/experiments/scriptc/celld/run.py
+  s_0c67a750076943::t_085aea78a484e2 1-101
+results/2026-10-19/sources/experiments/scriptc/celld/wasm.json
+  s_0c67a750076943::t_f88a2d59e8b9f7 1-43
+results/2026-10-19/sources/experiments/scriptc/results/toolchain.json
+  s_0c67a750076943::t_9f6f7456765403 1-13
+results/2026-10-19/sources/guest/.cargo/config.toml
+  s_0c67a750076943::t_99d6b39b54c14b 1-2
+results/2026-10-19/sources/guest/Cargo.lock
+  s_0c67a750076943::t_7755af8038260b 1-269
+results/2026-10-19/sources/guest/Cargo.toml
+  s_0c67a750076943::t_830408532d98f0 1-19
+results/2026-10-19/sources/guest/src/lib.rs
+  s_0c67a750076943::t_35abbee77b19da 1-89
+results/2026-10-19/sources/host.rs
+  s_0c67a750076943::t_7cd70a6364b75f 1-978
+results/2026-10-19/sources/load/Cargo.lock
+  s_0c67a750076943::t_9b7344ebe8bf25 1-1576
+results/2026-10-19/sources/load/Cargo.toml
+  s_0c67a750076943::t_e8730176096343 1-25
+results/2026-10-19/sources/load/src/main.rs
+  s_0c67a750076943::t_0d05c086fda9b6 1-318
+results/2026-10-19/sources/load/src/ws.rs
+  s_0c67a750076943::t_a43b6e5d75cf8e 1-246
+results/2026-10-19/sources/package.json
+  s_0c67a750076943::t_9aa59be53f908a 1-21
+results/2026-10-19/sources/patches/celld.patch
+  s_0c67a750076943::t_7f8baececfe890 1-1250
+results/2026-10-19/sources/pnpm-lock.yaml
+  s_0c67a750076943::t_be37a0b16cfc10 1-285
+results/2026-10-19/sources/rust-toolchain.toml
+  s_0c67a750076943::t_af803a956604ee 1-4
+results/2026-10-19/validation.json
+  s_0c67a750076943::t_33556b629ffd0e 1-314
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a79d6032887b521563a08b72d3465ba8d6b30884",
+  "prompts": {},
+  "sessions": {
+    "s_0c67a750076943": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a142b9-dc2a-7cb3-b413-5f7a8193ef7e",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yunfei He <i.heyunfei@gmail.com>"
+    },
+    "s_e51134701ed91b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a15276-b272-7113-b91c-7355b0cd3f45",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yunfei He <i.heyunfei@gmail.com>"
+    }
+  }
+}
