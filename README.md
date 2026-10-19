@@ -1,11 +1,37 @@
 # celld-campfire-bench
 
-A reproducible comparison of **JavaScript, Rust Wasm, and native Rust** running the same chat workload inside [celld](https://github.com/denoland/celld). A stateless Worker routes requests to one Durable Object per chat room; each object stores messages in SQLite.
+A reproducible comparison of **JavaScript, TypeScript compiled to Wasm with scriptc, Rust Wasm, and native Rust** running the same chat workload inside [celld](https://github.com/denoland/celld). A stateless Worker routes requests to one Durable Object per chat room; each object stores messages in SQLite.
 
 **Celld itself is a native Rust executable in every mode. The Wasm variants compile application code to Wasm.**
 
+## TypeScript → Wasm (scriptc)
+
+[scriptc](https://github.com/vercel-labs/scriptc) compiles the TypeScript Worker and Durable Object handlers to Wasm. Wasmtime runs them inside celld; Rust implements their SQLite and WebSocket imports. Request handling and database access execute without JavaScript.
+
+Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64 · 2026-10-19. Medians of three 3-second trials, 32 simultaneous clients. All ratios use JavaScript as the baseline.
+
+### Server-rendered HTML (without in-memory page caching)
+
+| Application runtime | Requests/s | CPU use (%; 100% = 1 core) | CPU µs/request | Peak process memory (MiB) |
+| --- | ---: | ---: | ---: | ---: |
+| JavaScript / V8 | 2,488 (1.00×) | 114.3 (1.00×) | 459.5 (1.00×) | 111.5 (1.00×) |
+| TypeScript → scriptc Wasm / Wasmtime | 1,635 (0.66×) | 106.8 (0.93×) | 655.6 (1.43×) | 64.6 (0.58×) |
+| Native Rust | 10,595 (4.26×) | 138.9 (1.22×) | 131.1 (0.29×) | 44.8 (0.40×) |
+
+### Read messages as JSON (no response cache)
+
+| Application runtime | Requests/s | CPU use (%; 100% = 1 core) | CPU µs/request | Peak process memory (MiB) |
+| --- | ---: | ---: | ---: | ---: |
+| JavaScript / V8 | 3,050 (1.00×) | 116.1 (1.00×) | 380.9 (1.00×) | 109.7 (1.00×) |
+| TypeScript → scriptc Wasm / Wasmtime | 5,199 (1.70×) | 120.3 (1.04×) | 233.0 (0.61×) | 67.0 (0.61×) |
+| Native Rust | 13,224 (4.34×) | 148.8 (1.28×) | 112.2 (0.29×) | 46.2 (0.42×) |
+
+CPU and memory cover the whole celld process. Each request queries SQLite and returns the latest 50 messages. Startup and module compilation precede load timing.
+
+[All seven workloads, trial ranges, and raw measurements](experiments/scriptc/results/celld/REPORT.md).
+
 <!-- benchmark:start -->
-## Results
+## Rust → Wasm
 
 Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64 · 2026-10-16. Medians of three 5-second trials.
 
@@ -58,10 +84,6 @@ Wasm module compilation/loading: **66.21 ms → 1.03 ms** when reusing compiled 
 [Complete report](results/2026-10-16/REPORT.md) · Raw data: [load tests](results/2026-10-16/results.json), [startup](results/2026-10-16/cold-results.json), [validation](results/2026-10-16/validation.json).
 <!-- benchmark:end -->
 
-## TypeScript compiled to Wasm
-
-[The scriptc experiment](experiments/scriptc/README.md) runs TypeScript Worker and Durable Object handlers as Wasm inside celld, with Rust implementations of the SQLite and WebSocket imports. Request handling and database access execute without JavaScript. It includes throughput, CPU, memory, raw data, and reproduction instructions.
-
 ## Request and binding paths
 
 | Mode | Application code | SQL and WebSocket access |
@@ -70,6 +92,7 @@ Wasm module compilation/loading: **66.21 ms → 1.03 ms** when reusing compiled 
 | `wasm-js` | Rust Wasm in V8 | [JS Worker entry and JS bindings](application/wasm-worker.js) |
 | `wasm-v8` | The same Wasm module in V8 | Rust callbacks through V8; no JS source execution |
 | `wasm` | The same Wasm module in Wasmtime 49 | Rust host imports; no JS execution |
+| `scriptc-wasm` | TypeScript compiled to Wasm in Wasmtime 49 | Rust host imports; no JS execution |
 | `native` | The same Rust source compiled natively | Direct Rust calls |
 
 ```mermaid
@@ -81,6 +104,7 @@ flowchart LR
     SHIM --> WASMJS["Rust Wasm (V8)"] --> JSAPI
     HOST --> WASMV8["wasm-v8: Rust Wasm (V8)"] --> CALLBACKS["Rust callbacks through V8"]
     HOST --> WASMTIME["wasm: Rust Wasm (Wasmtime)"] --> IMPORTS["Rust host imports"]
+    HOST --> SCRIPTC["scriptc-wasm: TypeScript Wasm (Wasmtime)"] --> IMPORTS
     HOST --> NATIVE["native: Rust handlers"]
     JSAPI --> STORE["celld SQLite / WebSocket"]
     CALLBACKS --> STORE
@@ -88,11 +112,11 @@ flowchart LR
     NATIVE --> STORE
 ```
 
-`wasm-js` measures a standard Wasm Worker on celld: JS Worker → Rust Wasm → JS bindings. All three Wasm modes use the same module. SQLite runs outside Wasm in every mode. These are local celld measurements; Cloudflare Workers is an architecture reference.
+`wasm-js` measures a standard Wasm Worker on celld: JS Worker → Rust Wasm → JS bindings. The three Rust Wasm modes use the same module. SQLite runs outside Wasm in every mode. These are local celld measurements; Cloudflare Workers is an architecture reference.
 
 ## Reproduce
 
-[Build, run the benchmarks, or open the chat app](REPRODUCE.md).
+[Build and run the Rust comparison](REPRODUCE.md) · [Build and run the scriptc comparison](experiments/scriptc/REPRODUCE.md).
 
 ## What the numbers measure
 

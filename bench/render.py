@@ -165,7 +165,7 @@ def readme_results(summary, compile_cache=None):
     columns = '| ' + ' | '.join(LABELS[engine] for engine in engines) + ' |'
     alignment = '| --- | ' + ' | '.join('---:' for _ in engines) + ' |'
     lines = [
-        '## Results', '',
+        '## Rust → Wasm', '',
         'Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64 · 2026-10-16. Medians of three 5-second trials.', '',
         '### Server-rendered HTML (without in-memory page caching): 32 simultaneous clients', '',
         'Each request authenticates a user, checks room membership, and renders the latest 50 messages. Database and operating-system caches remain active.', '',
