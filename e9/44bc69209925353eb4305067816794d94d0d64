@@ -1,0 +1,19 @@
+README.md
+  s_0c67a750076943::t_afb504cd716bcf 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e944bc69209925353eb4305067816794d94d0d64",
+  "prompts": {},
+  "sessions": {
+    "s_0c67a750076943": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a142b9-dc2a-7cb3-b413-5f7a8193ef7e",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yunfei He <i.heyunfei@gmail.com>"
+    }
+  }
+}
