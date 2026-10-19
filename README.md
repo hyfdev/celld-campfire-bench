@@ -65,7 +65,7 @@ Wasm module compilation/loading: **69.14 ms → 1.05 ms** when reusing compiled 
 | Mode | Application code | SQL and WebSocket access |
 | --- | --- | --- |
 | `js` | JavaScript in V8 | JS Worker and Durable Object APIs |
-| `wasm-js` | Rust Wasm in V8 | [JS Worker entry and JS bindings](application/wasm-worker.js) |
+| `wasm-js` — **current standard Wasm model in celld / Cloudflare Workers** | Rust Wasm in V8 | [JS Worker entry and JS bindings](application/wasm-worker.js) |
 | `wasm-v8` | The same Wasm module in V8 | Rust callbacks through V8; no JS source execution |
 | `wasm` | The same Wasm module in Wasmtime 49 | Rust host imports; no JS execution |
 | `scriptc-wasm` | TypeScript compiled to Wasm in Wasmtime 49 | Rust host imports; no JS execution |
