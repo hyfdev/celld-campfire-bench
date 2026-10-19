@@ -1,0 +1,43 @@
+{
+  "profile_format": 1,
+  "name": "chat",
+  "entry": "app.ts",
+  "emission": "llvm",
+  "abi": {
+    "prefix": "chat_ts_",
+    "init_symbol": "chat_ts_init",
+    "sink_register_symbol": "chat_ts_panic",
+    "callback_register_symbol": "chat_ts_callback",
+    "instance_per_thread": false
+  },
+  "callbacks": [
+    {
+      "name": "hostCall",
+      "params": [
+        "string",
+        "string",
+        "bytes"
+      ],
+      "returns": "f64"
+    }
+  ],
+  "exports": [
+    {
+      "export": "handle",
+      "symbol": "chat_ts_handle",
+      "params": [
+        "f64",
+        "string"
+      ],
+      "returns": "string"
+    },
+    {
+      "export": "release",
+      "symbol": "chat_ts_release",
+      "params": [
+        "f64"
+      ],
+      "returns": "void"
+    }
+  ]
+}

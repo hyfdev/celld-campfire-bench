@@ -1,0 +1,13 @@
+{
+  "scriptc_version": "0.3.6",
+  "scriptc_release_source_revision": "fab1a29b333047bf799f6ff498100176c00bb7b7",
+  "scriptc_archive_sha256": "d8c33e7601a712297417c4589b66ece9007fce3b86f35a7fd20cd99339cae172",
+  "runtime_package": "@scriptc/runtime-wasm32-wasi@0.3.6",
+  "runtime_archive_sha256": "01f623a23778de9c1e6ade6a28c8acc109862b12ba7d101bcf651d9b1e277c8e",
+  "runtime_archive_matches_registry_sha1": true,
+  "zig": {
+    "tarball": "https://ziglang.org/download/0.16.0/zig-aarch64-macos-0.16.0.tar.xz",
+    "shasum": "b23d70deaa879b5c2d486ed3316f7eaa53e84acf6fc9cc747de152450d401489",
+    "size": "52238004"
+  }
+}

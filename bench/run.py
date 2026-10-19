@@ -404,7 +404,7 @@ def timed(engine,case,concurrency,trial,seconds,rooms=None,listeners=None):
 
 def sources():
     paths=BINARIES + [ROOT/name for name in (
-        "host.rs", "app/src/lib.rs", "app/sql.json", "app/schema.json",
+        "host.rs", "experiments/scriptc/celld/host.rs", "app/src/lib.rs", "app/sql.json", "app/schema.json",
         "application/worker.js", "application/wasm-worker.js", "application/index.html", "application/wrangler.jsonc",
         "guest/src/lib.rs", "guest/.cargo/config.toml", "load/src/main.rs", "load/src/ws.rs",
         "app/Cargo.toml", "app/Cargo.lock", "guest/Cargo.toml", "guest/Cargo.lock",

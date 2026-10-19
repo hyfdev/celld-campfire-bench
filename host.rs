@@ -1,3 +1,5 @@
+#[path = "scriptc_host.rs"]
+mod scriptc;
 use crate::engine_api::{self, HttpResponse, HttpResponseWebSocket, RequestBody, WsTarget};
 use crate::http_streams::RequestBodyGuard;
 use crate::js::{CellJob, CellStorage, DoCallReq};
@@ -23,6 +25,7 @@ enum Engine {
     Native(App),
     Wasm(DirectWasm),
     WasmV8(V8Wasm),
+    TypeScript(scriptc::TsRuntime),
 }
 
 #[derive(Default)]
@@ -196,6 +199,7 @@ impl DirectRuntime {
         let host = Arc::new(Mutex::new(HostState::default()));
         let engine = match mode.as_str() {
             "native" => Engine::Native(App::new()),
+            "scriptc-wasm" => Engine::TypeScript(scriptc::TsRuntime::new(host.clone())?),
             "wasm" => {
                 let path =
                     std::env::var("WORKERS_CHAT_WASM").context("WORKERS_CHAT_WASM is required")?;
@@ -221,6 +225,7 @@ impl DirectRuntime {
     pub fn heap_bytes(&self) -> crate::js::HeapBytes {
         match &self.engine {
             Engine::WasmV8(w) => w.heap_bytes(),
+            Engine::TypeScript(t) => t.heap_bytes(),
             Engine::Wasm(w) => crate::js::HeapBytes {
                 physical: 0,
                 external: w.memory.data_size(&w.store) as u64,
@@ -254,6 +259,7 @@ impl DirectRuntime {
             host.frames = WsBatch::default();
         }
         match &mut self.engine {
+            Engine::TypeScript(t) => t.call(kind, request),
             Engine::Native(app) => {
                 if kind == 0 {
                     Ok(workers_chat_app::ingress(request))
@@ -311,6 +317,7 @@ impl DirectRuntime {
             if let Some(room) = self.names.remove(scope) {
                 match &mut self.engine {
                     Engine::Native(app) => app.release(room),
+                    Engine::TypeScript(t) => t.release(room)?,
                     Engine::Wasm(w) => w.release(room)?,
                     Engine::WasmV8(w) => w.release(room)?,
                 }

@@ -2,7 +2,7 @@
 
 A reproducible comparison of **JavaScript, Rust Wasm, and native Rust** running the same chat workload inside [celld](https://github.com/denoland/celld). A stateless Worker routes requests to one Durable Object per chat room; each object stores messages in SQLite.
 
-**Celld itself is a native Rust executable in every mode. Only the Rust application's Wasm variants are compiled to Wasm.**
+**Celld itself is a native Rust executable in every mode. The Wasm variants compile application code to Wasm.**
 
 <!-- benchmark:start -->
 ## Results
@@ -58,6 +58,10 @@ Wasm module compilation/loading: **66.21 ms → 1.03 ms** when reusing compiled 
 [Complete report](results/2026-10-16/REPORT.md) · Raw data: [load tests](results/2026-10-16/results.json), [startup](results/2026-10-16/cold-results.json), [validation](results/2026-10-16/validation.json).
 <!-- benchmark:end -->
 
+## TypeScript compiled to Wasm
+
+[The scriptc experiment](experiments/scriptc/README.md) runs TypeScript Worker and Durable Object handlers as Wasm inside celld, with Rust implementations of the SQLite and WebSocket imports. Request handling and database access execute without JavaScript. It includes throughput, CPU, memory, raw data, and reproduction instructions.
+
 ## Request and binding paths
 
 | Mode | Application code | SQL and WebSocket access |
@@ -105,10 +109,11 @@ The test uses one node and local persistence. Native Rust runs as trusted code. 
 | `application/` | JS chat implementation, JS-to-Wasm adapter, Worker configuration, and browser UI |
 | `app/` | Rust chat logic, SQL, and database schema |
 | `guest/` | Rust Wasm entry points and imports for host functions |
-| `host.rs` | Rust host adapters for native Rust, Wasmtime, and direct V8 Wasm |
+| `host.rs` | Rust host adapters for native Rust, Wasmtime, direct V8 Wasm, and scriptc |
 | `load/` | HTTP and WebSocket load generators that check responses |
 | `bench/` | Build, data preparation, measurement, and report scripts |
 | `patches/celld.patch` | Integration with the pinned celld source and locked dependencies |
+| `experiments/scriptc/` | TypeScript-to-Wasm chat application, Rust imports, results, and reproduction guide |
 | `results/` | Recorded measurements, measured source files, and full reports |
 
 ## References

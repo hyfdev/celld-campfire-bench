@@ -23,7 +23,7 @@ def digest(path):
 def inputs():
     paths = [ROOT / name for name in (
         "celld.json", "patches/celld.patch", "rust-toolchain.toml",
-        "package.json", "pnpm-lock.yaml", "bench/build.py", "host.rs",
+        "package.json", "pnpm-lock.yaml", "bench/build.py", "host.rs", "experiments/scriptc/celld/host.rs",
     )]
     for directory in ("app", "application", "guest", "load"):
         paths.extend(path for path in (ROOT / directory).rglob("*")
@@ -81,6 +81,7 @@ def prepare_source():
             ignore=shutil.ignore_patterns("target", ".celld", ".wrangler", "__pycache__"),
         )
     shutil.copy2(ROOT / "host.rs", destination / "host.rs")
+    shutil.copy2(ROOT / "experiments/scriptc/celld/host.rs", destination / "scriptc_host.rs")
 
 
 def check_build():

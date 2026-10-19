@@ -1,0 +1,19 @@
+[package]
+name = "workers-chat-guest"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+workers-chat-app = { path = "../app" }
+postcard = { version = "1", features = ["alloc"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+panic = "abort"
