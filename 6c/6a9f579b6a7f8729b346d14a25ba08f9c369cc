@@ -1,0 +1,149 @@
+README.md
+  s_0c67a750076943::t_dc69afea0805bd 5,61-64,112,116
+bench/build.py
+  s_e51134701ed91b::t_dcc9863b90e13e 26,84
+bench/run.py
+  s_0c67a750076943::t_1f92ca62b952f3 407
+experiments/scriptc/.gitignore
+  s_0c67a750076943::t_8e1b521e340f10 1
+experiments/scriptc/README.md
+  s_0c67a750076943::t_0799ebaa0d0042 1-57
+experiments/scriptc/REPRODUCE.md
+  s_0c67a750076943::t_a59173368e2bb7 1-65
+experiments/scriptc/celld/app.ts
+  s_80881f2571c058::t_fe32e9294f48b0 1-181
+experiments/scriptc/celld/build.py
+  s_0c67a750076943::t_20a207d1b87fdf 1-52
+experiments/scriptc/celld/data.ts
+  s_0c67a750076943::t_3fba545f161862 1-23
+experiments/scriptc/celld/host.rs
+  s_0c67a750076943::t_c3bd91c62e8674 1-340
+experiments/scriptc/celld/report.py
+  s_0c67a750076943::t_0b7afed6654722 1-105
+experiments/scriptc/celld/run.py
+  s_0c67a750076943::t_58b4a9a4bdc20a 1-101
+experiments/scriptc/celld/wasm.json
+  s_0c67a750076943::t_0c1fe89b6b5619 1-43
+experiments/scriptc/results/celld/REPORT.md
+  s_0c67a750076943::t_7e50ca835bb3f7 1-87
+experiments/scriptc/results/celld/results.json
+  s_0c67a750076943::t_40522e5fa25cfe 1-18582
+experiments/scriptc/results/celld/sources/.build/build.json
+  s_0c67a750076943::t_ec8d94d9bbb15a 1-41
+experiments/scriptc/results/celld/sources/.build/celld/Cargo.lock
+  s_0c67a750076943::t_b11bc717d8e9a3 1-4990
+experiments/scriptc/results/celld/sources/.build/celld/Cargo.toml
+  s_0c67a750076943::t_2467798e0165e2 1-154
+experiments/scriptc/results/celld/sources/.build/celld/crates/celld/Cargo.toml
+  s_0c67a750076943::t_a9b35ad9213dad 1-102
+experiments/scriptc/results/celld/sources/.build/celld/crates/celld/js.rs
+  s_0c67a750076943::t_723c6bfdbdda79 1-12726
+experiments/scriptc/results/celld/sources/.build/celld/crates/celld/lib.rs
+  s_0c67a750076943::t_d2ee3ccbce9009 1-316
+experiments/scriptc/results/celld/sources/.build/celld/crates/celld/runtime.rs
+  s_0c67a750076943::t_27397b56f9890f 1-3615
+experiments/scriptc/results/celld/sources/app/Cargo.lock
+  s_0c67a750076943::t_09751e255af70c 1-118
+experiments/scriptc/results/celld/sources/app/Cargo.toml
+  s_0c67a750076943::t_36a7673e2781ab 1-12
+experiments/scriptc/results/celld/sources/app/schema.json
+  s_0c67a750076943::t_62643f651f6a9a 1-15
+experiments/scriptc/results/celld/sources/app/sql.json
+  s_0c67a750076943::t_84d71745646d0c 1-7
+experiments/scriptc/results/celld/sources/app/src/lib.rs
+  s_0c67a750076943::t_de90cabfaebde6 1-507
+experiments/scriptc/results/celld/sources/application/index.html
+  s_0c67a750076943::t_cc9277aeb909d3 1-12
+experiments/scriptc/results/celld/sources/application/wasm-worker.js
+  s_0c67a750076943::t_f4d4eee3a5d387 1-219
+experiments/scriptc/results/celld/sources/application/worker.js
+  s_0c67a750076943::t_5faeee18c0c536 1-198
+experiments/scriptc/results/celld/sources/application/wrangler.jsonc
+  s_0c67a750076943::t_502af32cc114bf 1-21
+experiments/scriptc/results/celld/sources/bench/build.py
+  s_0c67a750076943::t_656b02180e2e1f 1-130
+experiments/scriptc/results/celld/sources/bench/fixture.py
+  s_0c67a750076943::t_39cce854cce10a 1-81
+experiments/scriptc/results/celld/sources/bench/metrics.py
+  s_0c67a750076943::t_24a1ed19455a39 1-39
+experiments/scriptc/results/celld/sources/bench/run.py
+  s_0c67a750076943::t_84d3f85b1e046e 1-555
+experiments/scriptc/results/celld/sources/celld.json
+  s_0c67a750076943::t_ca8c629a549b45 1-4
+experiments/scriptc/results/celld/sources/experiments/scriptc/celld/app.ts
+  s_0c67a750076943::t_0b4fa0bbf703f3 1-181
+experiments/scriptc/results/celld/sources/experiments/scriptc/celld/build.py
+  s_0c67a750076943::t_86e829ee8a5441 1-52
+experiments/scriptc/results/celld/sources/experiments/scriptc/celld/data.ts
+  s_0c67a750076943::t_1838711bc47736 1-23
+experiments/scriptc/results/celld/sources/experiments/scriptc/celld/host.rs
+  s_0c67a750076943::t_e0d711a0f5b6e7 1-340
+experiments/scriptc/results/celld/sources/experiments/scriptc/celld/run.py
+  s_0c67a750076943::t_d2246fa9664d89 1-101
+experiments/scriptc/results/celld/sources/experiments/scriptc/celld/wasm.json
+  s_0c67a750076943::t_2584ae3c411f6c 1-43
+experiments/scriptc/results/celld/sources/guest/.cargo/config.toml
+  s_0c67a750076943::t_3e9a09c81c2ed5 1-2
+experiments/scriptc/results/celld/sources/guest/Cargo.lock
+  s_0c67a750076943::t_99d65e2e2943ba 1-269
+experiments/scriptc/results/celld/sources/guest/Cargo.toml
+  s_0c67a750076943::t_93c2130d59edbe 1-19
+experiments/scriptc/results/celld/sources/guest/src/lib.rs
+  s_0c67a750076943::t_1272f8404ee0ac 1-89
+experiments/scriptc/results/celld/sources/host.rs
+  s_0c67a750076943::t_8cec3d01d616a5 1-978
+experiments/scriptc/results/celld/sources/load/Cargo.lock
+  s_0c67a750076943::t_2c2c4de074fe38 1-1576
+experiments/scriptc/results/celld/sources/load/Cargo.toml
+  s_0c67a750076943::t_bac410cadca9aa 1-25
+experiments/scriptc/results/celld/sources/load/src/main.rs
+  s_0c67a750076943::t_0f4b929f4e9c07 1-318
+experiments/scriptc/results/celld/sources/load/src/ws.rs
+  s_0c67a750076943::t_25b0d66b6f835a 1-246
+experiments/scriptc/results/celld/sources/package.json
+  s_0c67a750076943::t_9af1d2c70bf098 1-21
+experiments/scriptc/results/celld/sources/patches/celld.patch
+  s_0c67a750076943::t_b9f136ad937852 1-1250
+experiments/scriptc/results/celld/sources/pnpm-lock.yaml
+  s_0c67a750076943::t_d08e4112a5bfa2 1-285
+experiments/scriptc/results/celld/sources/rust-toolchain.toml
+  s_0c67a750076943::t_5460cdd8528423 1-4
+experiments/scriptc/results/celld/validation.json
+  s_0c67a750076943::t_13422c35592291 1-259
+experiments/scriptc/results/toolchain.json
+  s_0c67a750076943::t_b742201a0445ff 1-13
+host.rs
+  s_0c67a750076943::t_eb86b06491abc7 1-2,28,202,228,262,320
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6c6a9f579b6a7f8729b346d14a25ba08f9c369cc",
+  "prompts": {},
+  "sessions": {
+    "s_0c67a750076943": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a142b9-dc2a-7cb3-b413-5f7a8193ef7e",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yunfei He <i.heyunfei@gmail.com>"
+    },
+    "s_80881f2571c058": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a15304-3783-7b31-a19e-6bda1fba2f49",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yunfei He <i.heyunfei@gmail.com>"
+    },
+    "s_e51134701ed91b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a15276-b272-7113-b91c-7355b0cd3f45",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yunfei He <i.heyunfei@gmail.com>"
+    }
+  }
+}
