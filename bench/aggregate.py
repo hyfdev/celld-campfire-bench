@@ -31,7 +31,10 @@ def load(directory):
     engines = ["js"]
     if any(r["engine"] == "wasm-js" for r in results["trials"]):
         engines.append("wasm-js")
-    engines += ["wasm-v8", "wasm", "native"]
+    engines += ["wasm-v8", "wasm"]
+    if any(r["engine"] == "scriptc-wasm" for r in results["trials"]):
+        engines.append("scriptc-wasm")
+    engines.append("native")
     metrics = ["cpu_us_per_operation", "cpu_percent_one_core", "client_cpu_percent_one_core", "p50_ms", "p99_ms"]
     aggregate = {"http": [], "websocket": [], "cold": [], "checks": {}}
 
@@ -100,7 +103,10 @@ def load_compile_cache(directory):
     engines = ["js"]
     engines += [engine for engine in ("wasm-js", "wasm-v8")
                 if any(r["engine"] == engine for r in data["trials"])]
-    engines += ["wasm", "wasm-cached", "native"]
+    engines += ["wasm", "wasm-cached"]
+    if any(r["engine"] == "scriptc-wasm" for r in data["trials"]):
+        engines.append("scriptc-wasm")
+    engines.append("native")
     expected = {(engine, trial) for engine in engines for trial in range(data["rounds"])}
     assert len(data["trials"]) == len(expected)
     assert {(r["engine"], r["trial"]) for r in data["trials"]} == expected

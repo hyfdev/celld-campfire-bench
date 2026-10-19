@@ -1,0 +1,1385 @@
+{
+  "complete": true,
+  "sources": {
+    ".build/host-target/release/celld": "7caa6e1a3e9984d1cd44b04b60bdf7a4a50dba1e15ceeb68973174a182c62fbd",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "f2c72ca2cf4e39ef5d44e52aa8e27c5fe343348f2dfed6a6d2a4ad288ff80b08",
+    ".build/load-target/release/workers-chat-load": "e12b6c1f34057fa24a3b77c147ce5f33718b42d1b5066aabfb005d620d9f6f79",
+    ".build/load-target/release/workers-chat-ws": "aec382e86a71dbeb85e7696f50428596f8ae4ad02a16ac352e7c833e101a40f9",
+    "experiments/scriptc/.build/chat.wasm": "df292e1b9d13b32a3ab059875825b35efcbaa9cc4b9dfc4ff9a12ae68247b5c8",
+    "host.rs": "9f6fe6da9a775fbc90efdc7030a7b1f9f50b819b4fffbb759324252efb84dc71",
+    "experiments/scriptc/celld/host.rs": "0c35c46574b7b53479ec7d677169056cec400d0e5968457c57ff2cdc1bc35890",
+    "app/src/lib.rs": "b65c32868864cf26348df1d4424e3c20c1c9ccf588168364c25d6c347fccf3c3",
+    "app/sql.json": "c3eb137a07bbe7bd4e206d08893fa0a18fafa75aa25601060f2be6be0c0e4f6c",
+    "app/schema.json": "66c52aa1b2aea84d4c4c6c3c92f511916c7e7807bf9f38213587af0c7e2915b7",
+    "application/worker.js": "440301986d0859fb179f464e2eca774b326d458ad667a14f2e880c3464fbe343",
+    "application/wasm-worker.js": "caf4be1804a9105c2f8b945ef7c41aa29314c8b9220d129ab5338927fadb9a03",
+    "application/index.html": "559661c6b9e32fe4ca1818963f7b18aa7b163e540d754f18c8022715c85ff08b",
+    "application/wrangler.jsonc": "1ba7823fcb23b29ce1b7b0e6a47d4c2875f15e54efdc8285f3a528c335b9cf3a",
+    "guest/src/lib.rs": "52af8d0a3b7ccb10101769256b58d96191241fb6300ae50ae3cadd17d3f430a8",
+    "guest/.cargo/config.toml": "2511de2ff0bf0f36f53f46cd26193fe7202f0be861c8e00ff02824012198f9d4",
+    "load/src/main.rs": "30b3b67f872beefa0d84108cb78d4180b7a23bdc529b694c3cb4fbea96c24dd7",
+    "load/src/ws.rs": "b7c865e751f0b7f110a1c18532a3e12c88c9f3c9c9348d7a0759ff5a1ad3edd0",
+    "app/Cargo.toml": "d29a4e480fda0177222c3025e24c5528f696cabff19a35fbe1d53a9163056320",
+    "app/Cargo.lock": "d01d01fa46e5acb67bb611c85a631f7f80863f275563caf49140b998cc67b4e3",
+    "guest/Cargo.toml": "51d1df7fa66c1f170c933d9489071e3595418fa0a79e14a2695fa035d072595b",
+    "guest/Cargo.lock": "33261853b36859e4f27d7b22c295638aea9f9473e4637f2a98bf316e32f713f8",
+    "load/Cargo.toml": "e01830ab0636a1352072795211c7cfc8deab1080a523e3b6abb10ba001245fdc",
+    "load/Cargo.lock": "2893c1b0fd234277665da158fb2579d0099ffbce8526b9eef74da5c02468fb8f",
+    "bench/run.py": "7cdf8363a010d9fb01017d429de2bd744c9b1b793a0843d9ee2fab14fcca6e31",
+    "bench/fixture.py": "a6521cae7fe6e87dcf2f22ba33f82718c55b00471a8d7849584b2bf617bdd526",
+    "bench/metrics.py": "b2e17183e967460118e0f03e7ef78ca4c3889c3e2b8f5b1b853b883a5b49ca4e",
+    "bench/build.py": "a9daf1b805179847c058e97da8b089831662c7e0328e89d4542aec46abb02e43",
+    "celld.json": "581e2584bb752f14b39e062088f991af194f60abe0130dec1f22b7f9d898abb2",
+    "patches/celld.patch": "c6cdd1c089a0df6f2e8031083aeefe088efb9f8ad0188b8bb4b177c0af0e8fb2",
+    "rust-toolchain.toml": "23794dfc365530e7749b589631e09db35dfbcc58e79b21b4185622406587fe84",
+    "package.json": "4daef5d3b7a2b9a20f0ded2a6208b148314144c5df6f2fa71292d6c5341ac778",
+    "pnpm-lock.yaml": "d5b901396cb4e334eeb7d25a9f047ff2291d5a4fbf8cd5823d4952512a7e9d8e",
+    ".build/build.json": "47cec0b85818fb112273850d9447ded69b39a2043bb57fb4440554aa86f91d2c",
+    "experiments/scriptc/celld/app.ts": "317b5029719048fb0ab32bd4be8398807c5fe32c4eb2d647b4e7f155b0834f71",
+    "experiments/scriptc/celld/data.ts": "446cd0352f08a43b92b44fc886ebe7b83c648fec7d5a4115c935b72ffb61779e",
+    "experiments/scriptc/celld/wasm.json": "425ee878e112dfba3dcdb9ed0e77bc5c5bd222475233d06533137b3d7c855b65",
+    "experiments/scriptc/celld/build.py": "dcf75625c083de97ecf2dfc0aff569001b6400e2a4578624179af450eac81b8d",
+    "experiments/scriptc/celld/run.py": "9440566879a23ccbb0fa33d2197b4c3505050e8d151308f3d055b48f23eb73bb",
+    "experiments/scriptc/results/toolchain.json": "b91d56fda44fda44bafa80ec6a0ddf8d38b2c9f3d33bf310516d4bba0eba434f",
+    "experiments/scriptc/.build/celld-build.json": "a1882b98b9d144b4133cc709ebc892659936f7ca7ba6806e77eab5551038b0bc",
+    ".build/celld/crates/celld/js.rs": "1f70ffa748c75e742a2e77d1eacc91dd21f08baa306055eb12805d520fbb5149",
+    ".build/celld/crates/celld/runtime.rs": "108c40abf09b40ea122c30da8fa0203c60ef291a4fae0c64813c12762cf312f6",
+    ".build/celld/crates/celld/lib.rs": "b8e96798d1b5c580ccc54a54846387d78cadfce4bbaed9457d8b6954ddd2019f",
+    ".build/celld/Cargo.toml": "cce35295402aaf564c393483d1a94e9215c0765a135e138e86f025fea0b49423",
+    ".build/celld/crates/celld/Cargo.toml": "e7c215289b8f6d4fdec3c40a1bcaae842373a906b3cee78f6cf2b60b477f9f76",
+    ".build/celld/Cargo.lock": "32026828bdd14ac63510f9fc2e04d3837e6d07042a111ad27add387f9383b14d"
+  },
+  "source_snapshot": "../sources",
+  "recorded_only": {
+    ".build/host-target/release/celld": "Measured binary digest; rebuild from source.",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/workers-chat-load": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/workers-chat-ws": "Measured binary digest; rebuild from source.",
+    "experiments/scriptc/.build/chat.wasm": "Measured binary digest; rebuild from source."
+  },
+  "started_at": "2026-10-19T09:17:45Z",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "cpu": "Apple M4 Pro",
+  "memory_bytes": 51539607552,
+  "logical_cpus": 14,
+  "mach_timebase": {
+    "numer": 125,
+    "denom": 3
+  },
+  "cache": "Wasmtime 49 built-in filesystem compilation cache",
+  "rounds": 10,
+  "trials": [
+    {
+      "engine": "js",
+      "process_to_root_ms": 299.93129055947065,
+      "first_room_ms": 2.9953336343169212,
+      "process_to_first_page_ms": 302.9317082837224,
+      "cpu_ms": 558.577374,
+      "memory": {
+        "user_ns": 261630541,
+        "system_ns": 296946833,
+        "rss_bytes": 104120320,
+        "footprint_bytes": 67996624
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 0
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 350.59458296746016,
+      "first_room_ms": 0.5365833640098572,
+      "process_to_first_page_ms": 351.13416612148285,
+      "cpu_ms": 611.917499,
+      "memory": {
+        "user_ns": 290243666,
+        "system_ns": 321673833,
+        "rss_bytes": 79249408,
+        "footprint_bytes": 53117792
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 70.10862499999999
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 0
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 280.49745969474316,
+      "first_room_ms": 0.5727494135499,
+      "process_to_first_page_ms": 281.07370901852846,
+      "cpu_ms": 545.423125,
+      "memory": {
+        "user_ns": 244556375,
+        "system_ns": 300866750,
+        "rss_bytes": 75137024,
+        "footprint_bytes": 52003656
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.051625
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 0
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 306.44720792770386,
+      "first_room_ms": 0.7824581116437912,
+      "process_to_first_page_ms": 307.2352912276983,
+      "cpu_ms": 461.387416,
+      "memory": {
+        "user_ns": 206895666,
+        "system_ns": 254491750,
+        "rss_bytes": 68747264,
+        "footprint_bytes": 47055640
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 0
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 290.6031245365739,
+      "first_room_ms": 1.909792423248291,
+      "process_to_first_page_ms": 292.5182497128844,
+      "cpu_ms": 527.781999,
+      "memory": {
+        "user_ns": 220589541,
+        "system_ns": 307192458,
+        "rss_bytes": 84000768,
+        "footprint_bytes": 55756600
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 0
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 312.3951246961951,
+      "first_room_ms": 4.015000537037849,
+      "process_to_first_page_ms": 316.41304213553667,
+      "cpu_ms": 599.585332,
+      "memory": {
+        "user_ns": 280699416,
+        "system_ns": 318885916,
+        "rss_bytes": 105480192,
+        "footprint_bytes": 68422608
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 0
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 468.95416732877493,
+      "first_room_ms": 1.3465424999594688,
+      "process_to_first_page_ms": 470.3040421009064,
+      "cpu_ms": 694.393249,
+      "memory": {
+        "user_ns": 373910708,
+        "system_ns": 320482541,
+        "rss_bytes": 93503488,
+        "footprint_bytes": 67453792
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 0
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 363.79608418792486,
+      "first_room_ms": 0.6989175453782082,
+      "process_to_first_page_ms": 364.49854262173176,
+      "cpu_ms": 600.948416,
+      "memory": {
+        "user_ns": 285219541,
+        "system_ns": 315728875,
+        "rss_bytes": 80773120,
+        "footprint_bytes": 54690680
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 68.6275
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 1
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 237.44770884513855,
+      "first_room_ms": 21.820999681949615,
+      "process_to_first_page_ms": 259.2742498964071,
+      "cpu_ms": 238.680749,
+      "memory": {
+        "user_ns": 136982833,
+        "system_ns": 101697916,
+        "rss_bytes": 51560448,
+        "footprint_bytes": 29803312
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.029125
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 1
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 246.47916667163372,
+      "first_room_ms": 23.718916811048985,
+      "process_to_first_page_ms": 270.2033333480358,
+      "cpu_ms": 239.142791,
+      "memory": {
+        "user_ns": 136937333,
+        "system_ns": 102205458,
+        "rss_bytes": 46743552,
+        "footprint_bytes": 26460928
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 1
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 242.41362512111664,
+      "first_room_ms": 25.463249534368515,
+      "process_to_first_page_ms": 267.8807498887181,
+      "cpu_ms": 248.112458,
+      "memory": {
+        "user_ns": 141009750,
+        "system_ns": 107102708,
+        "rss_bytes": 59932672,
+        "footprint_bytes": 32654992
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 1
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 327.4465827271342,
+      "first_room_ms": 4.1528744623064995,
+      "process_to_first_page_ms": 331.602624617517,
+      "cpu_ms": 547.465666,
+      "memory": {
+        "user_ns": 231617458,
+        "system_ns": 315848208,
+        "rss_bytes": 103645184,
+        "footprint_bytes": 66702360
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 1
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 411.68100014328957,
+      "first_room_ms": 26.68933290988207,
+      "process_to_first_page_ms": 438.37533239275217,
+      "cpu_ms": 408.655499,
+      "memory": {
+        "user_ns": 306479291,
+        "system_ns": 102176208,
+        "rss_bytes": 69844992,
+        "footprint_bytes": 45122352
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 1
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 263.0142504349351,
+      "first_room_ms": 28.632833622395992,
+      "process_to_first_page_ms": 291.6505001485348,
+      "cpu_ms": 277.109374,
+      "memory": {
+        "user_ns": 164790666,
+        "system_ns": 112318708,
+        "rss_bytes": 76136448,
+        "footprint_bytes": 40945992
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 1
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 240.25633372366428,
+      "first_room_ms": 26.512332260608673,
+      "process_to_first_page_ms": 266.77254121750593,
+      "cpu_ms": 235.179166,
+      "memory": {
+        "user_ns": 138723583,
+        "system_ns": 96455583,
+        "rss_bytes": 50872320,
+        "footprint_bytes": 29098776
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.107625
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 2
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 252.44620721787214,
+      "first_room_ms": 23.88725057244301,
+      "process_to_first_page_ms": 276.3391248881817,
+      "cpu_ms": 231.275166,
+      "memory": {
+        "user_ns": 138587416,
+        "system_ns": 92687750,
+        "rss_bytes": 46399488,
+        "footprint_bytes": 26116864
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 2
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 240.11479131877422,
+      "first_room_ms": 23.896208964288235,
+      "process_to_first_page_ms": 264.014458283782,
+      "cpu_ms": 243.462666,
+      "memory": {
+        "user_ns": 141386125,
+        "system_ns": 102076541,
+        "rss_bytes": 59949056,
+        "footprint_bytes": 32622224
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 2
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 282.3414169251919,
+      "first_room_ms": 37.657834589481354,
+      "process_to_first_page_ms": 320.0044594705105,
+      "cpu_ms": 283.478666,
+      "memory": {
+        "user_ns": 175076541,
+        "system_ns": 108402125,
+        "rss_bytes": 79003648,
+        "footprint_bytes": 42961296
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 2
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 417.8709164261818,
+      "first_room_ms": 28.186291456222534,
+      "process_to_first_page_ms": 446.06124982237816,
+      "cpu_ms": 406.767958,
+      "memory": {
+        "user_ns": 307738583,
+        "system_ns": 99029375,
+        "rss_bytes": 69812224,
+        "footprint_bytes": 45073176
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 2
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 259.7085004672408,
+      "first_room_ms": 32.14345779269934,
+      "process_to_first_page_ms": 291.8567080050707,
+      "cpu_ms": 270.383624,
+      "memory": {
+        "user_ns": 165215791,
+        "system_ns": 105167833,
+        "rss_bytes": 76038144,
+        "footprint_bytes": 40798584
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 2
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 314.44895826280117,
+      "first_room_ms": 27.610959485173225,
+      "process_to_first_page_ms": 342.06512570381165,
+      "cpu_ms": 314.875249,
+      "memory": {
+        "user_ns": 205036166,
+        "system_ns": 109839083,
+        "rss_bytes": 57802752,
+        "footprint_bytes": 33047368
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 69.507791
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 2
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 244.20679174363613,
+      "first_room_ms": 22.56720792502165,
+      "process_to_first_page_ms": 266.7769165709615,
+      "cpu_ms": 243.066791,
+      "memory": {
+        "user_ns": 136488666,
+        "system_ns": 106578125,
+        "rss_bytes": 46514176,
+        "footprint_bytes": 26231552
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 3
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 239.33554161339998,
+      "first_room_ms": 25.72799939662218,
+      "process_to_first_page_ms": 265.0668751448393,
+      "cpu_ms": 235.117249,
+      "memory": {
+        "user_ns": 138910666,
+        "system_ns": 96206583,
+        "rss_bytes": 59539456,
+        "footprint_bytes": 32376464
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 3
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 275.35962499678135,
+      "first_room_ms": 37.86974959075451,
+      "process_to_first_page_ms": 313.2324172183871,
+      "cpu_ms": 290.462291,
+      "memory": {
+        "user_ns": 172751750,
+        "system_ns": 117710541,
+        "rss_bytes": 81592320,
+        "footprint_bytes": 45533560
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 3
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 420.2649174258113,
+      "first_room_ms": 25.36445762962103,
+      "process_to_first_page_ms": 445.63270825892687,
+      "cpu_ms": 406.649124,
+      "memory": {
+        "user_ns": 308164791,
+        "system_ns": 98484333,
+        "rss_bytes": 69648384,
+        "footprint_bytes": 44892952
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 3
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 272.5224168971181,
+      "first_room_ms": 35.62912531197071,
+      "process_to_first_page_ms": 308.15708357840776,
+      "cpu_ms": 251.813124,
+      "memory": {
+        "user_ns": 170000208,
+        "system_ns": 81812916,
+        "rss_bytes": 76627968,
+        "footprint_bytes": 41208160
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 3
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 318.8963755965233,
+      "first_room_ms": 19.35837510973215,
+      "process_to_first_page_ms": 338.2580420002341,
+      "cpu_ms": 304.454291,
+      "memory": {
+        "user_ns": 203844250,
+        "system_ns": 100610041,
+        "rss_bytes": 55279616,
+        "footprint_bytes": 30491416
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 69.59491700000001
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 3
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 249.50379226356745,
+      "first_room_ms": 22.094707936048508,
+      "process_to_first_page_ms": 271.60387579351664,
+      "cpu_ms": 245.885875,
+      "memory": {
+        "user_ns": 140997125,
+        "system_ns": 104888750,
+        "rss_bytes": 51281920,
+        "footprint_bytes": 29524784
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.047583
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 3
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 242.41466727107763,
+      "first_room_ms": 23.952624760568142,
+      "process_to_first_page_ms": 266.3701670244336,
+      "cpu_ms": 235.382999,
+      "memory": {
+        "user_ns": 140016833,
+        "system_ns": 95366166,
+        "rss_bytes": 59785216,
+        "footprint_bytes": 32474768
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 4
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 261.2917497754097,
+      "first_room_ms": 35.80137528479099,
+      "process_to_first_page_ms": 297.0977909862995,
+      "cpu_ms": 283.656541,
+      "memory": {
+        "user_ns": 167979583,
+        "system_ns": 115676958,
+        "rss_bytes": 80035840,
+        "footprint_bytes": 43977128
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 4
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 413.8722075149417,
+      "first_room_ms": 24.34799913316965,
+      "process_to_first_page_ms": 438.22391517460346,
+      "cpu_ms": 414.567499,
+      "memory": {
+        "user_ns": 307643958,
+        "system_ns": 106923541,
+        "rss_bytes": 69599232,
+        "footprint_bytes": 44876592
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 4
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 252.38462537527084,
+      "first_room_ms": 32.0337088778615,
+      "process_to_first_page_ms": 284.4215417280793,
+      "cpu_ms": 272.991958,
+      "memory": {
+        "user_ns": 161819375,
+        "system_ns": 111172583,
+        "rss_bytes": 77348864,
+        "footprint_bytes": 42109280
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 4
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 309.1632919386029,
+      "first_room_ms": 22.76070788502693,
+      "process_to_first_page_ms": 331.9279169663787,
+      "cpu_ms": 305.065332,
+      "memory": {
+        "user_ns": 201602416,
+        "system_ns": 103462916,
+        "rss_bytes": 57360384,
+        "footprint_bytes": 32605000
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 68.71754200000001
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 4
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 234.35716703534126,
+      "first_room_ms": 23.560499772429466,
+      "process_to_first_page_ms": 257.92104192078114,
+      "cpu_ms": 244.594874,
+      "memory": {
+        "user_ns": 136632666,
+        "system_ns": 107962208,
+        "rss_bytes": 51150848,
+        "footprint_bytes": 29377328
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 0.9972909999999999
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 4
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 246.26308400183916,
+      "first_room_ms": 22.145708091557026,
+      "process_to_first_page_ms": 268.4127502143383,
+      "cpu_ms": 244.865832,
+      "memory": {
+        "user_ns": 135805291,
+        "system_ns": 109060541,
+        "rss_bytes": 47087616,
+        "footprint_bytes": 26821400
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 4
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 268.60662549734116,
+      "first_room_ms": 35.03475058823824,
+      "process_to_first_page_ms": 303.6445416510105,
+      "cpu_ms": 290.785291,
+      "memory": {
+        "user_ns": 172194291,
+        "system_ns": 118591000,
+        "rss_bytes": 79675392,
+        "footprint_bytes": 43633040
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 5
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 411.73533257097006,
+      "first_room_ms": 25.754458270967007,
+      "process_to_first_page_ms": 437.49374989420176,
+      "cpu_ms": 415.783916,
+      "memory": {
+        "user_ns": 311490750,
+        "system_ns": 104293166,
+        "rss_bytes": 71188480,
+        "footprint_bytes": 46449480
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 5
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 258.55158269405365,
+      "first_room_ms": 30.06412461400032,
+      "process_to_first_page_ms": 288.6202074587345,
+      "cpu_ms": 270.214457,
+      "memory": {
+        "user_ns": 162875416,
+        "system_ns": 107339041,
+        "rss_bytes": 76627968,
+        "footprint_bytes": 41372000
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 5
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 313.2871249690652,
+      "first_room_ms": 21.858999505639076,
+      "process_to_first_page_ms": 335.14941670000553,
+      "cpu_ms": 300.273583,
+      "memory": {
+        "user_ns": 205078958,
+        "system_ns": 95194625,
+        "rss_bytes": 57671680,
+        "footprint_bytes": 32883480
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 71.13858300000001
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 5
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 239.62412495166063,
+      "first_room_ms": 38.71087450534105,
+      "process_to_first_page_ms": 278.3416248857975,
+      "cpu_ms": 227.042958,
+      "memory": {
+        "user_ns": 140390208,
+        "system_ns": 86652750,
+        "rss_bytes": 53035008,
+        "footprint_bytes": 31294280
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.052083
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 5
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 266.8260829523206,
+      "first_room_ms": 26.080625131726265,
+      "process_to_first_page_ms": 292.91045758873224,
+      "cpu_ms": 249.332041,
+      "memory": {
+        "user_ns": 143377375,
+        "system_ns": 105954666,
+        "rss_bytes": 46891008,
+        "footprint_bytes": 26624792
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 5
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 292.599624954164,
+      "first_room_ms": 25.386792607605457,
+      "process_to_first_page_ms": 317.99083296209574,
+      "cpu_ms": 267.240583,
+      "memory": {
+        "user_ns": 153215500,
+        "system_ns": 114025083,
+        "rss_bytes": 60227584,
+        "footprint_bytes": 32966288
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 5
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 418.37537474930286,
+      "first_room_ms": 27.487332932651043,
+      "process_to_first_page_ms": 445.86650002747774,
+      "cpu_ms": 404.446333,
+      "memory": {
+        "user_ns": 307199083,
+        "system_ns": 97247250,
+        "rss_bytes": 66600960,
+        "footprint_bytes": 41845504
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 6
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 258.1224590539932,
+      "first_room_ms": 31.669000163674355,
+      "process_to_first_page_ms": 289.79475051164627,
+      "cpu_ms": 278.805458,
+      "memory": {
+        "user_ns": 162996750,
+        "system_ns": 115808708,
+        "rss_bytes": 79298560,
+        "footprint_bytes": 44157256
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 6
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 310.3055413812399,
+      "first_room_ms": 21.380167454481125,
+      "process_to_first_page_ms": 331.6892087459564,
+      "cpu_ms": 313.0195,
+      "memory": {
+        "user_ns": 204138000,
+        "system_ns": 108881500,
+        "rss_bytes": 57196544,
+        "footprint_bytes": 32424752
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 68.13383400000001
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 6
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 271.143333055079,
+      "first_room_ms": 26.49079170078039,
+      "process_to_first_page_ms": 297.6397080346942,
+      "cpu_ms": 247.841333,
+      "memory": {
+        "user_ns": 143268458,
+        "system_ns": 104572875,
+        "rss_bytes": 50216960,
+        "footprint_bytes": 28459824
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.333458
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 6
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 247.79183231294155,
+      "first_room_ms": 23.04104156792164,
+      "process_to_first_page_ms": 270.8368329331279,
+      "cpu_ms": 232.230874,
+      "memory": {
+        "user_ns": 137772291,
+        "system_ns": 94458583,
+        "rss_bytes": 46333952,
+        "footprint_bytes": 26034920
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 6
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 244.6327917277813,
+      "first_room_ms": 27.354500256478786,
+      "process_to_first_page_ms": 271.99033461511135,
+      "cpu_ms": 250.756041,
+      "memory": {
+        "user_ns": 142055541,
+        "system_ns": 108700500,
+        "rss_bytes": 60522496,
+        "footprint_bytes": 33146512
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 6
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 259.90366749465466,
+      "first_room_ms": 44.42474991083145,
+      "process_to_first_page_ms": 304.3317925184965,
+      "cpu_ms": 278.415541,
+      "memory": {
+        "user_ns": 170370458,
+        "system_ns": 108045083,
+        "rss_bytes": 77692928,
+        "footprint_bytes": 41601376
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 6
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 255.67587558180094,
+      "first_room_ms": 31.09491616487503,
+      "process_to_first_page_ms": 286.7741258814931,
+      "cpu_ms": 271.848624,
+      "memory": {
+        "user_ns": 161263541,
+        "system_ns": 110585083,
+        "rss_bytes": 76201984,
+        "footprint_bytes": 40929608
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 7
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 301.385167054832,
+      "first_room_ms": 24.45241715759039,
+      "process_to_first_page_ms": 325.8409174159169,
+      "cpu_ms": 292.427916,
+      "memory": {
+        "user_ns": 199593583,
+        "system_ns": 92834333,
+        "rss_bytes": 57196544,
+        "footprint_bytes": 32424752
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 68.773792
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 7
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 235.10354198515415,
+      "first_room_ms": 22.63875026255846,
+      "process_to_first_page_ms": 257.74575024843216,
+      "cpu_ms": 232.819291,
+      "memory": {
+        "user_ns": 135156208,
+        "system_ns": 97663083,
+        "rss_bytes": 51085312,
+        "footprint_bytes": 29295360
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.070209
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 7
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 233.05308260023594,
+      "first_room_ms": 21.897749975323677,
+      "process_to_first_page_ms": 254.95387520641088,
+      "cpu_ms": 233.251791,
+      "memory": {
+        "user_ns": 133535541,
+        "system_ns": 99716250,
+        "rss_bytes": 46825472,
+        "footprint_bytes": 26526440
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 7
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 250.24120789021254,
+      "first_room_ms": 26.288332417607307,
+      "process_to_first_page_ms": 276.5381243079901,
+      "cpu_ms": 236.522708,
+      "memory": {
+        "user_ns": 143772083,
+        "system_ns": 92750625,
+        "rss_bytes": 58966016,
+        "footprint_bytes": 31622776
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 7
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 264.52791783958673,
+      "first_room_ms": 37.33383398503065,
+      "process_to_first_page_ms": 301.8665425479412,
+      "cpu_ms": 277.33525,
+      "memory": {
+        "user_ns": 170278500,
+        "system_ns": 107056750,
+        "rss_bytes": 80642048,
+        "footprint_bytes": 44550472
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 7
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 419.94016617536545,
+      "first_room_ms": 25.666083209216595,
+      "process_to_first_page_ms": 445.6093329936266,
+      "cpu_ms": 405.350208,
+      "memory": {
+        "user_ns": 308813833,
+        "system_ns": 96536375,
+        "rss_bytes": 69959680,
+        "footprint_bytes": 45237040
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 7
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 307.48475063592196,
+      "first_room_ms": 20.77700011432171,
+      "process_to_first_page_ms": 328.2644161954522,
+      "cpu_ms": 299.447249,
+      "memory": {
+        "user_ns": 202004708,
+        "system_ns": 97442541,
+        "rss_bytes": 57737216,
+        "footprint_bytes": 32965424
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 68.661292
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 8
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 252.6929173618555,
+      "first_room_ms": 24.134875275194645,
+      "process_to_first_page_ms": 276.83224994689226,
+      "cpu_ms": 243.956708,
+      "memory": {
+        "user_ns": 142073583,
+        "system_ns": 101883125,
+        "rss_bytes": 51544064,
+        "footprint_bytes": 29786928
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.015334
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 8
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 236.81904189288616,
+      "first_room_ms": 25.38845781236887,
+      "process_to_first_page_ms": 262.21120823174715,
+      "cpu_ms": 240.560416,
+      "memory": {
+        "user_ns": 134844875,
+        "system_ns": 105715541,
+        "rss_bytes": 46497792,
+        "footprint_bytes": 26198784
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 8
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 240.00308383256197,
+      "first_room_ms": 26.68833266943693,
+      "process_to_first_page_ms": 266.695249825716,
+      "cpu_ms": 232.264332,
+      "memory": {
+        "user_ns": 140224416,
+        "system_ns": 92039916,
+        "rss_bytes": 58785792,
+        "footprint_bytes": 31475368
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 8
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 265.90112503618,
+      "first_room_ms": 39.06475007534027,
+      "process_to_first_page_ms": 304.96941693127155,
+      "cpu_ms": 290.849666,
+      "memory": {
+        "user_ns": 172615375,
+        "system_ns": 118234291,
+        "rss_bytes": 83410944,
+        "footprint_bytes": 47352184
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 8
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 415.3352081775665,
+      "first_room_ms": 24.283332750201225,
+      "process_to_first_page_ms": 439.622082747519,
+      "cpu_ms": 392.680332,
+      "memory": {
+        "user_ns": 307823416,
+        "system_ns": 84856916,
+        "rss_bytes": 69582848,
+        "footprint_bytes": 44909360
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 8
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 253.61545756459236,
+      "first_room_ms": 34.362916834652424,
+      "process_to_first_page_ms": 287.9817495122552,
+      "cpu_ms": 265.065749,
+      "memory": {
+        "user_ns": 160659166,
+        "system_ns": 104406583,
+        "rss_bytes": 76513280,
+        "footprint_bytes": 41240904
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 8
+    },
+    {
+      "engine": "wasm-cached",
+      "process_to_root_ms": 243.5517506673932,
+      "first_room_ms": 22.051124833524227,
+      "process_to_first_page_ms": 265.606458298862,
+      "cpu_ms": 235.772833,
+      "memory": {
+        "user_ns": 137370083,
+        "system_ns": 98402750,
+        "rss_bytes": 51265536,
+        "footprint_bytes": 29491992
+      },
+      "wasmtime": {
+        "cache_enabled": true,
+        "cache_hits": 1,
+        "cache_misses": 0,
+        "module_ms": 1.039916
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 9
+    },
+    {
+      "engine": "native",
+      "process_to_root_ms": 248.50812554359436,
+      "first_room_ms": 22.288084030151367,
+      "process_to_first_page_ms": 270.7998752593994,
+      "cpu_ms": 240.245291,
+      "memory": {
+        "user_ns": 140915500,
+        "system_ns": 99329791,
+        "rss_bytes": 46284800,
+        "footprint_bytes": 25985792
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 9
+    },
+    {
+      "engine": "wasm-v8",
+      "process_to_root_ms": 242.45929159224033,
+      "first_room_ms": 26.077291928231716,
+      "process_to_first_page_ms": 268.54137517511845,
+      "cpu_ms": 246.067999,
+      "memory": {
+        "user_ns": 141406458,
+        "system_ns": 104661541,
+        "rss_bytes": 59801600,
+        "footprint_bytes": 32491176
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 9
+    },
+    {
+      "engine": "wasm-js",
+      "process_to_root_ms": 273.0781249701977,
+      "first_room_ms": 38.15291542559862,
+      "process_to_first_page_ms": 311.2341249361634,
+      "cpu_ms": 279.796583,
+      "memory": {
+        "user_ns": 172370375,
+        "system_ns": 107426208,
+        "rss_bytes": 79937536,
+        "footprint_bytes": 43878776
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 9
+    },
+    {
+      "engine": "scriptc-wasm",
+      "process_to_root_ms": 407.0104993879795,
+      "first_room_ms": 22.48283289372921,
+      "process_to_first_page_ms": 429.49654068797827,
+      "cpu_ms": 392.658916,
+      "memory": {
+        "user_ns": 303718208,
+        "system_ns": 88940708,
+        "rss_bytes": 67387392,
+        "footprint_bytes": 42648344
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 9
+    },
+    {
+      "engine": "js",
+      "process_to_root_ms": 264.101792126894,
+      "first_room_ms": 32.292624935507774,
+      "process_to_first_page_ms": 296.3983342051506,
+      "cpu_ms": 271.559374,
+      "memory": {
+        "user_ns": 164033791,
+        "system_ns": 107525583,
+        "rss_bytes": 79478784,
+        "footprint_bytes": 44403040
+      },
+      "wasmtime": null,
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 9
+    },
+    {
+      "engine": "wasm",
+      "process_to_root_ms": 310.272041708231,
+      "first_room_ms": 22.701291367411613,
+      "process_to_first_page_ms": 332.9784581437707,
+      "cpu_ms": 307.778791,
+      "memory": {
+        "user_ns": 204167666,
+        "system_ns": 103611125,
+        "rss_bytes": 57196544,
+        "footprint_bytes": 32424752
+      },
+      "wasmtime": {
+        "cache_enabled": false,
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "module_ms": 70.44262499999999
+      },
+      "root_validated": true,
+      "first_page_validated": true,
+      "trial": 9
+    }
+  ],
+  "cache_population": {
+    "engine": "wasm-cached",
+    "process_to_root_ms": 362.8846248611808,
+    "first_room_ms": 0.5581676959991455,
+    "process_to_first_page_ms": 363.4482091292739,
+    "cpu_ms": 588.317791,
+    "memory": {
+      "user_ns": 296079541,
+      "system_ns": 292238250,
+      "rss_bytes": 81739776,
+      "footprint_bytes": 55313224
+    },
+    "wasmtime": {
+      "cache_enabled": true,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "module_ms": 71.644167
+    },
+    "root_validated": true,
+    "first_page_validated": true
+  },
+  "completed_at": "2026-10-19T09:18:22Z"
+}

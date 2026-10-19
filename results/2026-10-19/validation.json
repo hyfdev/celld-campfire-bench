@@ -1,0 +1,314 @@
+{
+  "complete": true,
+  "sources": {
+    ".build/host-target/release/celld": "7caa6e1a3e9984d1cd44b04b60bdf7a4a50dba1e15ceeb68973174a182c62fbd",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "f2c72ca2cf4e39ef5d44e52aa8e27c5fe343348f2dfed6a6d2a4ad288ff80b08",
+    ".build/load-target/release/workers-chat-load": "e12b6c1f34057fa24a3b77c147ce5f33718b42d1b5066aabfb005d620d9f6f79",
+    ".build/load-target/release/workers-chat-ws": "aec382e86a71dbeb85e7696f50428596f8ae4ad02a16ac352e7c833e101a40f9",
+    "experiments/scriptc/.build/chat.wasm": "df292e1b9d13b32a3ab059875825b35efcbaa9cc4b9dfc4ff9a12ae68247b5c8",
+    "host.rs": "9f6fe6da9a775fbc90efdc7030a7b1f9f50b819b4fffbb759324252efb84dc71",
+    "experiments/scriptc/celld/host.rs": "0c35c46574b7b53479ec7d677169056cec400d0e5968457c57ff2cdc1bc35890",
+    "app/src/lib.rs": "b65c32868864cf26348df1d4424e3c20c1c9ccf588168364c25d6c347fccf3c3",
+    "app/sql.json": "c3eb137a07bbe7bd4e206d08893fa0a18fafa75aa25601060f2be6be0c0e4f6c",
+    "app/schema.json": "66c52aa1b2aea84d4c4c6c3c92f511916c7e7807bf9f38213587af0c7e2915b7",
+    "application/worker.js": "440301986d0859fb179f464e2eca774b326d458ad667a14f2e880c3464fbe343",
+    "application/wasm-worker.js": "caf4be1804a9105c2f8b945ef7c41aa29314c8b9220d129ab5338927fadb9a03",
+    "application/index.html": "559661c6b9e32fe4ca1818963f7b18aa7b163e540d754f18c8022715c85ff08b",
+    "application/wrangler.jsonc": "1ba7823fcb23b29ce1b7b0e6a47d4c2875f15e54efdc8285f3a528c335b9cf3a",
+    "guest/src/lib.rs": "52af8d0a3b7ccb10101769256b58d96191241fb6300ae50ae3cadd17d3f430a8",
+    "guest/.cargo/config.toml": "2511de2ff0bf0f36f53f46cd26193fe7202f0be861c8e00ff02824012198f9d4",
+    "load/src/main.rs": "30b3b67f872beefa0d84108cb78d4180b7a23bdc529b694c3cb4fbea96c24dd7",
+    "load/src/ws.rs": "b7c865e751f0b7f110a1c18532a3e12c88c9f3c9c9348d7a0759ff5a1ad3edd0",
+    "app/Cargo.toml": "d29a4e480fda0177222c3025e24c5528f696cabff19a35fbe1d53a9163056320",
+    "app/Cargo.lock": "d01d01fa46e5acb67bb611c85a631f7f80863f275563caf49140b998cc67b4e3",
+    "guest/Cargo.toml": "51d1df7fa66c1f170c933d9489071e3595418fa0a79e14a2695fa035d072595b",
+    "guest/Cargo.lock": "33261853b36859e4f27d7b22c295638aea9f9473e4637f2a98bf316e32f713f8",
+    "load/Cargo.toml": "e01830ab0636a1352072795211c7cfc8deab1080a523e3b6abb10ba001245fdc",
+    "load/Cargo.lock": "2893c1b0fd234277665da158fb2579d0099ffbce8526b9eef74da5c02468fb8f",
+    "bench/run.py": "7cdf8363a010d9fb01017d429de2bd744c9b1b793a0843d9ee2fab14fcca6e31",
+    "bench/fixture.py": "a6521cae7fe6e87dcf2f22ba33f82718c55b00471a8d7849584b2bf617bdd526",
+    "bench/metrics.py": "b2e17183e967460118e0f03e7ef78ca4c3889c3e2b8f5b1b853b883a5b49ca4e",
+    "bench/build.py": "a9daf1b805179847c058e97da8b089831662c7e0328e89d4542aec46abb02e43",
+    "celld.json": "581e2584bb752f14b39e062088f991af194f60abe0130dec1f22b7f9d898abb2",
+    "patches/celld.patch": "c6cdd1c089a0df6f2e8031083aeefe088efb9f8ad0188b8bb4b177c0af0e8fb2",
+    "rust-toolchain.toml": "23794dfc365530e7749b589631e09db35dfbcc58e79b21b4185622406587fe84",
+    "package.json": "4daef5d3b7a2b9a20f0ded2a6208b148314144c5df6f2fa71292d6c5341ac778",
+    "pnpm-lock.yaml": "d5b901396cb4e334eeb7d25a9f047ff2291d5a4fbf8cd5823d4952512a7e9d8e",
+    ".build/build.json": "47cec0b85818fb112273850d9447ded69b39a2043bb57fb4440554aa86f91d2c",
+    "experiments/scriptc/celld/app.ts": "317b5029719048fb0ab32bd4be8398807c5fe32c4eb2d647b4e7f155b0834f71",
+    "experiments/scriptc/celld/data.ts": "446cd0352f08a43b92b44fc886ebe7b83c648fec7d5a4115c935b72ffb61779e",
+    "experiments/scriptc/celld/wasm.json": "425ee878e112dfba3dcdb9ed0e77bc5c5bd222475233d06533137b3d7c855b65",
+    "experiments/scriptc/celld/build.py": "dcf75625c083de97ecf2dfc0aff569001b6400e2a4578624179af450eac81b8d",
+    "experiments/scriptc/celld/run.py": "9440566879a23ccbb0fa33d2197b4c3505050e8d151308f3d055b48f23eb73bb",
+    "experiments/scriptc/results/toolchain.json": "b91d56fda44fda44bafa80ec6a0ddf8d38b2c9f3d33bf310516d4bba0eba434f",
+    "experiments/scriptc/.build/celld-build.json": "a1882b98b9d144b4133cc709ebc892659936f7ca7ba6806e77eab5551038b0bc",
+    ".build/celld/crates/celld/js.rs": "1f70ffa748c75e742a2e77d1eacc91dd21f08baa306055eb12805d520fbb5149",
+    ".build/celld/crates/celld/runtime.rs": "108c40abf09b40ea122c30da8fa0203c60ef291a4fae0c64813c12762cf312f6",
+    ".build/celld/crates/celld/lib.rs": "b8e96798d1b5c580ccc54a54846387d78cadfce4bbaed9457d8b6954ddd2019f",
+    ".build/celld/Cargo.toml": "cce35295402aaf564c393483d1a94e9215c0765a135e138e86f025fea0b49423",
+    ".build/celld/crates/celld/Cargo.toml": "e7c215289b8f6d4fdec3c40a1bcaae842373a906b3cee78f6cf2b60b477f9f76",
+    ".build/celld/Cargo.lock": "32026828bdd14ac63510f9fc2e04d3837e6d07042a111ad27add387f9383b14d"
+  },
+  "source_snapshot": "sources",
+  "recorded_only": {
+    ".build/host-target/release/celld": "Measured binary digest; rebuild from source.",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/workers-chat-load": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/workers-chat-ws": "Measured binary digest; rebuild from source.",
+    "experiments/scriptc/.build/chat.wasm": "Measured binary digest; rebuild from source."
+  },
+  "engines": [
+    {
+      "engine": "js",
+      "response_checks": 716,
+      "websocket": {
+        "broadcast_deliveries": 231,
+        "deliveries_per_s": 614.3314242479031,
+        "elapsed_s": 0.501358042,
+        "errors": [],
+        "listeners_per_room": 3,
+        "messages": 77,
+        "messages_per_s": 153.58285606197578,
+        "p50_ms": 6.024959,
+        "p99_ms": 31.483542,
+        "read_ack_counts": [
+          0
+        ],
+        "read_acknowledgments": 0,
+        "read_acknowledgments_enabled": false,
+        "rooms": 1,
+        "sender_p99_ms": 31.483042,
+        "setup_read_ack_counts": [
+          0
+        ],
+        "total_frame_deliveries": 308,
+        "write_counts": [
+          77
+        ]
+      },
+      "before_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 136,
+        "integrity": "ok"
+      },
+      "after_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 136,
+        "integrity": "ok"
+      },
+      "restart_source": "object store with runtime directory removed"
+    },
+    {
+      "engine": "wasm",
+      "response_checks": 716,
+      "websocket": {
+        "broadcast_deliveries": 246,
+        "deliveries_per_s": 647.8506324746483,
+        "elapsed_s": 0.506289542,
+        "errors": [],
+        "listeners_per_room": 3,
+        "messages": 82,
+        "messages_per_s": 161.96265811866206,
+        "p50_ms": 6.006334,
+        "p99_ms": 12.421083,
+        "read_ack_counts": [
+          0
+        ],
+        "read_acknowledgments": 0,
+        "read_acknowledgments_enabled": false,
+        "rooms": 1,
+        "sender_p99_ms": 12.421042,
+        "setup_read_ack_counts": [
+          0
+        ],
+        "total_frame_deliveries": 328,
+        "write_counts": [
+          82
+        ]
+      },
+      "before_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 141,
+        "integrity": "ok"
+      },
+      "after_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 141,
+        "integrity": "ok"
+      },
+      "restart_source": "object store with runtime directory removed"
+    },
+    {
+      "engine": "native",
+      "response_checks": 716,
+      "websocket": {
+        "broadcast_deliveries": 246,
+        "deliveries_per_s": 652.0556618330078,
+        "elapsed_s": 0.503024541,
+        "errors": [],
+        "listeners_per_room": 3,
+        "messages": 82,
+        "messages_per_s": 163.01391545825194,
+        "p50_ms": 6.054042,
+        "p99_ms": 11.517583,
+        "read_ack_counts": [
+          0
+        ],
+        "read_acknowledgments": 0,
+        "read_acknowledgments_enabled": false,
+        "rooms": 1,
+        "sender_p99_ms": 11.517541,
+        "setup_read_ack_counts": [
+          0
+        ],
+        "total_frame_deliveries": 328,
+        "write_counts": [
+          82
+        ]
+      },
+      "before_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 141,
+        "integrity": "ok"
+      },
+      "after_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 141,
+        "integrity": "ok"
+      },
+      "restart_source": "object store with runtime directory removed"
+    },
+    {
+      "engine": "wasm-v8",
+      "response_checks": 716,
+      "websocket": {
+        "broadcast_deliveries": 243,
+        "deliveries_per_s": 646.2110719184318,
+        "elapsed_s": 0.501384167,
+        "errors": [],
+        "listeners_per_room": 3,
+        "messages": 81,
+        "messages_per_s": 161.55276797960795,
+        "p50_ms": 6.05425,
+        "p99_ms": 10.5045,
+        "read_ack_counts": [
+          0
+        ],
+        "read_acknowledgments": 0,
+        "read_acknowledgments_enabled": false,
+        "rooms": 1,
+        "sender_p99_ms": 10.5045,
+        "setup_read_ack_counts": [
+          0
+        ],
+        "total_frame_deliveries": 324,
+        "write_counts": [
+          81
+        ]
+      },
+      "before_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 140,
+        "integrity": "ok"
+      },
+      "after_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 140,
+        "integrity": "ok"
+      },
+      "restart_source": "object store with runtime directory removed"
+    },
+    {
+      "engine": "wasm-js",
+      "response_checks": 716,
+      "websocket": {
+        "broadcast_deliveries": 222,
+        "deliveries_per_s": 588.4758148955129,
+        "elapsed_s": 0.502994333,
+        "errors": [],
+        "listeners_per_room": 3,
+        "messages": 74,
+        "messages_per_s": 147.11895372387823,
+        "p50_ms": 6.824,
+        "p99_ms": 12.476208,
+        "read_ack_counts": [
+          0
+        ],
+        "read_acknowledgments": 0,
+        "read_acknowledgments_enabled": false,
+        "rooms": 1,
+        "sender_p99_ms": 12.476083,
+        "setup_read_ack_counts": [
+          0
+        ],
+        "total_frame_deliveries": 296,
+        "write_counts": [
+          74
+        ]
+      },
+      "before_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 133,
+        "integrity": "ok"
+      },
+      "after_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 133,
+        "integrity": "ok"
+      },
+      "restart_source": "object store with runtime directory removed"
+    },
+    {
+      "engine": "scriptc-wasm",
+      "response_checks": 716,
+      "websocket": {
+        "broadcast_deliveries": 234,
+        "deliveries_per_s": 618.9783831223243,
+        "elapsed_s": 0.504056375,
+        "errors": [],
+        "listeners_per_room": 3,
+        "messages": 78,
+        "messages_per_s": 154.74459578058108,
+        "p50_ms": 6.266083,
+        "p99_ms": 12.890375,
+        "read_ack_counts": [
+          0
+        ],
+        "read_acknowledgments": 0,
+        "read_acknowledgments_enabled": false,
+        "rooms": 1,
+        "sender_p99_ms": 12.890333,
+        "setup_read_ack_counts": [
+          0
+        ],
+        "total_frame_deliveries": 312,
+        "write_counts": [
+          78
+        ]
+      },
+      "before_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 137,
+        "integrity": "ok"
+      },
+      "after_restart": {
+        "rooms": 50,
+        "seed_messages": 50000,
+        "posts": 137,
+        "integrity": "ok"
+      },
+      "restart_source": "object store with runtime directory removed"
+    }
+  ]
+}

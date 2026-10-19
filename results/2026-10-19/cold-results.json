@@ -1,0 +1,842 @@
+{
+  "complete": true,
+  "sources": {
+    ".build/host-target/release/celld": "7caa6e1a3e9984d1cd44b04b60bdf7a4a50dba1e15ceeb68973174a182c62fbd",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "f2c72ca2cf4e39ef5d44e52aa8e27c5fe343348f2dfed6a6d2a4ad288ff80b08",
+    ".build/load-target/release/workers-chat-load": "e12b6c1f34057fa24a3b77c147ce5f33718b42d1b5066aabfb005d620d9f6f79",
+    ".build/load-target/release/workers-chat-ws": "aec382e86a71dbeb85e7696f50428596f8ae4ad02a16ac352e7c833e101a40f9",
+    "experiments/scriptc/.build/chat.wasm": "df292e1b9d13b32a3ab059875825b35efcbaa9cc4b9dfc4ff9a12ae68247b5c8",
+    "host.rs": "9f6fe6da9a775fbc90efdc7030a7b1f9f50b819b4fffbb759324252efb84dc71",
+    "experiments/scriptc/celld/host.rs": "0c35c46574b7b53479ec7d677169056cec400d0e5968457c57ff2cdc1bc35890",
+    "app/src/lib.rs": "b65c32868864cf26348df1d4424e3c20c1c9ccf588168364c25d6c347fccf3c3",
+    "app/sql.json": "c3eb137a07bbe7bd4e206d08893fa0a18fafa75aa25601060f2be6be0c0e4f6c",
+    "app/schema.json": "66c52aa1b2aea84d4c4c6c3c92f511916c7e7807bf9f38213587af0c7e2915b7",
+    "application/worker.js": "440301986d0859fb179f464e2eca774b326d458ad667a14f2e880c3464fbe343",
+    "application/wasm-worker.js": "caf4be1804a9105c2f8b945ef7c41aa29314c8b9220d129ab5338927fadb9a03",
+    "application/index.html": "559661c6b9e32fe4ca1818963f7b18aa7b163e540d754f18c8022715c85ff08b",
+    "application/wrangler.jsonc": "1ba7823fcb23b29ce1b7b0e6a47d4c2875f15e54efdc8285f3a528c335b9cf3a",
+    "guest/src/lib.rs": "52af8d0a3b7ccb10101769256b58d96191241fb6300ae50ae3cadd17d3f430a8",
+    "guest/.cargo/config.toml": "2511de2ff0bf0f36f53f46cd26193fe7202f0be861c8e00ff02824012198f9d4",
+    "load/src/main.rs": "30b3b67f872beefa0d84108cb78d4180b7a23bdc529b694c3cb4fbea96c24dd7",
+    "load/src/ws.rs": "b7c865e751f0b7f110a1c18532a3e12c88c9f3c9c9348d7a0759ff5a1ad3edd0",
+    "app/Cargo.toml": "d29a4e480fda0177222c3025e24c5528f696cabff19a35fbe1d53a9163056320",
+    "app/Cargo.lock": "d01d01fa46e5acb67bb611c85a631f7f80863f275563caf49140b998cc67b4e3",
+    "guest/Cargo.toml": "51d1df7fa66c1f170c933d9489071e3595418fa0a79e14a2695fa035d072595b",
+    "guest/Cargo.lock": "33261853b36859e4f27d7b22c295638aea9f9473e4637f2a98bf316e32f713f8",
+    "load/Cargo.toml": "e01830ab0636a1352072795211c7cfc8deab1080a523e3b6abb10ba001245fdc",
+    "load/Cargo.lock": "2893c1b0fd234277665da158fb2579d0099ffbce8526b9eef74da5c02468fb8f",
+    "bench/run.py": "7cdf8363a010d9fb01017d429de2bd744c9b1b793a0843d9ee2fab14fcca6e31",
+    "bench/fixture.py": "a6521cae7fe6e87dcf2f22ba33f82718c55b00471a8d7849584b2bf617bdd526",
+    "bench/metrics.py": "b2e17183e967460118e0f03e7ef78ca4c3889c3e2b8f5b1b853b883a5b49ca4e",
+    "bench/build.py": "a9daf1b805179847c058e97da8b089831662c7e0328e89d4542aec46abb02e43",
+    "celld.json": "581e2584bb752f14b39e062088f991af194f60abe0130dec1f22b7f9d898abb2",
+    "patches/celld.patch": "c6cdd1c089a0df6f2e8031083aeefe088efb9f8ad0188b8bb4b177c0af0e8fb2",
+    "rust-toolchain.toml": "23794dfc365530e7749b589631e09db35dfbcc58e79b21b4185622406587fe84",
+    "package.json": "4daef5d3b7a2b9a20f0ded2a6208b148314144c5df6f2fa71292d6c5341ac778",
+    "pnpm-lock.yaml": "d5b901396cb4e334eeb7d25a9f047ff2291d5a4fbf8cd5823d4952512a7e9d8e",
+    ".build/build.json": "47cec0b85818fb112273850d9447ded69b39a2043bb57fb4440554aa86f91d2c",
+    "experiments/scriptc/celld/app.ts": "317b5029719048fb0ab32bd4be8398807c5fe32c4eb2d647b4e7f155b0834f71",
+    "experiments/scriptc/celld/data.ts": "446cd0352f08a43b92b44fc886ebe7b83c648fec7d5a4115c935b72ffb61779e",
+    "experiments/scriptc/celld/wasm.json": "425ee878e112dfba3dcdb9ed0e77bc5c5bd222475233d06533137b3d7c855b65",
+    "experiments/scriptc/celld/build.py": "dcf75625c083de97ecf2dfc0aff569001b6400e2a4578624179af450eac81b8d",
+    "experiments/scriptc/celld/run.py": "9440566879a23ccbb0fa33d2197b4c3505050e8d151308f3d055b48f23eb73bb",
+    "experiments/scriptc/results/toolchain.json": "b91d56fda44fda44bafa80ec6a0ddf8d38b2c9f3d33bf310516d4bba0eba434f",
+    "experiments/scriptc/.build/celld-build.json": "a1882b98b9d144b4133cc709ebc892659936f7ca7ba6806e77eab5551038b0bc",
+    ".build/celld/crates/celld/js.rs": "1f70ffa748c75e742a2e77d1eacc91dd21f08baa306055eb12805d520fbb5149",
+    ".build/celld/crates/celld/runtime.rs": "108c40abf09b40ea122c30da8fa0203c60ef291a4fae0c64813c12762cf312f6",
+    ".build/celld/crates/celld/lib.rs": "b8e96798d1b5c580ccc54a54846387d78cadfce4bbaed9457d8b6954ddd2019f",
+    ".build/celld/Cargo.toml": "cce35295402aaf564c393483d1a94e9215c0765a135e138e86f025fea0b49423",
+    ".build/celld/crates/celld/Cargo.toml": "e7c215289b8f6d4fdec3c40a1bcaae842373a906b3cee78f6cf2b60b477f9f76",
+    ".build/celld/Cargo.lock": "32026828bdd14ac63510f9fc2e04d3837e6d07042a111ad27add387f9383b14d"
+  },
+  "source_snapshot": "sources",
+  "recorded_only": {
+    ".build/host-target/release/celld": "Measured binary digest; rebuild from source.",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/workers-chat-load": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/workers-chat-ws": "Measured binary digest; rebuild from source.",
+    "experiments/scriptc/.build/chat.wasm": "Measured binary digest; rebuild from source."
+  },
+  "trials": [
+    {
+      "engine": "js",
+      "trial": 0,
+      "process_to_root_ms": 271.0079997777939,
+      "first_room_ms": 34.25766620784998,
+      "process_to_first_page_ms": 305.27208279818296,
+      "memory": {
+        "user_ns": 163337041,
+        "system_ns": 98766416,
+        "rss_bytes": 76431360,
+        "footprint_bytes": 41175368
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 0,
+      "process_to_root_ms": 315.35600032657385,
+      "first_room_ms": 25.586875155568123,
+      "process_to_first_page_ms": 340.96425026655197,
+      "memory": {
+        "user_ns": 206101208,
+        "system_ns": 107531875,
+        "rss_bytes": 60407808,
+        "footprint_bytes": 35619608
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 0,
+      "process_to_root_ms": 241.07241723686457,
+      "first_room_ms": 23.15362449735403,
+      "process_to_first_page_ms": 264.24525026232004,
+      "memory": {
+        "user_ns": 135268708,
+        "system_ns": 94065166,
+        "rss_bytes": 46448640,
+        "footprint_bytes": 26166016
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 0,
+      "process_to_root_ms": 250.4058750346303,
+      "first_room_ms": 25.07374994456768,
+      "process_to_first_page_ms": 275.50141606479883,
+      "memory": {
+        "user_ns": 142484250,
+        "system_ns": 107754208,
+        "rss_bytes": 59768832,
+        "footprint_bytes": 32507584
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 0,
+      "process_to_root_ms": 257.2400001809001,
+      "first_room_ms": 34.7893750295043,
+      "process_to_first_page_ms": 292.04995930194855,
+      "memory": {
+        "user_ns": 167267875,
+        "system_ns": 108388625,
+        "rss_bytes": 80347136,
+        "footprint_bytes": 44239200
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 0,
+      "process_to_root_ms": 408.9688751846552,
+      "first_room_ms": 24.843333289027214,
+      "process_to_first_page_ms": 433.82908403873444,
+      "memory": {
+        "user_ns": 304643000,
+        "system_ns": 98414416,
+        "rss_bytes": 69664768,
+        "footprint_bytes": 44942128
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 1,
+      "process_to_root_ms": 306.07633478939533,
+      "first_room_ms": 21.611792035400867,
+      "process_to_first_page_ms": 327.7037926018238,
+      "memory": {
+        "user_ns": 200194250,
+        "system_ns": 88545250,
+        "rss_bytes": 57720832,
+        "footprint_bytes": 32965424
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 1,
+      "process_to_root_ms": 258.5818748921156,
+      "first_room_ms": 25.913584046065807,
+      "process_to_first_page_ms": 284.53312534838915,
+      "memory": {
+        "user_ns": 141324000,
+        "system_ns": 93933416,
+        "rss_bytes": 46039040,
+        "footprint_bytes": 25772800
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 1,
+      "process_to_root_ms": 240.90516567230225,
+      "first_room_ms": 23.04374985396862,
+      "process_to_first_page_ms": 263.9666246250272,
+      "memory": {
+        "user_ns": 140524875,
+        "system_ns": 90634375,
+        "rss_bytes": 59342848,
+        "footprint_bytes": 32196192
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 1,
+      "process_to_root_ms": 268.63525062799454,
+      "first_room_ms": 43.45179162919521,
+      "process_to_first_page_ms": 312.113125808537,
+      "memory": {
+        "user_ns": 173975041,
+        "system_ns": 100699166,
+        "rss_bytes": 78544896,
+        "footprint_bytes": 42584464
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 1,
+      "process_to_root_ms": 416.5197080001235,
+      "first_room_ms": 23.610499687492847,
+      "process_to_first_page_ms": 440.14620780944824,
+      "memory": {
+        "user_ns": 308028583,
+        "system_ns": 104780125,
+        "rss_bytes": 69173248,
+        "footprint_bytes": 44450608
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 1,
+      "process_to_root_ms": 257.4702091515064,
+      "first_room_ms": 31.646625138819218,
+      "process_to_first_page_ms": 289.1336251050234,
+      "memory": {
+        "user_ns": 162710541,
+        "system_ns": 79770291,
+        "rss_bytes": 76480512,
+        "footprint_bytes": 41109856
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 2,
+      "process_to_root_ms": 251.11200008541346,
+      "first_room_ms": 22.68462534993887,
+      "process_to_first_page_ms": 273.8188337534666,
+      "memory": {
+        "user_ns": 138080333,
+        "system_ns": 95143041,
+        "rss_bytes": 44384256,
+        "footprint_bytes": 24085224
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 2,
+      "process_to_root_ms": 271.6466663405299,
+      "first_room_ms": 42.82800015062094,
+      "process_to_first_page_ms": 314.4965833052993,
+      "memory": {
+        "user_ns": 151654958,
+        "system_ns": 101895000,
+        "rss_bytes": 59654144,
+        "footprint_bytes": 32343696
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 2,
+      "process_to_root_ms": 278.12520787119865,
+      "first_room_ms": 33.500208519399166,
+      "process_to_first_page_ms": 311.64641585201025,
+      "memory": {
+        "user_ns": 171633333,
+        "system_ns": 115613166,
+        "rss_bytes": 79446016,
+        "footprint_bytes": 43387208
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 2,
+      "process_to_root_ms": 417.19608288258314,
+      "first_room_ms": 24.049666710197926,
+      "process_to_first_page_ms": 441.2617078050971,
+      "memory": {
+        "user_ns": 306472000,
+        "system_ns": 104324750,
+        "rss_bytes": 69287936,
+        "footprint_bytes": 44581704
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 2,
+      "process_to_root_ms": 253.60970757901669,
+      "first_room_ms": 30.002000741660595,
+      "process_to_first_page_ms": 283.6274169385433,
+      "memory": {
+        "user_ns": 160603333,
+        "system_ns": 107843875,
+        "rss_bytes": 76922880,
+        "footprint_bytes": 41666936
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 2,
+      "process_to_root_ms": 312.9821252077818,
+      "first_room_ms": 23.861334659159184,
+      "process_to_first_page_ms": 336.89325023442507,
+      "memory": {
+        "user_ns": 204103166,
+        "system_ns": 80019541,
+        "rss_bytes": 56836096,
+        "footprint_bytes": 32047872
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 3,
+      "process_to_root_ms": 268.87962501496077,
+      "first_room_ms": 30.364375561475754,
+      "process_to_first_page_ms": 299.2635425180197,
+      "memory": {
+        "user_ns": 152239416,
+        "system_ns": 84910625,
+        "rss_bytes": 58966016,
+        "footprint_bytes": 31590056
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 3,
+      "process_to_root_ms": 269.3952498957515,
+      "first_room_ms": 36.92679200321436,
+      "process_to_first_page_ms": 306.3380839303136,
+      "memory": {
+        "user_ns": 171425708,
+        "system_ns": 104678000,
+        "rss_bytes": 79413248,
+        "footprint_bytes": 43387256
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 3,
+      "process_to_root_ms": 413.48550003021955,
+      "first_room_ms": 23.835417814552784,
+      "process_to_first_page_ms": 437.3431671410799,
+      "memory": {
+        "user_ns": 306741583,
+        "system_ns": 102066291,
+        "rss_bytes": 69894144,
+        "footprint_bytes": 45171504
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 3,
+      "process_to_root_ms": 248.82862530648708,
+      "first_room_ms": 34.96237471699715,
+      "process_to_first_page_ms": 283.80758315324783,
+      "memory": {
+        "user_ns": 160773250,
+        "system_ns": 92720750,
+        "rss_bytes": 75890688,
+        "footprint_bytes": 40634696
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 3,
+      "process_to_root_ms": 305.46062532812357,
+      "first_room_ms": 23.768833838403225,
+      "process_to_first_page_ms": 329.25149984657764,
+      "memory": {
+        "user_ns": 202311500,
+        "system_ns": 92521791,
+        "rss_bytes": 57458688,
+        "footprint_bytes": 32719688
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 3,
+      "process_to_root_ms": 234.31920818984509,
+      "first_room_ms": 21.065332926809788,
+      "process_to_first_page_ms": 255.39908278733492,
+      "memory": {
+        "user_ns": 134469750,
+        "system_ns": 104644375,
+        "rss_bytes": 46071808,
+        "footprint_bytes": 25805568
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 4,
+      "process_to_root_ms": 256.0754995793104,
+      "first_room_ms": 34.25295930355787,
+      "process_to_first_page_ms": 290.34858383238316,
+      "memory": {
+        "user_ns": 166242583,
+        "system_ns": 110722875,
+        "rss_bytes": 79347712,
+        "footprint_bytes": 43338128
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 4,
+      "process_to_root_ms": 407.91604202240705,
+      "first_room_ms": 27.914125472307205,
+      "process_to_first_page_ms": 435.8500838279724,
+      "memory": {
+        "user_ns": 304896458,
+        "system_ns": 85659666,
+        "rss_bytes": 69697536,
+        "footprint_bytes": 44974896
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 4,
+      "process_to_root_ms": 259.33854188770056,
+      "first_room_ms": 28.960833325982094,
+      "process_to_first_page_ms": 288.32270856946707,
+      "memory": {
+        "user_ns": 163685041,
+        "system_ns": 100694583,
+        "rss_bytes": 75317248,
+        "footprint_bytes": 40044824
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 4,
+      "process_to_root_ms": 304.8712909221649,
+      "first_room_ms": 23.05504120886326,
+      "process_to_first_page_ms": 327.9424998909235,
+      "memory": {
+        "user_ns": 202009541,
+        "system_ns": 94579708,
+        "rss_bytes": 57344000,
+        "footprint_bytes": 32555800
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 4,
+      "process_to_root_ms": 243.325375020504,
+      "first_room_ms": 23.886832408607006,
+      "process_to_first_page_ms": 267.23212469369173,
+      "memory": {
+        "user_ns": 139561250,
+        "system_ns": 104231291,
+        "rss_bytes": 46235648,
+        "footprint_bytes": 25953024
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 4,
+      "process_to_root_ms": 259.73591580986977,
+      "first_room_ms": 22.64662552624941,
+      "process_to_first_page_ms": 282.3981661349535,
+      "memory": {
+        "user_ns": 146656083,
+        "system_ns": 87795083,
+        "rss_bytes": 57360384,
+        "footprint_bytes": 30066344
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 5,
+      "process_to_root_ms": 431.17562495172024,
+      "first_room_ms": 26.391291990876198,
+      "process_to_first_page_ms": 457.5842097401619,
+      "memory": {
+        "user_ns": 315453458,
+        "system_ns": 109888625,
+        "rss_bytes": 72630272,
+        "footprint_bytes": 47907632
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 5,
+      "process_to_root_ms": 250.66837575286627,
+      "first_room_ms": 28.906541876494884,
+      "process_to_first_page_ms": 279.597083106637,
+      "memory": {
+        "user_ns": 162010833,
+        "system_ns": 89266000,
+        "rss_bytes": 75808768,
+        "footprint_bytes": 40700256
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 5,
+      "process_to_root_ms": 311.5228330716491,
+      "first_room_ms": 23.282166570425034,
+      "process_to_first_page_ms": 334.8434576764703,
+      "memory": {
+        "user_ns": 204201375,
+        "system_ns": 91920166,
+        "rss_bytes": 57671680,
+        "footprint_bytes": 32932680
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 5,
+      "process_to_root_ms": 236.47487442940474,
+      "first_room_ms": 23.983292281627655,
+      "process_to_first_page_ms": 260.47583390027285,
+      "memory": {
+        "user_ns": 134959125,
+        "system_ns": 102022333,
+        "rss_bytes": 46612480,
+        "footprint_bytes": 26329856
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 5,
+      "process_to_root_ms": 238.05220890790224,
+      "first_room_ms": 23.557500913739204,
+      "process_to_first_page_ms": 261.62920892238617,
+      "memory": {
+        "user_ns": 139631333,
+        "system_ns": 95174208,
+        "rss_bytes": 58687488,
+        "footprint_bytes": 31458960
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 5,
+      "process_to_root_ms": 271.06558345258236,
+      "first_room_ms": 36.66529152542353,
+      "process_to_first_page_ms": 307.7468750998378,
+      "memory": {
+        "user_ns": 170624416,
+        "system_ns": 109343291,
+        "rss_bytes": 78544896,
+        "footprint_bytes": 42535312
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 6,
+      "process_to_root_ms": 260.93616615980864,
+      "first_room_ms": 30.137458816170692,
+      "process_to_first_page_ms": 291.09624959528446,
+      "memory": {
+        "user_ns": 164109708,
+        "system_ns": 100155666,
+        "rss_bytes": 76660736,
+        "footprint_bytes": 41404768
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 6,
+      "process_to_root_ms": 358.35462529212236,
+      "first_room_ms": 23.418374359607697,
+      "process_to_first_page_ms": 381.79016672074795,
+      "memory": {
+        "user_ns": 209351708,
+        "system_ns": 92644791,
+        "rss_bytes": 58163200,
+        "footprint_bytes": 33407792
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 6,
+      "process_to_root_ms": 241.21375009417534,
+      "first_room_ms": 22.377749904990196,
+      "process_to_first_page_ms": 263.60800024122,
+      "memory": {
+        "user_ns": 134778750,
+        "system_ns": 96692333,
+        "rss_bytes": 48660480,
+        "footprint_bytes": 28377832
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 6,
+      "process_to_root_ms": 256.2432922422886,
+      "first_room_ms": 24.547042325139046,
+      "process_to_first_page_ms": 280.80970887094736,
+      "memory": {
+        "user_ns": 142822083,
+        "system_ns": 96103416,
+        "rss_bytes": 57704448,
+        "footprint_bytes": 30525072
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 6,
+      "process_to_root_ms": 258.84941779077053,
+      "first_room_ms": 40.308875031769276,
+      "process_to_first_page_ms": 299.18137565255165,
+      "memory": {
+        "user_ns": 169905500,
+        "system_ns": 115900250,
+        "rss_bytes": 81772544,
+        "footprint_bytes": 45730144
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 6,
+      "process_to_root_ms": 412.0531249791384,
+      "first_room_ms": 24.369957856833935,
+      "process_to_first_page_ms": 436.43970787525177,
+      "memory": {
+        "user_ns": 306836208,
+        "system_ns": 105216958,
+        "rss_bytes": 69844992,
+        "footprint_bytes": 45122352
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 7,
+      "process_to_root_ms": 306.73995800316334,
+      "first_room_ms": 20.962500013411045,
+      "process_to_first_page_ms": 327.7208749204874,
+      "memory": {
+        "user_ns": 201264833,
+        "system_ns": 109586958,
+        "rss_bytes": 57901056,
+        "footprint_bytes": 33162056
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 7,
+      "process_to_root_ms": 250.02404116094112,
+      "first_room_ms": 23.898917250335217,
+      "process_to_first_page_ms": 273.94120767712593,
+      "memory": {
+        "user_ns": 139445125,
+        "system_ns": 88974750,
+        "rss_bytes": 45465600,
+        "footprint_bytes": 25182976
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 7,
+      "process_to_root_ms": 252.8719576075673,
+      "first_room_ms": 27.770083397626877,
+      "process_to_first_page_ms": 280.6575410068035,
+      "memory": {
+        "user_ns": 145101250,
+        "system_ns": 102076750,
+        "rss_bytes": 59490304,
+        "footprint_bytes": 32147016
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 7,
+      "process_to_root_ms": 267.7302910014987,
+      "first_room_ms": 35.63624992966652,
+      "process_to_first_page_ms": 303.38199995458126,
+      "memory": {
+        "user_ns": 171322000,
+        "system_ns": 101095291,
+        "rss_bytes": 79282176,
+        "footprint_bytes": 43239776
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 7,
+      "process_to_root_ms": 404.94974981993437,
+      "first_room_ms": 24.03087541460991,
+      "process_to_first_page_ms": 428.9961252361536,
+      "memory": {
+        "user_ns": 302584083,
+        "system_ns": 112985875,
+        "rss_bytes": 69795840,
+        "footprint_bytes": 45089608
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 7,
+      "process_to_root_ms": 282.9703325405717,
+      "first_room_ms": 36.563375033438206,
+      "process_to_first_page_ms": 319.55420784652233,
+      "memory": {
+        "user_ns": 166418625,
+        "system_ns": 108145458,
+        "rss_bytes": 76414976,
+        "footprint_bytes": 41126192
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 8,
+      "process_to_root_ms": 233.63550007343292,
+      "first_room_ms": 20.067207515239716,
+      "process_to_first_page_ms": 253.72058246284723,
+      "memory": {
+        "user_ns": 132910250,
+        "system_ns": 99800041,
+        "rss_bytes": 44515328,
+        "footprint_bytes": 24216296
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 8,
+      "process_to_root_ms": 240.34966714680195,
+      "first_room_ms": 24.421832524240017,
+      "process_to_first_page_ms": 264.79204185307026,
+      "memory": {
+        "user_ns": 138395791,
+        "system_ns": 96919500,
+        "rss_bytes": 59523072,
+        "footprint_bytes": 32196192
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 8,
+      "process_to_root_ms": 258.37158411741257,
+      "first_room_ms": 35.425083711743355,
+      "process_to_first_page_ms": 293.8123755156994,
+      "memory": {
+        "user_ns": 166558166,
+        "system_ns": 113309958,
+        "rss_bytes": 78331904,
+        "footprint_bytes": 42289504
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 8,
+      "process_to_root_ms": 403.66558264940977,
+      "first_room_ms": 25.50362516194582,
+      "process_to_first_page_ms": 429.18374948203564,
+      "memory": {
+        "user_ns": 301253833,
+        "system_ns": 93754791,
+        "rss_bytes": 69582848,
+        "footprint_bytes": 44876592
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 8,
+      "process_to_root_ms": 253.14637552946806,
+      "first_room_ms": 31.40566684305668,
+      "process_to_first_page_ms": 284.5733752474189,
+      "memory": {
+        "user_ns": 161036291,
+        "system_ns": 99295125,
+        "rss_bytes": 76087296,
+        "footprint_bytes": 40847712
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 8,
+      "process_to_root_ms": 309.6869168803096,
+      "first_room_ms": 23.30637536942959,
+      "process_to_first_page_ms": 333.0072080716491,
+      "memory": {
+        "user_ns": 204003958,
+        "system_ns": 109715000,
+        "rss_bytes": 57851904,
+        "footprint_bytes": 33080112
+      }
+    },
+    {
+      "engine": "wasm-v8",
+      "trial": 9,
+      "process_to_root_ms": 242.37154237926006,
+      "first_room_ms": 22.414082661271095,
+      "process_to_first_page_ms": 264.8010002449155,
+      "memory": {
+        "user_ns": 141495083,
+        "system_ns": 94682875,
+        "rss_bytes": 59490304,
+        "footprint_bytes": 32261752
+      }
+    },
+    {
+      "engine": "wasm-js",
+      "trial": 9,
+      "process_to_root_ms": 264.0088750049472,
+      "first_room_ms": 38.87983225286007,
+      "process_to_first_page_ms": 302.90462449193,
+      "memory": {
+        "user_ns": 168370916,
+        "system_ns": 97448250,
+        "rss_bytes": 79511552,
+        "footprint_bytes": 43518352
+      }
+    },
+    {
+      "engine": "scriptc-wasm",
+      "trial": 9,
+      "process_to_root_ms": 413.19204214960337,
+      "first_room_ms": 23.58991652727127,
+      "process_to_first_page_ms": 436.7950838059187,
+      "memory": {
+        "user_ns": 308715750,
+        "system_ns": 109194625,
+        "rss_bytes": 69697536,
+        "footprint_bytes": 44991280
+      }
+    },
+    {
+      "engine": "js",
+      "trial": 9,
+      "process_to_root_ms": 263.4169580414891,
+      "first_room_ms": 31.058083288371563,
+      "process_to_first_page_ms": 294.49137579649687,
+      "memory": {
+        "user_ns": 165931666,
+        "system_ns": 97204625,
+        "rss_bytes": 76595200,
+        "footprint_bytes": 41503096
+      }
+    },
+    {
+      "engine": "wasm",
+      "trial": 9,
+      "process_to_root_ms": 353.11658307909966,
+      "first_room_ms": 25.514916516840458,
+      "process_to_first_page_ms": 378.647499717772,
+      "memory": {
+        "user_ns": 221522291,
+        "system_ns": 102662958,
+        "rss_bytes": 57851904,
+        "footprint_bytes": 33096496
+      }
+    },
+    {
+      "engine": "native",
+      "trial": 9,
+      "process_to_root_ms": 243.52545849978924,
+      "first_room_ms": 23.64212553948164,
+      "process_to_first_page_ms": 267.1822924166918,
+      "memory": {
+        "user_ns": 134837000,
+        "system_ns": 109631416,
+        "rss_bytes": 46055424,
+        "footprint_bytes": 25756392
+      }
+    }
+  ]
+}

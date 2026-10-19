@@ -27,7 +27,9 @@ REPO = CELLD_SOURCE
 RUNS = ROOT / ".runs/current"
 PROJECT = RUNS / "app"
 STATE = PROJECT / ".celld/dev"
-ENGINES = ["js", "wasm", "native", "wasm-v8", "wasm-js"]
+ENGINES = ["js", "wasm", "native", "wasm-v8", "wasm-js", "scriptc-wasm"]
+TS_GUEST = ROOT / "experiments/scriptc/.build/chat.wasm"
+MEASURED_BINARIES = [*BINARIES, TS_GUEST]
 CASES = ["uncached-html", "uncached-json", "cached-html", "post", "mixed"]
 WS_TEXT = "WebSocket pressure: 你好 👋 <b>& text</b>"
 
@@ -45,7 +47,7 @@ def env(engine):
     values.update({"CELLD_ESBUILD": ESBUILD, "CELLD_TOKIO_THREADS": "1", "CELLD_MAX_STATELESS_ISOLATES": "1", "CELLD_MAX_CELL_REQUESTS": "256",
                    "CELLD_NODE": "workers-chat-local", "CELLD_INTERNAL_DEV_STORE": str(STATE / "objects.sqlite3"),
                    "CELLD_WATCH": str(STATE / "runtime"), "WORKERS_CHAT_ENGINE": "wasm" if engine == "wasm-cached" else engine,
-                   "WORKERS_CHAT_WASM": str(GUEST), "RUST_LOG": "error"})
+                   "WORKERS_CHAT_WASM": str(GUEST), "WORKERS_CHAT_TS_WASM": str(TS_GUEST), "RUST_LOG": "error"})
     if engine == "wasm-cached":
         values["WORKERS_CHAT_COMPILE_CACHE"] = str(RUNS / "wasmtime-cache")
     for key in ("AWS_DEFAULT_REGION", "AWS_REGION", "S3_ENDPOINT"):
@@ -403,7 +405,7 @@ def timed(engine,case,concurrency,trial,seconds,rooms=None,listeners=None):
 
 
 def sources():
-    paths=BINARIES + [ROOT/name for name in (
+    paths=MEASURED_BINARIES + [ROOT/name for name in (
         "host.rs", "experiments/scriptc/celld/host.rs", "app/src/lib.rs", "app/sql.json", "app/schema.json",
         "application/worker.js", "application/wasm-worker.js", "application/index.html", "application/wrangler.jsonc",
         "guest/src/lib.rs", "guest/.cargo/config.toml", "load/src/main.rs", "load/src/ws.rs",
@@ -411,6 +413,10 @@ def sources():
         "load/Cargo.toml", "load/Cargo.lock", "bench/run.py", "bench/fixture.py",
         "bench/metrics.py", "bench/build.py", "celld.json", "patches/celld.patch",
         "rust-toolchain.toml", "package.json", "pnpm-lock.yaml", ".build/build.json",
+        "experiments/scriptc/celld/app.ts", "experiments/scriptc/celld/data.ts",
+        "experiments/scriptc/celld/wasm.json", "experiments/scriptc/celld/build.py",
+        "experiments/scriptc/celld/run.py", "experiments/scriptc/results/toolchain.json",
+        "experiments/scriptc/.build/celld-build.json",
     )] + [REPO/name for name in (
         "crates/celld/js.rs", "crates/celld/runtime.rs", "crates/celld/lib.rs",
         "Cargo.toml", "crates/celld/Cargo.toml", "Cargo.lock",
@@ -421,13 +427,13 @@ def sources():
 def provenance():
     hashes=sources()
     for path in hashes:
-        if ROOT/path in BINARIES:
+        if ROOT/path in MEASURED_BINARIES:
             continue
         target=RUNS/"sources"/path
         target.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(ROOT/path,target)
     return {"sources":hashes,"source_snapshot":"sources",
-            "recorded_only":{str(p.relative_to(ROOT)):"Measured binary digest; rebuild from source." for p in BINARIES}}
+            "recorded_only":{str(p.relative_to(ROOT)):"Measured binary digest; rebuild from source." for p in MEASURED_BINARIES}}
 
 
 def benchmark(seconds,rounds,concurrencies):
@@ -514,7 +520,7 @@ def cold_cache(rounds):
         assert population["wasmtime"]["cache_enabled"]
         assert population["wasmtime"]["cache_hits"] == 0 and population["wasmtime"]["cache_misses"] == 1
         result["cache_population"] = population
-        engines = ["js", "wasm", "wasm-cached", "native", "wasm-v8", "wasm-js"]
+        engines = ["js", "wasm", "wasm-cached", "native", "wasm-v8", "wasm-js", "scriptc-wasm"]
         for trial in range(rounds):
             order = engines[trial % len(engines):] + engines[:trial % len(engines)]
             for engine in order:
@@ -544,6 +550,10 @@ def main():
     parser.add_argument("--concurrencies",default="1,32,128")
     args=parser.parse_args()
     check_build()
+    manifest = json.loads((ROOT / "experiments/scriptc/.build/celld-build.json").read_text())
+    for relative, expected in {**manifest["inputs"], **manifest["binaries"]}.items():
+        if digest(ROOT / relative) != expected:
+            raise RuntimeError(f"Changed scriptc build input: {relative}; run python3 experiments/scriptc/celld/build.py")
     RUNS.mkdir(parents=True,exist_ok=True)
     if args.phase in ("prepare","all"):prepare()
     if args.phase in ("validate","all"):validate()

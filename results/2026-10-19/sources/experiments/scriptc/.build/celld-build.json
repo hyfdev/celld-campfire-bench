@@ -1,0 +1,32 @@
+{
+  "compiler": "0.3.6",
+  "toolchain": {
+    "scriptc_version": "0.3.6",
+    "scriptc_release_source_revision": "fab1a29b333047bf799f6ff498100176c00bb7b7",
+    "scriptc_archive_sha256": "d8c33e7601a712297417c4589b66ece9007fce3b86f35a7fd20cd99339cae172",
+    "runtime_package": "@scriptc/runtime-wasm32-wasi@0.3.6",
+    "runtime_archive_sha256": "01f623a23778de9c1e6ade6a28c8acc109862b12ba7d101bcf651d9b1e277c8e",
+    "runtime_archive_matches_registry_sha1": true,
+    "zig": {
+      "tarball": "https://ziglang.org/download/0.16.0/zig-aarch64-macos-0.16.0.tar.xz",
+      "shasum": "b23d70deaa879b5c2d486ed3316f7eaa53e84acf6fc9cc747de152450d401489",
+      "size": "52238004"
+    }
+  },
+  "compiler_sha256": "a5babeeb99492c64c0b273cdae40183877c12e9120801b6c43aa96ba3f5da463",
+  "zig_sha256": "e6cd688d25664983833aae272f501d4bceeae304875b8f1741209d15fd13a4ec",
+  "runtime_pack_sha256": "814880ad7a03e28b22682133ab92fbfa55083dcfe670fb43a288ea1e23ac38bb",
+  "inputs": {
+    "experiments/scriptc/celld/app.ts": "317b5029719048fb0ab32bd4be8398807c5fe32c4eb2d647b4e7f155b0834f71",
+    "experiments/scriptc/celld/data.ts": "446cd0352f08a43b92b44fc886ebe7b83c648fec7d5a4115c935b72ffb61779e",
+    "experiments/scriptc/celld/wasm.json": "425ee878e112dfba3dcdb9ed0e77bc5c5bd222475233d06533137b3d7c855b65",
+    "experiments/scriptc/celld/build.py": "dcf75625c083de97ecf2dfc0aff569001b6400e2a4578624179af450eac81b8d",
+    "experiments/scriptc/celld/run.py": "9440566879a23ccbb0fa33d2197b4c3505050e8d151308f3d055b48f23eb73bb",
+    "app/sql.json": "c3eb137a07bbe7bd4e206d08893fa0a18fafa75aa25601060f2be6be0c0e4f6c",
+    "app/schema.json": "66c52aa1b2aea84d4c4c6c3c92f511916c7e7807bf9f38213587af0c7e2915b7",
+    "application/index.html": "559661c6b9e32fe4ca1818963f7b18aa7b163e540d754f18c8022715c85ff08b"
+  },
+  "binaries": {
+    "experiments/scriptc/.build/chat.wasm": "df292e1b9d13b32a3ab059875825b35efcbaa9cc4b9dfc4ff9a12ae68247b5c8"
+  }
+}

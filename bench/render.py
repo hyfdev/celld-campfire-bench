@@ -5,6 +5,7 @@ LABELS = {
     'wasm-js': 'Rust Wasm / V8 + JS bindings',
     'wasm-v8': 'Rust Wasm / V8 + direct host calls',
     'wasm': 'Rust Wasm / Wasmtime + direct host calls',
+    'scriptc-wasm': 'TypeScript → scriptc Wasm / Wasmtime',
     'native': 'Native Rust',
 }
 
@@ -17,7 +18,8 @@ def compile_cache_results(compile_cache, raw_link):
     data, rows = compile_cache
     labels = {**LABELS,
               'wasm': 'Rust Wasm / Wasmtime: compile at startup',
-              'wasm-cached': 'Rust Wasm / Wasmtime: reuse compiled module'}
+              'wasm-cached': 'Rust Wasm / Wasmtime: reuse compiled module',
+              'scriptc-wasm': 'TypeScript → scriptc Wasm / Wasmtime: compile at startup'}
     baseline = next(r for r in rows if r['engine'] == 'js')
     wasm = next(r for r in rows if r['engine'] == 'wasm')
     cached = next(r for r in rows if r['engine'] == 'wasm-cached')
@@ -134,6 +136,7 @@ def render(raw, cold_data, s, compile_cache=None):
         'wasm-js': 'Rust Wasm in V8 (`v8` crate 152.1.0) | JS Worker entry and JS bindings',
         'wasm-v8': 'Rust Wasm in V8 (`v8` crate 152.1.0) | Rust callbacks through V8; no JS source execution',
         'wasm': 'Rust Wasm in Wasmtime 49.0.0 | Wasm imports calling Rust directly',
+        'scriptc-wasm': 'TypeScript compiled to Wasm with scriptc 0.3.6 in Wasmtime 49.0.0 | Wasm imports calling Rust directly',
         'native': 'The same Rust source compiled natively | Direct Rust calls',
     }
     execution_table = ['| Application runtime | Application code | SQL and WebSocket access |',
@@ -142,6 +145,11 @@ def render(raw, cold_data, s, compile_cache=None):
     bridge = ''
     if 'wasm-js' in engines:
         bridge = ('The **V8 + JS bindings** mode imports the same `.wasm` module through celld\'s standard deployment loader. Its [`JS adapter`](../../application/wasm-worker.js) calls the Wasm entry points from JS Worker and Durable Object handlers; Wasm imports call `ctx.storage.sql.exec()`, SQL cursor wrappers, `getWebSockets()`, and per-socket `send()` in JS. SQL result strings are encoded by celld\'s JS TextEncoder before Wasm reads them; the direct paths transfer them as Rust/UTF-8. The V8 pair shares the engine, module, business logic, and binary data format.\n\n')
+    if 'scriptc-wasm' in engines:
+        report = report.replace('JavaScript, Rust Wasm, and native Rust', 'JavaScript, TypeScript Wasm, Rust Wasm, and native Rust')
+        report = report.replace("only the Rust application's Wasm variants are compiled to Wasm", 'the Wasm variants compile application code to Wasm')
+        report = report.replace('The Wasm build uses', 'The Rust Wasm build uses')
+        bridge += ('The **scriptc Wasm** mode compiles TypeScript Worker and room handlers with scriptc 0.3.6, using its default release optimization and C runtime. Wasmtime runs the application with Rust imports and no JS execution. Requests, actions, SQL parameters, and SQL rows cross the TS/Rust boundary as JSON; SQL response buffers are 4 MiB and linear memory is limited to 128 MiB. It uses the shared SQL, schema, data, and response-cache policy.\n\n')
     for key, text in {'RESULTS_TABLES': '\n'.join(tables),
                       'EXECUTION_TABLE': '\n'.join(execution_table),
                       'JS_BRIDGE_DESCRIPTION': bridge,
@@ -157,7 +165,7 @@ def render(raw, cold_data, s, compile_cache=None):
 
 def readme_results(summary, compile_cache=None):
     engines = tuple(engine for engine in LABELS if any(r['engine'] == engine for r in summary['http']))
-    recorded = 'results/2026-10-16'
+    recorded = 'results/2026-10-19'
 
     def row(case, engine):
         return next(r for r in summary['http'] if (r['case'], r['concurrency'], r['engine']) == (case, 32, engine))
@@ -165,8 +173,8 @@ def readme_results(summary, compile_cache=None):
     columns = '| ' + ' | '.join(LABELS[engine] for engine in engines) + ' |'
     alignment = '| --- | ' + ' | '.join('---:' for _ in engines) + ' |'
     lines = [
-        '## Rust → Wasm', '',
-        'Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64 · 2026-10-16. Medians of three 5-second trials.', '',
+        '## Results', '',
+        'Apple M4 Pro, 48 GiB RAM, macOS 26.5.2 arm64 · 2026-10-19. Medians of three 5-second trials.', '',
         '### Server-rendered HTML (without in-memory page caching): 32 simultaneous clients', '',
         'Each request authenticates a user, checks room membership, and renders the latest 50 messages. Database and operating-system caches remain active.', '',
         '| Application runtime | Total requests/s | CPU use (%; 100% = 1 core) | CPU time/request (µs) | Peak process memory (MiB) | p99 response time (ms) |',
