@@ -23,3 +23,7 @@ lto = "thin"
 [[bin]]
 name = "workers-chat-ws"
 path = "src/ws.rs"
+
+[[bin]]
+name = "campfire-original-load"
+path = "../experiments/basecamp/load.rs"

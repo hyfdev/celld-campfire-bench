@@ -60,6 +60,34 @@ Wasm module compilation/loading: **69.14 ms → 1.05 ms** when reusing compiled 
 [Complete report](results/2026-10-19/REPORT.md) · Raw data: [load tests](results/2026-10-19/results.json), [startup](results/2026-10-19/cold-results.json), [validation](results/2026-10-19/validation.json).
 <!-- benchmark:end -->
 
+<!-- workerd-benchmark:start -->
+### workerd: server-rendered HTML (without in-memory page caching), 32 simultaneous clients
+
+The same chat workload on workerd 2026-10-19, with one shared release build and SQLite seed. Apple M4 Pro, 48 GiB RAM · 2026-10-21. Medians of 3 5-second trials; ratios use this workerd JS baseline.
+
+| Application runtime | Total requests/s | CPU use (%; 100% = 1 core) | CPU time/operation (µs) | Peak process memory (MiB) | p99 response time (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| JavaScript / V8 (baseline) | 4,289 (1.00×) | 101.5 (1.00×) | 236.7 (1.00×) | 177.0 (1.00×) | 12.26 (1.00×) |
+| Rust Wasm / V8 + JS bindings | 3,921 (0.91×) | 101.7 (1.00×) | 259.6 (1.10×) | 205.2 (1.16×) | 16.96 (1.38×) |
+| Rust Wasm / V8 + direct C++ host calls (prototype) | 8,491 (1.98×) | 99.9 (0.98×) | 117.7 (0.50×) | 59.5 (0.34×) | 4.73 (0.39×) |
+
+The direct path is a patched workerd prototype: HTTP → V8 Wasm → C++ host functions → workerd DO storage and WebSockets. It executes no JS application or binding callback. [Complete report and raw data](results/2026-10-21-workerd/REPORT.md) · [Reproduce](experiments/workerd/README.md).
+<!-- workerd-benchmark:end -->
+
+<!-- basecamp-benchmark:start -->
+### Original Basecamp Rust application
+
+The unmodified Basecamp application runs with 32 clients in the same session. Ratios use workerd JS for the corresponding request. The original renders 40 rich-text messages per page; the Workers chat renders 50 plain-text messages. SQL, caching, and write durability also differ, so these are whole-application references.
+
+| Original application operation | Total requests/s | CPU use (%; 100% = 1 core) | CPU time/request (µs) | Peak process memory (MiB) | p99 response time (ms) | Response size (KiB) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Messages HTML; response and fragment caches disabled | 277 (0.06×) | 99.8 (0.98×) | 3,607.3 (15.24×) | 45.6 (0.26×) | 183.33 (14.96×) | 385.0 |
+| Messages HTML; original response and fragment caches enabled | 13,391 (1.23×) | 99.6 (0.98×) | 74.4 (0.80×) | 117.8 (0.35×) | 4.07 (0.30×) | 385.0 |
+| Post a message; original caches enabled | 3,099 (0.49×) | 137.1 (1.49×) | 442.8 (3.04×) | 133.2 (0.57×) | 19.39 (0.71×) | 9.8 |
+
+[Original application report and raw data](results/2026-10-21-basecamp/REPORT.md) · [Reproduce](experiments/basecamp/README.md).
+<!-- basecamp-benchmark:end -->
+
 ## Request and binding paths
 
 | Mode | Application code | SQL and WebSocket access |
@@ -113,10 +141,12 @@ The test uses one node and local persistence. Native Rust runs as trusted code. 
 | `bench/` | Build, data preparation, measurement, and report scripts |
 | `patches/celld.patch` | Integration with the pinned celld source and locked dependencies |
 | `experiments/scriptc/` | TypeScript-to-Wasm chat application, Rust imports, and compiler setup |
+| `experiments/workerd/` | Workerd native Wasm host, build and measurement scripts, and reproduction instructions |
+| `experiments/basecamp/` | Build and measurement scripts for Basecamp's unmodified Rust application |
 | `results/` | Recorded measurements, measured source files, and full reports |
 
 ## References
 
-[Basecamp Campfire](https://github.com/basecamp/once-campfire/tree/edbc779f4dfc9b26c36310881711ddc976a9dfc8) supplies the chat-application reference. [Campfire in Rust](https://github.com/basecamp/once-campfire-rust/tree/6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad) illustrates a native implementation and reproducible application benchmarks. Their published results use different applications, workloads, and hardware. The numbers here compare this celld application under the stated conditions.
+[Basecamp Campfire](https://github.com/basecamp/once-campfire/tree/edbc779f4dfc9b26c36310881711ddc976a9dfc8) supplies the chat-application reference. [Campfire in Rust](https://github.com/basecamp/once-campfire-rust/tree/6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad) supplies the original native application. The celld and workerd tables compare the Workers-style chat workload; the original Basecamp application is measured separately. Basecamp's published results use different workloads and hardware.
 
 Runtime base: [celld v0.6.2](https://github.com/denoland/celld/tree/90b43017241f81189453d326d05948f388b34652). License: [Apache-2.0](LICENSE); see [NOTICE](NOTICE) for retained upstream notices.

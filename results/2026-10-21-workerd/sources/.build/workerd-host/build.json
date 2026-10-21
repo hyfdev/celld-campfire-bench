@@ -1,0 +1,59 @@
+{
+  "workerd": {
+    "repository": "https://github.com/cloudflare/workerd.git",
+    "revision": "781048bc05cb205c92e503c1062ef3266ab959b5",
+    "tag": "v1.20261019.1",
+    "version": "2026-10-19"
+  },
+  "build_flags": [
+    "--config=release",
+    "--jobs=8"
+  ],
+  "bazel": "Bazelisk v1.30.0\nbazel 9.3.0",
+  "version": "workerd 2026-10-19",
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "inputs": {
+    ".build/workerd-source/src/workerd/api/actor.c++": "a236654a635b98c7a415af6dbfb716124d11eb3c4c3af8b3cd234194148fa36c",
+    ".build/workerd-source/src/workerd/api/actor.h": "d417ab4d0761abad8a368dc59eeed9392cb949541791f7eb7a07877aa7a34235",
+    ".build/workerd-source/src/workerd/api/hibernatable-web-socket.c++": "56a48a326d2dc597c9589d3ac59ac56c61f82e163a89bc56e7514bab177eaf6a",
+    ".build/workerd-source/src/workerd/io/BUILD.bazel": "269c52cb8cf854b090eda7800c2523c63d9180256835e791589e0d64336e7cc0",
+    ".build/workerd-source/src/workerd/io/native-wasm.c++": "bc4bf69de0f8a1d801d48a0cfdd9c2a5908aa3b73a0f64cc2c17b9c51d8e8375",
+    ".build/workerd-source/src/workerd/io/native-wasm.h": "44bb9cc1754a0024be847784aa6f33f5d6ee6ec48150f6c31f87b00edd9bb4e3",
+    ".build/workerd-source/src/workerd/io/worker-entrypoint.c++": "ad83884548873ff41666aeae9ecd0b46b55e13917024acb022a4f4f34441115b",
+    ".build/workerd-source/src/workerd/io/worker.c++": "dadf7bedb36d30726756b4207989b1aeb53a3e30f448eab45e4862d37b25b0f3",
+    ".build/workerd-source/src/workerd/io/worker.h": "226c78e4aad621f7fa690fe01373f69aae64d548ae328fb66b7ea7da4fc1c2a7",
+    "app/Cargo.lock": "d01d01fa46e5acb67bb611c85a631f7f80863f275563caf49140b998cc67b4e3",
+    "app/Cargo.toml": "d29a4e480fda0177222c3025e24c5528f696cabff19a35fbe1d53a9163056320",
+    "app/schema.json": "66c52aa1b2aea84d4c4c6c3c92f511916c7e7807bf9f38213587af0c7e2915b7",
+    "app/sql.json": "c3eb137a07bbe7bd4e206d08893fa0a18fafa75aa25601060f2be6be0c0e4f6c",
+    "app/src/lib.rs": "b65c32868864cf26348df1d4424e3c20c1c9ccf588168364c25d6c347fccf3c3",
+    "application/index.html": "559661c6b9e32fe4ca1818963f7b18aa7b163e540d754f18c8022715c85ff08b",
+    "application/wasm-worker.js": "caf4be1804a9105c2f8b945ef7c41aa29314c8b9220d129ab5338927fadb9a03",
+    "application/worker.js": "440301986d0859fb179f464e2eca774b326d458ad667a14f2e880c3464fbe343",
+    "application/wrangler.jsonc": "1ba7823fcb23b29ce1b7b0e6a47d4c2875f15e54efdc8285f3a528c335b9cf3a",
+    "experiments/basecamp/load.rs": "9c50b46269718e6b097244d50bb7f3a3401c907a819ff61c63f50b37ae49649d",
+    "experiments/workerd/build_workerd.py": "2b521da4c0c1fd42c2237baae53f3d79183988dbe700e7f1d45627f4a78da933",
+    "experiments/workerd/native-wasm.c++": "bc4bf69de0f8a1d801d48a0cfdd9c2a5908aa3b73a0f64cc2c17b9c51d8e8375",
+    "experiments/workerd/native-wasm.h": "44bb9cc1754a0024be847784aa6f33f5d6ee6ec48150f6c31f87b00edd9bb4e3",
+    "experiments/workerd/native-worker.js": "a5e9918a48fd3616ee12c3722645d086babc525016243261f7d3251080b12034",
+    "experiments/workerd/report.py": "e851b93d758636650d820a0b3cd7f44e3e20acb6060f3ae6e9687a6b36160b61",
+    "experiments/workerd/run.py": "544c704e12e2c65dc557307d719f10f2dab01dd51e43a0256eff0c3ddef945be",
+    "experiments/workerd/workerd.json": "a3734a4bc50a661f9629801f91bd603ea580bcd63df5e1d91a8a5db163ba629f",
+    "guest/.cargo/config.toml": "2511de2ff0bf0f36f53f46cd26193fe7202f0be861c8e00ff02824012198f9d4",
+    "guest/Cargo.lock": "33261853b36859e4f27d7b22c295638aea9f9473e4637f2a98bf316e32f713f8",
+    "guest/Cargo.toml": "51d1df7fa66c1f170c933d9489071e3595418fa0a79e14a2695fa035d072595b",
+    "guest/src/lib.rs": "52af8d0a3b7ccb10101769256b58d96191241fb6300ae50ae3cadd17d3f430a8",
+    "load/Cargo.lock": "2893c1b0fd234277665da158fb2579d0099ffbce8526b9eef74da5c02468fb8f",
+    "load/Cargo.toml": "59242246309c3ef84b0463b44605011aedf4fd825ed56741f9c96b66306ed573",
+    "load/src/main.rs": "30b3b67f872beefa0d84108cb78d4180b7a23bdc529b694c3cb4fbea96c24dd7",
+    "load/src/ws.rs": "b7c865e751f0b7f110a1c18532a3e12c88c9f3c9c9348d7a0759ff5a1ad3edd0",
+    "patches/workerd.patch": "b906a153876009daecf1d5f64ac35951887584b60aa8874a92211fc14d13b70b",
+    "rust-toolchain.toml": "23794dfc365530e7749b589631e09db35dfbcc58e79b21b4185622406587fe84"
+  },
+  "binaries": {
+    ".build/workerd-host/workerd": "6ee9df5b3a3bd8e49a671d08dfa0e22ed266c06f4f37b885c7108b6fdb40007a",
+    ".build/guest-target/wasm32-unknown-unknown/release/workers_chat_guest.wasm": "f2c72ca2cf4e39ef5d44e52aa8e27c5fe343348f2dfed6a6d2a4ad288ff80b08",
+    ".build/load-target/release/workers-chat-load": "e12b6c1f34057fa24a3b77c147ce5f33718b42d1b5066aabfb005d620d9f6f79",
+    ".build/load-target/release/workers-chat-ws": "aec382e86a71dbeb85e7696f50428596f8ae4ad02a16ac352e7c833e101a40f9"
+  }
+}

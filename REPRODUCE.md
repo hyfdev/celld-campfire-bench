@@ -1,5 +1,7 @@
 # Build and run the benchmark
 
+For workerd and the original Basecamp Rust application, see [the workerd experiment](experiments/workerd/README.md) and [the original application comparison](experiments/basecamp/README.md).
+
 ## Requirements
 
 The resource measurements require **macOS**, Git, Xcode Command Line Tools, Python 3.11+, Rustup, and [Vite+](https://viteplus.dev/). The recorded runs use Apple Silicon. [`rust-toolchain.toml`](rust-toolchain.toml) selects Rust 1.96.0 and the Wasm target.

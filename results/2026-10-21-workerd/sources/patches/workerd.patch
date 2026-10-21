@@ -1,0 +1,273 @@
+diff --git a/src/workerd/api/actor.c++ b/src/workerd/api/actor.c++
+index c591882..959bba4 100644
+--- a/src/workerd/api/actor.c++
++++ b/src/workerd/api/actor.c++
+@@ -245,6 +245,20 @@ jsg::Ref<DurableObjectId> DurableObjectNamespace::newUniqueId(
+       idFactory->newUniqueId(options.orDefault({}).jurisdiction.orDefault(kj::none)));
+ }
+ 
++kj::Own<WorkerInterface> DurableObjectNamespace::startNativeRequest(kj::String name) {
++  auto& context = IoContext::current();
++  auto id = idFactory->idFromName(kj::mv(name));
++  auto channelId = KJ_REQUIRE_NONNULL(channel.tryGet<uint>());
++  auto actor = context.getGlobalActorChannel(channelId, *id, kj::none, ActorGetMode::GET_OR_CREATE,
++      false, ActorRoutingMode::DEFAULT, context.getCurrentTraceSpan(), kj::none, persistent);
++  auto startRequest = [&](TraceContext& tracing, IoChannelFactory&) {
++    tracing.setTag("objectId"_kjc, id->toString());
++    return actor->startRequest({.parentSpan = tracing.getInternalSpanParent(),
++      .userSpanParent = tracing.getUserSpanParent()});
++  };
++  return startActorSubrequest(context, startRequest, CountSubrequest::YES).attach(kj::mv(actor));
++}
++
+ jsg::Ref<DurableObjectId> DurableObjectNamespace::idFromName(jsg::Lock& js, kj::String name) {
+   return js.alloc<DurableObjectId>(idFactory->idFromName(kj::mv(name)));
+ }
+diff --git a/src/workerd/api/actor.h b/src/workerd/api/actor.h
+index d8900b5..9b8ebba 100644
+--- a/src/workerd/api/actor.h
++++ b/src/workerd/api/actor.h
+@@ -218,6 +218,7 @@ class DurableObjectNamespace: public jsg::Object {
+   // Create a name-derived ID. Passing in the same `name` (to the same class) will always
+   // produce the same ID.
+   jsg::Ref<DurableObjectId> idFromName(jsg::Lock& js, kj::String name);
++  kj::Own<WorkerInterface> startNativeRequest(kj::String name);
+ 
+   // Create a DurableObjectId from the stringified form of the ID (as produced by calling
+   // `toString()` on a durable object ID). Throws if the ID is not a 64-digit hex number, or if the
+diff --git a/src/workerd/api/hibernatable-web-socket.c++ b/src/workerd/api/hibernatable-web-socket.c++
+index 135fbc3..a54af9f 100644
+--- a/src/workerd/api/hibernatable-web-socket.c++
++++ b/src/workerd/api/hibernatable-web-socket.c++
+@@ -7,6 +7,7 @@
+ #include <workerd/api/global-scope.h>
+ #include <workerd/io/legacy-hibernation-manager.h>
+ #include <workerd/io/limit-enforcer.h>
++#include <workerd/io/native-wasm.h>
+ #include <workerd/io/tracer.h>
+ #include <workerd/jsg/ser.h>
+ 
+@@ -68,6 +69,10 @@ kj::Promise<WorkerInterface::CustomEvent::Result> HibernatableWebSocketCustomEve
+         [entrypointName = entrypointName, eventParameters = kj::mv(eventParameters),
+             versionInfo = kj::mv(versionInfo), props = kj::mv(props),
+             isDynamicDispatch](Worker::Lock& lock, IoContext& context) mutable {
++      if (CampfireWasm::enabled()) {
++        CampfireWasm::webSocketEvent(lock, eventParameters);
++        return;
++      }
+       KJ_SWITCH_ONEOF(eventParameters.eventType) {
+         KJ_CASE_ONEOF(text, HibernatableSocketParams::Text) {
+           markHibernatableWebSocketReceive(context);
+diff --git a/src/workerd/io/BUILD.bazel b/src/workerd/io/BUILD.bazel
+index d249c72..2009c89 100644
+--- a/src/workerd/io/BUILD.bazel
++++ b/src/workerd/io/BUILD.bazel
+@@ -44,6 +44,7 @@ wd_cc_library(
+         "io-own.c++",
+         "io-util.c++",
+         "legacy-hibernation-manager.c++",
++        "native-wasm.c++",
+         "stored-value.c++",
+         "timer-queue.c++",
+         "trace-stream.c++",
+@@ -62,6 +63,7 @@ wd_cc_library(
+         "io-own.h",
+         "io-util.h",
+         "legacy-hibernation-manager.h",
++        "native-wasm.h",
+         "stored-value.h",
+         "timer-queue.h",
+         "trace-stream.h",
+diff --git a/src/workerd/io/worker-entrypoint.c++ b/src/workerd/io/worker-entrypoint.c++
+index 3082771..7424243 100644
+--- a/src/workerd/io/worker-entrypoint.c++
++++ b/src/workerd/io/worker-entrypoint.c++
+@@ -4,6 +4,8 @@
+ 
+ #include "worker-entrypoint.h"
+ 
++#include "native-wasm.h"
++
+ #include <workerd/api/basics.h>
+ #include <workerd/api/global-scope.h>
+ #include <workerd/api/util.h>
+@@ -494,42 +496,49 @@ kj::Promise<void> WorkerEntrypoint::requestImpl(kj::HttpMethod method,
+       });
+ 
+       KJ_TRY {
+-        api::DeferredProxy<void> deferredProxy = co_await context.run(
+-            [this, method, url, &headers, &requestBody, &wrappedResponse = *wrappedResponse,
+-                entrypointName = entrypointName.clone(),
+-                metrics = kj::addRef(incomingRequest->getMetrics())](
+-                Worker::Lock& lock, IoContext& context) mutable {
+-          TRACE_EVENT_END("workerd", PERFETTO_TRACK_FROM_POINTER(&context));
+-          TRACE_EVENT(
+-              "workerd", "WorkerEntrypoint::request() run", PERFETTO_FLOW_FROM_POINTER(this));
+-          jsg::AsyncContextFrame::StorageScope traceScope = context.makeAsyncTraceScope(lock);
+-          jsg::AsyncContextFrame::StorageScope userTraceScope =
+-              context.makeUserAsyncTraceScope(lock);
+-
+-          kj::Maybe<jsg::Ref<api::AbortSignal>> signal;
+-          auto featureFlags = FeatureFlags::get(lock);
+-          if (featureFlags.getEnableRequestSignal()) {
+-            auto abortSignalFlag = featureFlags.getRequestSignalPassthrough()
+-                ? api::AbortSignal::Flag::NONE
+-                : api::AbortSignal::Flag::IGNORE_FOR_SUBREQUESTS;
+-            jsg::Lock& js = lock;
+-            signal.emplace(
+-                abortController.emplace(js.alloc<api::AbortController>(js, abortSignalFlag))
+-                    ->getSignal());
+-          }
+-
+-          // Getting the handler finishes actor construction, so the claim sees a constructed actor
+-          // but still precedes the choice and invocation of the fetch handler.
+-          auto handler = lock.getExportedHandler(asPtr(entrypointName), kj::mv(versionInfo),
+-              kj::mv(props), context.getActor(), isDynamicDispatch);
+-          auto retryable = IsRetryableHandler::NO;
+-          KJ_IF_SOME(h, handler) {
+-            retryable = h->isFetchRetryable(lock);
++        auto runRequest = [&]() -> kj::Promise<api::DeferredProxy<void>> {
++          if (CampfireWasm::enabled()) {
++            return CampfireWasm::request(
++                context, method, url, headers, requestBody, *wrappedResponse);
+           }
+-          metrics->claimRetryTokenBeforeUserCode(retryable);
+-          return lock.getGlobalScope().request(method, url, headers, requestBody, wrappedResponse,
+-              cfBlobJson, lock, handler, kj::mv(signal));
+-        });
++          return context.run(
++              [this, method, url, &headers, &requestBody, &wrappedResponse = *wrappedResponse,
++                  entrypointName = entrypointName.clone(),
++                  metrics = kj::addRef(incomingRequest->getMetrics())](
++                  Worker::Lock& lock, IoContext& context) mutable {
++            TRACE_EVENT_END("workerd", PERFETTO_TRACK_FROM_POINTER(&context));
++            TRACE_EVENT(
++                "workerd", "WorkerEntrypoint::request() run", PERFETTO_FLOW_FROM_POINTER(this));
++            jsg::AsyncContextFrame::StorageScope traceScope = context.makeAsyncTraceScope(lock);
++            jsg::AsyncContextFrame::StorageScope userTraceScope =
++                context.makeUserAsyncTraceScope(lock);
++
++            kj::Maybe<jsg::Ref<api::AbortSignal>> signal;
++            auto featureFlags = FeatureFlags::get(lock);
++            if (featureFlags.getEnableRequestSignal()) {
++              auto abortSignalFlag = featureFlags.getRequestSignalPassthrough()
++                  ? api::AbortSignal::Flag::NONE
++                  : api::AbortSignal::Flag::IGNORE_FOR_SUBREQUESTS;
++              jsg::Lock& js = lock;
++              signal.emplace(
++                  abortController.emplace(js.alloc<api::AbortController>(js, abortSignalFlag))
++                      ->getSignal());
++            }
++
++            // Getting the handler finishes actor construction, so the claim sees a constructed actor
++            // but still precedes the choice and invocation of the fetch handler.
++            auto handler = lock.getExportedHandler(asPtr(entrypointName), kj::mv(versionInfo),
++                kj::mv(props), context.getActor(), isDynamicDispatch);
++            auto retryable = IsRetryableHandler::NO;
++            KJ_IF_SOME(h, handler) {
++              retryable = h->isFetchRetryable(lock);
++            }
++            metrics->claimRetryTokenBeforeUserCode(retryable);
++            return lock.getGlobalScope().request(method, url, headers, requestBody, wrappedResponse,
++                cfBlobJson, lock, handler, kj::mv(signal));
++          });
++        };
++        api::DeferredProxy<void> deferredProxy = co_await runRequest();
+ 
+         // Record the proxy task and the tracer return time on the success path.
+         TRACE_EVENT("workerd", "WorkerEntrypoint::request() deferred proxy step",
+diff --git a/src/workerd/io/worker.c++ b/src/workerd/io/worker.c++
+index 362e335..a0dc3ec 100644
+--- a/src/workerd/io/worker.c++
++++ b/src/workerd/io/worker.c++
+@@ -20,6 +20,7 @@
+ #include <workerd/io/compatibility-date.h>
+ #include <workerd/io/features.h>
+ #include <workerd/io/frankenvalue.h>
++#include <workerd/io/native-wasm.h>
+ #include <workerd/io/tracer.h>
+ #include <workerd/io/tracked-wasm-instance.h>
+ #include <workerd/io/validation.h>
+@@ -578,6 +579,7 @@ struct Worker::Impl {
+ 
+   // If set, then any attempt to use this worker shall throw this exception.
+   kj::Maybe<kj::Exception> permanentException;
++  kj::Maybe<kj::Own<CampfireWasm>> campfireWasm;
+ };
+ 
+ // Note that Isolate mutable state is protected by locking the JsgWorkerIsolate unless otherwise
+@@ -2496,6 +2498,13 @@ Worker::Worker(kj::Own<const Script> scriptParam,
+   });
+ }
+ 
++CampfireWasm& Worker::getCampfireWasm(jsg::Lock& js) {
++  if (impl->campfireWasm == kj::none) {
++    impl->campfireWasm = kj::heap<CampfireWasm>(js, KJ_REQUIRE_NONNULL(impl->env).getHandle(js));
++  }
++  return *KJ_REQUIRE_NONNULL(impl->campfireWasm);
++}
++
+ Worker::~Worker() noexcept(false) {
+   metrics->teardownStarted();
+ 
+@@ -3887,6 +3896,7 @@ struct Worker::Actor::Impl {
+   kj::OneOf<bool, jsg::JsRef<jsg::JsValue>> transient;
+ 
+   kj::Maybe<kj::Own<ActorCacheInterface>> actorCache;
++  kj::Maybe<kj::Own<CampfireRoom>> campfireRoom;
+   kj::Maybe<StoredExternalHandler> storageExternalHandler;
+ 
+   kj::Maybe<jsg::JsRef<jsg::JsObject>> ctxObject;
+@@ -4174,6 +4184,7 @@ Worker::Actor::Actor(const Worker& worker,
+ }
+ 
+ void Worker::Actor::ensureConstructed(IoContext& context) {
++  if (CampfireWasm::enabled()) return;
+   KJ_IF_SOME(info, impl->classInstance.tryGet<ActorClassInfo*>()) {
+     // IMPORTANT: We need to set the state to "Initializing" synchronously, before
+     // ensureConstructedImpl() actually executes and acquires the input lock.
+@@ -4414,6 +4425,14 @@ kj::Maybe<jsg::JsRef<jsg::JsValue>> Worker::Actor::getTransient(Worker::Lock& lo
+       [&](jsg::JsRef<jsg::JsValue>& val) { return val.addRef(lock); });
+ }
+ 
++CampfireRoom& Worker::Actor::getCampfireRoom(jsg::Lock& js) {
++  if (impl->campfireRoom == kj::none) {
++    impl->campfireRoom =
++        kj::heap<CampfireRoom>(*this, const_cast<Worker&>(*worker).getCampfireWasm(js));
++  }
++  return *KJ_REQUIRE_NONNULL(impl->campfireRoom);
++}
++
+ kj::Maybe<ActorCacheInterface&> Worker::Actor::getPersistent() {
+   return impl->actorCache;
+ }
+diff --git a/src/workerd/io/worker.h b/src/workerd/io/worker.h
+index 87d7701..fe81046 100644
+--- a/src/workerd/io/worker.h
++++ b/src/workerd/io/worker.h
+@@ -75,6 +75,8 @@ class InputGate;
+ class OutputGate;
+ 
+ class StoredExternalHandler;
++class CampfireWasm;
++class CampfireRoom;
+ 
+ // Type signature of an entrypoint implementation class (Durable Object or stateless service).
+ using ExecutionContextOrState =
+@@ -108,6 +110,8 @@ struct EntrypointClasses {
+ //   for a class name to end in "Instance". ("I have an instance of WorkerInstance...")
+ class Worker: public kj::AtomicRefcounted {
+  public:
++  CampfireWasm& getCampfireWasm(jsg::Lock& js);
++
+   using VersionInfo = Worker_VersionInfo;
+   class Script;
+   class Isolate;
+@@ -1101,6 +1105,7 @@ class Worker::Actor final: public kj::Refcounted {
+   static Id cloneId(Id& id);
+   kj::Maybe<jsg::JsRef<jsg::JsValue>> getTransient(Worker::Lock& lock);
+   kj::Maybe<ActorCacheInterface&> getPersistent();
++  CampfireRoom& getCampfireRoom(jsg::Lock& js);
+   kj::Own<Loopback> getLoopback();
+ 
+   // Get the StoredExternalHandler, creating it if it doesn't already exist. Returns none if the

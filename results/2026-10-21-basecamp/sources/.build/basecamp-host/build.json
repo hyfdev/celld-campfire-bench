@@ -1,0 +1,41 @@
+{
+  "basecamp": {
+    "repository": "https://github.com/basecamp/once-campfire-rust.git",
+    "revision": "6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad",
+    "reference_revision": "90b330024dec3e757c79b6a7e6568f93da8e3148",
+    "rust": "1.98.1"
+  },
+  "build_flags": [
+    "--locked",
+    "--release",
+    "--package",
+    "campfire",
+    "--jobs",
+    "8"
+  ],
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+  "vips": "8.16.1",
+  "vips_features": "enable debug: false\nenable deprecated: true\nenable modules: false\nenable cplusplus: false\nenable RAD load/save: true\nenable Analyze7 load: true\nenable PPM load/save: true\nenable GIF load: true\nFFTs with fftw: false\nSIMD support with libhwy or liborc: false\nICC profile support with lcms2: false\ndeflate compression with zlib: false\ntext rendering with pangocairo: false\nfont file support with fontconfig: false\nEXIF metadata support with libexif: false\nJPEG load/save with libjpeg: false\nJXL load/save with libjxl: false (dynamic module: false)\nJPEG2000 load/save with OpenJPEG: false\nPNG load/save with libspng or libpng: false\nimage quantisation with imagequant or quantizr: false\nTIFF load/save with libtiff: false\nimage pyramid save with libarchive: false\nHEIC/AVIF load/save with libheif: false (dynamic module: false)\nWebP load/save with libwebp: false\nPDF load with PDFium or Poppler: false (dynamic module: false)\nSVG load with librsvg: false\nEXR load with OpenEXR: false\nWSI load with OpenSlide: false (dynamic module: false)\nMatlab load with Matio: false\nNIfTI load/save with libnifti: false\nFITS load/save with cfitsio: false\nGIF save with cgif: false\nMagick load/save with MagickCore: false (dynamic module: false)\n",
+  "glib": "2.88.1",
+  "sources": {
+    ".build/basecamp-source/.gitmodules": "23c879e060c89c1a32b1da8074be637d9f658a509d0900ad3bbaf9d69cc15c79",
+    ".build/basecamp-source/Cargo.lock": "7cf1fa3b9ef10fd765b84aefc6812b5614c98ceb3190f757e8d09c57c2c724c2",
+    ".build/basecamp-source/Cargo.toml": "b3fe2f51b7d198f39dd02e46469b7becd824f56788d7c6cc2d85d4e53a42f235",
+    ".build/basecamp-source/MIT-LICENSE": "fa0d1454375cbc7701bc13d916c3ae71e613b8ae718321641e678e09409393c4",
+    ".build/basecamp-source/crates/db/src/schema.rs": "5b1063c9f273b2152b771756c8b8322f76f231b6e417987e33f976dce5bca75a",
+    ".build/basecamp-source/crates/db/src/schema.sql": "e5d8c0c39cd6daffedcb270ace6ac7a0b1420e8ae8b4392f50a075a09179824f",
+    "bench/fixture.py": "a6521cae7fe6e87dcf2f22ba33f82718c55b00471a8d7849584b2bf617bdd526",
+    "bench/metrics.py": "b2e17183e967460118e0f03e7ef78ca4c3889c3e2b8f5b1b853b883a5b49ca4e",
+    "experiments/basecamp/basecamp.json": "91999acbecc847b86c1382e28a784d52b671e1dff1a71bf10e26ad5a59cbbd92",
+    "experiments/basecamp/build_basecamp.py": "54cdedcc74bbffeeb76f6b5a009a2312976bfe13abe7f085e5cc0161411b6889",
+    "experiments/basecamp/load.rs": "9c50b46269718e6b097244d50bb7f3a3401c907a819ff61c63f50b37ae49649d",
+    "experiments/basecamp/report.py": "1bcad5483ec3d7fa6047f0a28795c1889fbc4e483856d04862b97a89e9308426",
+    "experiments/basecamp/run.py": "4fbbe5ef38de6c6f89048ccad4358c61ecdeace714b5ffab701096ba9c8574bb",
+    "load/Cargo.lock": "2893c1b0fd234277665da158fb2579d0099ffbce8526b9eef74da5c02468fb8f",
+    "load/Cargo.toml": "59242246309c3ef84b0463b44605011aedf4fd825ed56741f9c96b66306ed573"
+  },
+  "binaries": {
+    ".build/basecamp-host/campfire": "6b0fa6f2e0538e6009f869c72056855a14a997b67316bf61f7eda4e88826c64f",
+    ".build/load-target/release/campfire-original-load": "e09fba50bd6f001aff3161886949fe8774eefb9445d4f9deb4b356287cc70065"
+  }
+}

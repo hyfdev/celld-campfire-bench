@@ -246,12 +246,14 @@ def warm(s, case):
     return writes
 
 
-def validate():
-    output = {"complete": False, **provenance(), "engines": []}
-    for engine in ENGINES:
+def validate(*, engines=None, server_factory=server, run_directory=RUNS,
+             metadata=None, restart_reset=None,
+             restart_source="object store with runtime directory removed"):
+    output = {"complete": False, **(provenance() if metadata is None else metadata), "engines": []}
+    for engine in ENGINES if engines is None else engines:
         posts = {r: [] for r in range(1, 51)}
         checks = 0
-        with server(engine, f"validate-{engine}") as s:
+        with server_factory(engine, f"validate-{engine}") as s:
             c = s["connection"]
             status, _, data = request(c, "POST", "/login", b'{"user":1,"password":"password-1"}')
             assert status == 200 and json.loads(data) == {"token":"token-1"}
@@ -305,7 +307,7 @@ def validate():
                     checked_read(c, 4, user, j, posts[4])
                     checks += 1
             # Room 1 starts after the two checked HTTP posts.
-            wsfile=RUNS/f"validate-{engine}-ws.json"
+            wsfile=run_directory/f"validate-{engine}-ws.json"
             subprocess.run([str(WS),s["base"],"1","3","0.5","3",str(wsfile)],check=True,stdout=subprocess.DEVNULL,input="go\n",text=True)
             ws=json.loads(wsfile.read_text())
             posts[1] += [(1,WS_TEXT)]*ws["messages"]
@@ -313,9 +315,12 @@ def validate():
                 checked_read(c,room,4,True,posts[room])
                 checks += 1
         first_audit=audit(s["data"],posts)
-        shutil.rmtree(STATE / "runtime")
-        (STATE / "runtime").mkdir()
-        with server(engine,f"validate-restart-{engine}",restore=False) as s:
+        if restart_reset is None:
+            shutil.rmtree(STATE / "runtime")
+            (STATE / "runtime").mkdir()
+        else:
+            restart_reset(s["data"])
+        with server_factory(engine,f"validate-restart-{engine}",restore=False) as s:
             for room in range(1,51):
                 for j in (False,True):
                     checked_read(s["connection"],room,4,j,posts[room],cache=True)
@@ -326,28 +331,29 @@ def validate():
             assert status==200 and json.loads(body)["unread"]==0
             checks += 2
         second_audit=audit(s["data"],posts,{2:(1,2)})
-        output["engines"].append({"engine":engine,"response_checks":checks,"websocket":ws,"before_restart":first_audit,"after_restart":second_audit,"restart_source":"object store with runtime directory removed"})
-        (RUNS/"validation.json").write_text(json.dumps(output,indent=2)+"\n")
+        output["engines"].append({"engine":engine,"response_checks":checks,"websocket":ws,"before_restart":first_audit,"after_restart":second_audit,"restart_source":restart_source})
+        (run_directory/"validation.json").write_text(json.dumps(output,indent=2)+"\n")
         print(f"Validated {engine}: {checks} HTTP responses, ordered broadcasts, restart and unread persistence",flush=True)
     output["complete"]=True
-    (RUNS/"validation.json").write_text(json.dumps(output,indent=2)+"\n")
+    (run_directory/"validation.json").write_text(json.dumps(output,indent=2)+"\n")
 
 
-def timed(engine,case,concurrency,trial,seconds,rooms=None,listeners=None):
+def timed(engine,case,concurrency,trial,seconds,rooms=None,listeners=None,*,
+          server_factory=server,run_directory=RUNS):
     label=f"{trial}-{case}-{concurrency}-{engine}"
-    with server(engine,label) as s:
+    with server_factory(engine,label) as s:
         ready_usage=usage(s["process"].pid)
         writes=warm(s,"ws" if rooms else case)
         time.sleep(.2)
         before=usage(s["process"].pid)
         child_before=resource.getrusage(resource.RUSAGE_CHILDREN)
         samples=[before]
-        outfile=RUNS/f"{label}.json"
+        outfile=run_directory/f"{label}.json"
         if rooms:
             command=[str(WS),s["base"],str(rooms),str(listeners),str(seconds),str(1+writes),str(outfile),"read-acks"]
         else:
-            command=[str(LOAD),s["base"],case,str(concurrency),str(seconds),str(1+writes),str(RUNS/"oracle.json"),str(outfile)]
-        with (RUNS/f"{label}-client.log").open("w+") as log:
+            command=[str(LOAD),s["base"],case,str(concurrency),str(seconds),str(1+writes),str(run_directory/"oracle.json"),str(outfile)]
+        with (run_directory/f"{label}-client.log").open("w+") as log:
             load=subprocess.Popen(command,stdout=subprocess.PIPE if rooms else log,stderr=log,stdin=subprocess.PIPE if rooms else None,text=True)
             try:
                 if rooms:

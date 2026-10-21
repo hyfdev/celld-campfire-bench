@@ -12,6 +12,22 @@ celld is licensed under the Apache License 2.0; see LICENSE. Code adapted
 from Tokio is under the MIT License; see the header at
 https://github.com/denoland/celld/blob/90b43017241f81189453d326d05948f388b34652/crates/celld/tokio_select.rs.
 
+workerd
+Copyright Cloudflare, Inc.
+
+The workerd experiment patches Worker dispatch and actor access to run
+the chat application through native V8 Wasm callbacks. Its measured
+source snapshots retain the upstream copyright and license headers.
+workerd is licensed under the Apache License 2.0; see LICENSE and
+https://github.com/cloudflare/workerd/tree/781048bc05cb205c92e503c1062ef3266ab959b5.
+
+once-campfire-rust
+
+The original-application experiment builds Basecamp's unmodified Rust
+implementation of Campfire. Its source snapshots retain the upstream
+MIT-LICENSE at results/2026-10-21-basecamp/sources/.build/basecamp-source/MIT-LICENSE.
+https://github.com/basecamp/once-campfire-rust/tree/6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad
+
 Third-party software
 --------------------
 
@@ -30,6 +46,6 @@ at:
 
 The exact versions are recorded in results/2026-10-15/sources/Cargo.lock.
 
-All other dependencies are under permissive licenses (Apache-2.0, MIT,
+Other celld dependencies are under permissive licenses (Apache-2.0, MIT,
 BSD-3-Clause, ISC, Unicode-3.0, Zlib, BSL-1.0, CC0-1.0,
 CDLA-Permissive-2.0); results/2026-10-15/sources/Cargo.lock lists them.

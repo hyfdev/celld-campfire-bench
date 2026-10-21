@@ -12,7 +12,7 @@ def verify_sources(root, data):
             assert hashlib.sha256((snapshot / path).read_bytes()).hexdigest() == digest, path
 
 
-def load(directory):
+def load(directory, engines=None):
     root = pathlib.Path(directory)
     results = json.loads((root / "results.json").read_text())
     cold = json.loads((root / "cold-results.json").read_text())
@@ -28,13 +28,14 @@ def load(directory):
         assert row["database_audit"]["integrity"] == "ok", row
         assert row["database_audit"]["rooms"] == 50, row
     assert {row["engine"] for row in results["trials"]} == {row["engine"] for row in cold["trials"]} == {row["engine"] for row in validation["engines"]}
-    engines = ["js"]
-    if any(r["engine"] == "wasm-js" for r in results["trials"]):
-        engines.append("wasm-js")
-    engines += ["wasm-v8", "wasm"]
-    if any(r["engine"] == "scriptc-wasm" for r in results["trials"]):
-        engines.append("scriptc-wasm")
-    engines.append("native")
+    if engines is None:
+        engines = ["js"]
+        if any(r["engine"] == "wasm-js" for r in results["trials"]):
+            engines.append("wasm-js")
+        engines += ["wasm-v8", "wasm"]
+        if any(r["engine"] == "scriptc-wasm" for r in results["trials"]):
+            engines.append("scriptc-wasm")
+        engines.append("native")
     metrics = ["cpu_us_per_operation", "cpu_percent_one_core", "client_cpu_percent_one_core", "p50_ms", "p99_ms"]
     aggregate = {"http": [], "websocket": [], "cold": [], "checks": {}}
 

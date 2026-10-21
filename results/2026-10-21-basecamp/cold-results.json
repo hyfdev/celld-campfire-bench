@@ -1,0 +1,155 @@
+{
+  "complete": true,
+  "basecamp": {
+    "repository": "https://github.com/basecamp/once-campfire-rust.git",
+    "revision": "6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad",
+    "reference_revision": "90b330024dec3e757c79b6a7e6568f93da8e3148",
+    "rust": "1.98.1"
+  },
+  "vips": "8.16.1",
+  "vips_features": "enable debug: false\nenable deprecated: true\nenable modules: false\nenable cplusplus: false\nenable RAD load/save: true\nenable Analyze7 load: true\nenable PPM load/save: true\nenable GIF load: true\nFFTs with fftw: false\nSIMD support with libhwy or liborc: false\nICC profile support with lcms2: false\ndeflate compression with zlib: false\ntext rendering with pangocairo: false\nfont file support with fontconfig: false\nEXIF metadata support with libexif: false\nJPEG load/save with libjpeg: false\nJXL load/save with libjxl: false (dynamic module: false)\nJPEG2000 load/save with OpenJPEG: false\nPNG load/save with libspng or libpng: false\nimage quantisation with imagequant or quantizr: false\nTIFF load/save with libtiff: false\nimage pyramid save with libarchive: false\nHEIC/AVIF load/save with libheif: false (dynamic module: false)\nWebP load/save with libwebp: false\nPDF load with PDFium or Poppler: false (dynamic module: false)\nSVG load with librsvg: false\nEXR load with OpenEXR: false\nWSI load with OpenSlide: false (dynamic module: false)\nMatlab load with Matio: false\nNIfTI load/save with libnifti: false\nFITS load/save with cfitsio: false\nGIF save with cgif: false\nMagick load/save with MagickCore: false (dynamic module: false)\n",
+  "glib": "2.88.1",
+  "sources": {
+    ".build/basecamp-host/build.json": "b02a1b0a83f0fdd527cf3659a062f7c4a0e85f007acc8e0adcb26fd39954ab0c",
+    ".build/basecamp-host/campfire": "6b0fa6f2e0538e6009f869c72056855a14a997b67316bf61f7eda4e88826c64f",
+    ".build/basecamp-source/.gitmodules": "23c879e060c89c1a32b1da8074be637d9f658a509d0900ad3bbaf9d69cc15c79",
+    ".build/basecamp-source/Cargo.lock": "7cf1fa3b9ef10fd765b84aefc6812b5614c98ceb3190f757e8d09c57c2c724c2",
+    ".build/basecamp-source/Cargo.toml": "b3fe2f51b7d198f39dd02e46469b7becd824f56788d7c6cc2d85d4e53a42f235",
+    ".build/basecamp-source/MIT-LICENSE": "fa0d1454375cbc7701bc13d916c3ae71e613b8ae718321641e678e09409393c4",
+    ".build/basecamp-source/crates/db/src/schema.rs": "5b1063c9f273b2152b771756c8b8322f76f231b6e417987e33f976dce5bca75a",
+    ".build/basecamp-source/crates/db/src/schema.sql": "e5d8c0c39cd6daffedcb270ace6ac7a0b1420e8ae8b4392f50a075a09179824f",
+    ".build/load-target/release/campfire-original-load": "e09fba50bd6f001aff3161886949fe8774eefb9445d4f9deb4b356287cc70065",
+    "bench/fixture.py": "a6521cae7fe6e87dcf2f22ba33f82718c55b00471a8d7849584b2bf617bdd526",
+    "bench/metrics.py": "b2e17183e967460118e0f03e7ef78ca4c3889c3e2b8f5b1b853b883a5b49ca4e",
+    "experiments/basecamp/basecamp.json": "91999acbecc847b86c1382e28a784d52b671e1dff1a71bf10e26ad5a59cbbd92",
+    "experiments/basecamp/build_basecamp.py": "54cdedcc74bbffeeb76f6b5a009a2312976bfe13abe7f085e5cc0161411b6889",
+    "experiments/basecamp/load.rs": "9c50b46269718e6b097244d50bb7f3a3401c907a819ff61c63f50b37ae49649d",
+    "experiments/basecamp/report.py": "1bcad5483ec3d7fa6047f0a28795c1889fbc4e483856d04862b97a89e9308426",
+    "experiments/basecamp/run.py": "4fbbe5ef38de6c6f89048ccad4358c61ecdeace714b5ffab701096ba9c8574bb",
+    "load/Cargo.lock": "2893c1b0fd234277665da158fb2579d0099ffbce8526b9eef74da5c02468fb8f",
+    "load/Cargo.toml": "59242246309c3ef84b0463b44605011aedf4fd825ed56741f9c96b66306ed573"
+  },
+  "source_snapshot": "sources",
+  "recorded_only": {
+    ".build/basecamp-host/campfire": "Measured binary digest; rebuild from source.",
+    ".build/load-target/release/campfire-original-load": "Measured binary digest; rebuild from source."
+  },
+  "seed_sha256": {
+    "db/production.sqlite3": "0346a7ec2241fd667bf59f863ac420e3652776a2686a04e0fb6b69e2834e1d34",
+    "db/production.sqlite3-shm": "78428ff9251975628b21d01229a2235109d7851d82a609f5619362ccbce9bbd5",
+    "db/production.sqlite3-wal": "d3bb06caec2b928a6ad83e7bc5881d8ecf8ec97413b84dbd2229e94d11556871"
+  },
+  "rounds": 10,
+  "trials": [
+    {
+      "trial": 0,
+      "process_to_first_page_ms": 28.300249949097633,
+      "cpu_ms": 23.065791,
+      "memory": {
+        "user_ns": 17769833,
+        "system_ns": 5295958,
+        "rss_bytes": 31129600,
+        "footprint_bytes": 16237024
+      }
+    },
+    {
+      "trial": 1,
+      "process_to_first_page_ms": 27.44295820593834,
+      "cpu_ms": 23.098666,
+      "memory": {
+        "user_ns": 17654166,
+        "system_ns": 5444500,
+        "rss_bytes": 31195136,
+        "footprint_bytes": 16318968
+      }
+    },
+    {
+      "trial": 2,
+      "process_to_first_page_ms": 27.17445883899927,
+      "cpu_ms": 22.179916,
+      "memory": {
+        "user_ns": 16955333,
+        "system_ns": 5224583,
+        "rss_bytes": 31178752,
+        "footprint_bytes": 16302584
+      }
+    },
+    {
+      "trial": 3,
+      "process_to_first_page_ms": 29.072708450257778,
+      "cpu_ms": 23.728708,
+      "memory": {
+        "user_ns": 18024250,
+        "system_ns": 5704458,
+        "rss_bytes": 31260672,
+        "footprint_bytes": 16368096
+      }
+    },
+    {
+      "trial": 4,
+      "process_to_first_page_ms": 27.21404191106558,
+      "cpu_ms": 23.040957,
+      "memory": {
+        "user_ns": 17579541,
+        "system_ns": 5461416,
+        "rss_bytes": 31195136,
+        "footprint_bytes": 16318968
+      }
+    },
+    {
+      "trial": 5,
+      "process_to_first_page_ms": 28.040749952197075,
+      "cpu_ms": 23.236583,
+      "memory": {
+        "user_ns": 17980833,
+        "system_ns": 5255750,
+        "rss_bytes": 30834688,
+        "footprint_bytes": 15958520
+      }
+    },
+    {
+      "trial": 6,
+      "process_to_first_page_ms": 27.86412462592125,
+      "cpu_ms": 22.827499,
+      "memory": {
+        "user_ns": 17592208,
+        "system_ns": 5235291,
+        "rss_bytes": 31129600,
+        "footprint_bytes": 16253432
+      }
+    },
+    {
+      "trial": 7,
+      "process_to_first_page_ms": 27.36333291977644,
+      "cpu_ms": 22.522166,
+      "memory": {
+        "user_ns": 17435416,
+        "system_ns": 5086750,
+        "rss_bytes": 31145984,
+        "footprint_bytes": 16253408
+      }
+    },
+    {
+      "trial": 8,
+      "process_to_first_page_ms": 27.573333121836185,
+      "cpu_ms": 22.701499,
+      "memory": {
+        "user_ns": 17513708,
+        "system_ns": 5187791,
+        "rss_bytes": 31145984,
+        "footprint_bytes": 16253408
+      }
+    },
+    {
+      "trial": 9,
+      "process_to_first_page_ms": 27.409874834120274,
+      "cpu_ms": 22.415749,
+      "memory": {
+        "user_ns": 17423041,
+        "system_ns": 4992708,
+        "rss_bytes": 31096832,
+        "footprint_bytes": 16220664
+      }
+    }
+  ]
+}

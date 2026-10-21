@@ -1,0 +1,541 @@
+// Copyright (c) 2017-2022 Cloudflare, Inc.
+// Licensed under the Apache 2.0 license found in the LICENSE file or at:
+//     https://opensource.org/licenses/Apache-2.0
+
+#include "actor.h"
+
+#include <workerd/io/features.h>
+#include <workerd/io/stored-value.h>
+#include <workerd/util/autogate.h>
+
+#include <capnp/compat/byte-stream.h>
+#include <capnp/compat/http-over-capnp.h>
+#include <capnp/message.h>
+#include <capnp/schema.h>
+#include <kj/compat/http.h>
+#include <kj/encoding.h>
+
+#include <cmath>
+
+namespace workerd::api {
+
+namespace {
+
+// NaN fails every comparison, so it is rejected too.
+bool isIntegerInRange(double value, double min, double max) {
+  return value >= min && value <= max && value == std::floor(value);
+}
+
+UserDefinedRetryPolicy toUserDefinedRetryPolicy(
+    const DurableObjectNamespace::GetDurableObjectOptionsWithRetry::RetryOptions& options) {
+  using Policy = UserDefinedRetryPolicy;
+  constexpr auto MIN_TIMEOUT_MS = Policy::MIN_CONFIGURABLE_TIMEOUT / kj::MILLISECONDS;
+  constexpr auto MAX_TIMEOUT_MS = Policy::MAX_CONFIGURABLE_TIMEOUT / kj::MILLISECONDS;
+  Policy policy;
+  KJ_IF_SOME(maxRetries, options.maxRetries) {
+    JSG_REQUIRE(isIntegerInRange(maxRetries.value, 0, Policy::MAX_CONFIGURABLE_RETRIES), RangeError,
+        "retry.maxRetries must be an integer between 0 and ", Policy::MAX_CONFIGURABLE_RETRIES);
+    policy.maxRetries = static_cast<uint>(maxRetries.value);
+  }
+  KJ_IF_SOME(timeoutMs, options.timeoutMs) {
+    JSG_REQUIRE(isIntegerInRange(timeoutMs.value, MIN_TIMEOUT_MS, MAX_TIMEOUT_MS), RangeError,
+        "retry.timeoutMs must be an integer between ", MIN_TIMEOUT_MS, " and ", MAX_TIMEOUT_MS);
+    policy.timeout = static_cast<int64_t>(timeoutMs.value) * kj::MILLISECONDS;
+  }
+  return policy;
+}
+
+// This number was arbitrarily chosen, but is meant to account for the cost of holding open outbound
+// actor connections, which do have a real cost and should be accounted for to encourage GC if they
+// accumulate.
+constexpr size_t ESTIMATED_EXTERNAL_MEMORY_PER_ACTOR_CHANNEL = 32768;
+
+template <typename StartRequest>
+kj::Own<WorkerInterface> startActorSubrequest(
+    IoContext& context, StartRequest& startRequest, CountSubrequest countSubrequest) {
+  auto options = IoContext::SubrequestOptions{.inHouse = true,
+    .wrapMetrics = true,
+    .operationName = kj::ConstString("durable_object_subrequest"_kjc)};
+  // Retries reuse the logical fetch's initial admission, bypassing its limit check and count.
+  auto client = countSubrequest
+      ? context.getSubrequest(startRequest, kj::mv(options))
+      : context.getSubrequestNoChecks(startRequest, kj::mv(options), CountSubrequest::NO);
+  return context.getMetrics().wrapActorSubrequestClient(kj::mv(client));
+}
+
+}  // namespace
+
+IoChannelFactory::ActorChannel& LocalActorOutgoingFactory::getOrCreateActorChannel(
+    IoContext& context, SpanParent parentSpan) {
+  if (actorChannel == kj::none) {
+    actorChannel = context.getColoLocalActorChannel(channelId, actorId, kj::mv(parentSpan));
+
+    // The ActorChannelImpl we just created holds a Cap'n Proto Pipeline::Client representing an
+    // open connection to the target DO's routing supervisor. Register external memory to pressure
+    // V8 into collecting this factory's owning stub promptly when it becomes unreachable,
+    // preventing connection/FD accumulation from stubs that are created and discarded in a loop.
+    jsg::Lock& js = context.getCurrentLock();
+    channelMemoryAdjustment =
+        js.getExternalMemoryAdjustment(ESTIMATED_EXTERNAL_MEMORY_PER_ACTOR_CHANNEL);
+  }
+
+  return *KJ_REQUIRE_NONNULL(actorChannel);
+}
+
+Fetcher::OutgoingFactory::Result LocalActorOutgoingFactory::newSingleUseClient(
+    kj::Maybe<kj::String> cfStr, MakeUserSpanParent makeUserSpanParent) {
+  auto& context = IoContext::current();
+
+  kj::Maybe<TraceContextParent> spanParents;
+  auto startRequest = [&](TraceContext& tracing, IoChannelFactory& ioChannelFactory) {
+    tracing.setTag("objectId"_kjc, actorId.asPtr());
+    spanParents = tracing.getSpanParents();
+    auto userSpanParent = tracing.getUserSpanParent();
+    KJ_IF_SOME(parent, makeUserSpanParent(tracing)) {
+      userSpanParent = kj::mv(parent);
+    }
+
+    return getOrCreateActorChannel(context, tracing.getInternalSpanParent())
+        .startRequest({.cfBlobJson = kj::mv(cfStr),
+          .parentSpan = tracing.getInternalSpanParent(),
+          .userSpanParent = kj::mv(userSpanParent)});
+  };
+  auto client = startActorSubrequest(context, startRequest, CountSubrequest::YES);
+  return {.client = kj::mv(client), .spanParents = kj::mv(spanParents)};
+}
+
+kj::Rc<IoChannelFactory::SubrequestChannel> LocalActorOutgoingFactory::getSubrequestChannel() {
+  auto& context = IoContext::current();
+  return getOrCreateActorChannel(context, context.getCurrentTraceSpan()).addRef();
+}
+
+IoChannelFactory::ActorChannel& GlobalActorOutgoingFactory::getOrCreateActorChannel(
+    IoContext& context, SpanParent parentSpan) {
+  if (actorChannel == kj::none) {
+    auto locationHint = this->locationHint.map([](kj::String& hint) { return kj::str(hint); });
+    auto version = this->version.map([](ActorVersion& version) { return version.clone(); });
+    KJ_SWITCH_ONEOF(channelIdOrFactory) {
+      KJ_CASE_ONEOF(channelId, uint) {
+        actorChannel =
+            context.getGlobalActorChannel(channelId, id->getInner(), kj::mv(locationHint), mode,
+                enableReplicaRouting, routingMode, kj::mv(parentSpan), kj::mv(version), persistent);
+      }
+      KJ_CASE_ONEOF(factory, kj::Own<DurableObjectNamespace::ActorChannelFactory>) {
+        // Note: Dynamic actor namespaces (no relation to Dynamic Workers) never produce persistent
+        // stubs.
+        KJ_ASSERT(persistent == Persistent::NO);
+        actorChannel = factory->getGlobalActor(id->getInner(), kj::mv(locationHint), mode,
+            enableReplicaRouting, routingMode, kj::mv(parentSpan), kj::mv(version));
+      }
+    }
+
+    jsg::Lock& js = context.getCurrentLock();
+    channelMemoryAdjustment =
+        js.getExternalMemoryAdjustment(ESTIMATED_EXTERNAL_MEMORY_PER_ACTOR_CHANNEL);
+  }
+
+  return *KJ_REQUIRE_NONNULL(actorChannel);
+}
+
+Fetcher::OutgoingFactory::Result GlobalActorOutgoingFactory::newSingleUseClient(
+    kj::Maybe<kj::String> cfStr, MakeUserSpanParent makeUserSpanParent) {
+  return newActorCallAttempt(kj::mv(cfStr),
+      ActorCallRetryState::Attempt(kj::none, IsFirstActorCallAttempt::YES),
+      kj::mv(makeUserSpanParent));
+}
+
+void GlobalActorOutgoingFactory::onActorCallRetry() {
+  // The cached channel may contain the disconnected routing pipeline. Clear it so the retry
+  // resolves a fresh route instead of reusing that pipeline.
+  actorChannel = kj::none;
+  channelMemoryAdjustment = kj::none;
+}
+
+Fetcher::OutgoingFactory::Result GlobalActorOutgoingFactory::newActorCallAttempt(
+    kj::Maybe<kj::String> cfStr,
+    ActorCallRetryState::Attempt attempt,
+    MakeUserSpanParent makeUserSpanParent) {
+  auto& context = IoContext::current();
+
+  kj::Maybe<TraceContextParent> spanParents;
+  auto makeClient = [&](TraceContext& tracing, IoChannelFactory& ioChannelFactory) {
+    tracing.setTag("objectId"_kjc, id->toString());
+    spanParents = tracing.getSpanParents();
+    auto userSpanParent = tracing.getUserSpanParent();
+    KJ_IF_SOME(parent, makeUserSpanParent(tracing)) {
+      userSpanParent = kj::mv(parent);
+    }
+
+    return getOrCreateActorChannel(context, tracing.getInternalSpanParent())
+        .startRequest({.cfBlobJson = kj::mv(cfStr),
+          .parentSpan = tracing.getInternalSpanParent(),
+          .userSpanParent = kj::mv(userSpanParent),
+          .actorRetryRequestMetadata = attempt.takeMetadata()});
+  };
+  auto client = startActorSubrequest(context, makeClient, attempt.getCountSubrequest());
+  return {.client = kj::mv(client), .spanParents = kj::mv(spanParents)};
+}
+
+kj::Rc<IoChannelFactory::SubrequestChannel> GlobalActorOutgoingFactory::getSubrequestChannel() {
+  auto& context = IoContext::current();
+  return getOrCreateActorChannel(context, context.getCurrentTraceSpan()).addRef();
+}
+
+Fetcher::OutgoingFactory::Result ReplicaActorOutgoingFactory::newSingleUseClient(
+    kj::Maybe<kj::String> cfStr, MakeUserSpanParent makeUserSpanParent) {
+  return newActorCallAttempt(kj::mv(cfStr),
+      ActorCallRetryState::Attempt(kj::none, IsFirstActorCallAttempt::YES),
+      kj::mv(makeUserSpanParent));
+}
+
+Fetcher::OutgoingFactory::Result ReplicaActorOutgoingFactory::newActorCallAttempt(
+    kj::Maybe<kj::String> cfStr,
+    ActorCallRetryState::Attempt attempt,
+    MakeUserSpanParent makeUserSpanParent) {
+  auto& context = IoContext::current();
+
+  kj::Maybe<TraceContextParent> spanParents;
+  auto startRequest = [&](TraceContext& tracing, IoChannelFactory& ioChannelFactory) {
+    tracing.setTag("objectId"_kjc, actorId.asPtr());
+    spanParents = tracing.getSpanParents();
+    auto userSpanParent = tracing.getUserSpanParent();
+    KJ_IF_SOME(parent, makeUserSpanParent(tracing)) {
+      userSpanParent = kj::mv(parent);
+    }
+
+    // Unlike in `GlobalActorOutgoingFactory`, we do not create this lazily, since our channel was
+    // already open prior to this DO starting up.
+    return actorChannel->startRequest({.cfBlobJson = kj::mv(cfStr),
+      .parentSpan = tracing.getInternalSpanParent(),
+      .userSpanParent = kj::mv(userSpanParent),
+      .actorRetryRequestMetadata = attempt.takeMetadata()});
+  };
+  auto client = startActorSubrequest(context, startRequest, attempt.getCountSubrequest());
+  return {.client = kj::mv(client), .spanParents = kj::mv(spanParents)};
+}
+
+kj::Rc<IoChannelFactory::SubrequestChannel> ReplicaActorOutgoingFactory::getSubrequestChannel() {
+  return actorChannel.addRef();
+}
+
+jsg::Ref<Fetcher> ColoLocalActorNamespace::get(jsg::Lock& js, kj::String actorId) {
+  JSG_REQUIRE(actorId.size() > 0 && actorId.size() <= 2048, TypeError,
+      "Actor ID length must be in the range [1, 2048].");
+
+  auto& context = IoContext::current();
+
+  kj::Own<api::Fetcher::OutgoingFactory> factory =
+      kj::heap<LocalActorOutgoingFactory>(channel, kj::mv(actorId));
+  auto outgoingFactory = context.addObject(kj::mv(factory));
+
+  bool isInHouse = true;
+  return js.alloc<Fetcher>(
+      kj::mv(outgoingFactory), Fetcher::RequiresHostAndProtocol::YES, isInHouse);
+}
+
+// =======================================================================================
+
+kj::String DurableObjectId::toString() {
+  return id->toString();
+}
+
+jsg::Ref<DurableObjectId> DurableObjectNamespace::newUniqueId(
+    jsg::Lock& js, jsg::Optional<NewUniqueIdOptions> options) {
+  return js.alloc<DurableObjectId>(
+      idFactory->newUniqueId(options.orDefault({}).jurisdiction.orDefault(kj::none)));
+}
+
+kj::Own<WorkerInterface> DurableObjectNamespace::startNativeRequest(kj::String name) {
+  auto& context = IoContext::current();
+  auto id = idFactory->idFromName(kj::mv(name));
+  auto channelId = KJ_REQUIRE_NONNULL(channel.tryGet<uint>());
+  auto actor = context.getGlobalActorChannel(channelId, *id, kj::none, ActorGetMode::GET_OR_CREATE,
+      false, ActorRoutingMode::DEFAULT, context.getCurrentTraceSpan(), kj::none, persistent);
+  auto startRequest = [&](TraceContext& tracing, IoChannelFactory&) {
+    tracing.setTag("objectId"_kjc, id->toString());
+    return actor->startRequest({.parentSpan = tracing.getInternalSpanParent(),
+      .userSpanParent = tracing.getUserSpanParent()});
+  };
+  return startActorSubrequest(context, startRequest, CountSubrequest::YES).attach(kj::mv(actor));
+}
+
+jsg::Ref<DurableObjectId> DurableObjectNamespace::idFromName(jsg::Lock& js, kj::String name) {
+  return js.alloc<DurableObjectId>(idFactory->idFromName(kj::mv(name)));
+}
+
+jsg::Ref<DurableObjectId> DurableObjectNamespace::idFromString(jsg::Lock& js, kj::String id) {
+  return js.alloc<DurableObjectId>(idFactory->idFromString(kj::mv(id)));
+}
+
+jsg::Ref<DurableObject> DurableObjectNamespace::getByName(
+    jsg::Lock& js, kj::String name, jsg::Optional<GetDurableObjectOptions> options) {
+  auto id = js.alloc<DurableObjectId>(idFactory->idFromName(kj::mv(name)));
+  return getImpl(js, ActorGetMode::GET_OR_CREATE, kj::mv(id), kj::mv(options), kj::none);
+}
+
+jsg::Ref<DurableObject> DurableObjectNamespace::getByNameWithRetry(
+    jsg::Lock& js, kj::String name, jsg::Optional<GetDurableObjectOptionsWithRetry> options) {
+  auto id = js.alloc<DurableObjectId>(idFactory->idFromName(kj::mv(name)));
+  return getImpl(js, ActorGetMode::GET_OR_CREATE, kj::mv(id), kj::mv(options));
+}
+
+jsg::Ref<DurableObject> DurableObjectNamespace::get(
+    jsg::Lock& js, jsg::Ref<DurableObjectId> id, jsg::Optional<GetDurableObjectOptions> options) {
+  return getImpl(js, ActorGetMode::GET_OR_CREATE, kj::mv(id), kj::mv(options), kj::none);
+}
+
+jsg::Ref<DurableObject> DurableObjectNamespace::getWithRetry(jsg::Lock& js,
+    jsg::Ref<DurableObjectId> id,
+    jsg::Optional<GetDurableObjectOptionsWithRetry> options) {
+  return getImpl(js, ActorGetMode::GET_OR_CREATE, kj::mv(id), kj::mv(options));
+}
+
+jsg::Ref<DurableObject> DurableObjectNamespace::getExisting(
+    jsg::Lock& js, jsg::Ref<DurableObjectId> id, jsg::Optional<GetDurableObjectOptions> options) {
+  return getImpl(js, ActorGetMode::GET_EXISTING, kj::mv(id), kj::mv(options), kj::none);
+}
+
+jsg::Ref<DurableObject> DurableObjectNamespace::getExistingWithRetry(jsg::Lock& js,
+    jsg::Ref<DurableObjectId> id,
+    jsg::Optional<GetDurableObjectOptionsWithRetry> options) {
+  return getImpl(js, ActorGetMode::GET_EXISTING, kj::mv(id), kj::mv(options));
+}
+
+jsg::Ref<DurableObject> DurableObjectNamespace::getImpl(jsg::Lock& js,
+    ActorGetMode mode,
+    jsg::Ref<DurableObjectId> id,
+    jsg::Optional<GetDurableObjectOptionsWithRetry> options) {
+  kj::Maybe<UserDefinedRetryPolicy> retryPolicy;
+  kj::Maybe<GetDurableObjectOptions> plainOptions;
+  KJ_IF_SOME(o, options) {
+    KJ_IF_SOME(r, o.retry) {
+      auto policy = toUserDefinedRetryPolicy(r);
+      if (util::Autogate::isEnabled(util::AutogateKey::DURABLE_OBJECT_RETRIES_USERLAND)) {
+        retryPolicy = policy;
+      }
+    }
+    plainOptions = GetDurableObjectOptions{
+      .locationHint = kj::mv(o.locationHint),
+      .routingMode = kj::mv(o.routingMode),
+      .version = kj::mv(o.version),
+    };
+  }
+  return getImpl(js, mode, kj::mv(id), kj::mv(plainOptions), retryPolicy);
+}
+
+jsg::Ref<DurableObject> DurableObjectNamespace::getImpl(jsg::Lock& js,
+    ActorGetMode mode,
+    jsg::Ref<DurableObjectId> id,
+    jsg::Optional<GetDurableObjectOptions> options,
+    kj::Maybe<UserDefinedRetryPolicy> retryPolicy) {
+  JSG_REQUIRE(idFactory->matchesJurisdiction(id->getInner()), TypeError,
+      "get called on jurisdictional subnamespace with an ID from a different jurisdiction");
+  ActorRoutingMode routingMode = ActorRoutingMode::DEFAULT;
+  KJ_IF_SOME(o, options) {
+    KJ_IF_SOME(rm, o.routingMode) {
+      JSG_REQUIRE(rm == "primary-only", RangeError, "unknown routingMode: ", rm);
+      routingMode = ActorRoutingMode::PRIMARY_ONLY;
+    }
+  }
+
+  auto& context = IoContext::current();
+  kj::Maybe<kj::String> locationHint;
+  kj::Maybe<ActorVersion> version;
+  KJ_IF_SOME(o, options) {
+    locationHint = kj::mv(o.locationHint);
+    if (FeatureFlags::get(js).getEnableVersionApi()) {
+      KJ_IF_SOME(v, o.version) {
+        version = ActorVersion{.cohort = kj::mv(v.cohort)};
+      }
+    }
+  }
+
+  bool enableReplicaRouting = FeatureFlags::get(js).getReplicaRouting();
+
+  kj::Own<Fetcher::OutgoingFactory> outgoingFactory;
+  KJ_SWITCH_ONEOF(channel) {
+    KJ_CASE_ONEOF(channelId, uint) {
+      outgoingFactory = kj::heap<GlobalActorOutgoingFactory>(channelId, id.addRef(),
+          kj::mv(locationHint), mode, enableReplicaRouting, routingMode, kj::mv(version),
+          actorCallRetriesAllowed, persistent, retryPolicy);
+    }
+    KJ_CASE_ONEOF(channelFactory, IoOwn<ActorChannelFactory>) {
+      outgoingFactory = kj::heap<GlobalActorOutgoingFactory>(kj::addRef(*channelFactory),
+          id.addRef(), kj::mv(locationHint), mode, enableReplicaRouting, routingMode,
+          kj::mv(version), actorCallRetriesAllowed, persistent, retryPolicy);
+    }
+  }
+
+  auto requiresHost = FeatureFlags::get(js).getDurableObjectFetchRequiresSchemeAuthority()
+      ? Fetcher::RequiresHostAndProtocol::YES
+      : Fetcher::RequiresHostAndProtocol::NO;
+  return js.alloc<DurableObject>(
+      kj::mv(id), context.addObject(kj::mv(outgoingFactory)), requiresHost);
+}
+
+jsg::Ref<DurableObjectNamespace> DurableObjectNamespace::jurisdiction(
+    jsg::Lock& js, jsg::Optional<kj::Maybe<kj::String>> maybeJurisdiction) {
+  auto newIdFactory = idFactory->cloneWithJurisdiction(maybeJurisdiction.orDefault(kj::none));
+
+  // A jurisdictional sub-namespace of a ctx.exports self-binding is still a self-binding, so it
+  // inherits the `persistent` bit.
+  KJ_SWITCH_ONEOF(channel) {
+    KJ_CASE_ONEOF(channelId, uint) {
+      return js.alloc<api::DurableObjectNamespace>(
+          channelId, kj::mv(newIdFactory), actorCallRetriesAllowed, persistent);
+    }
+    KJ_CASE_ONEOF(channelFactory, IoOwn<ActorChannelFactory>) {
+      return js.alloc<api::DurableObjectNamespace>(
+          IoContext::current().addObject(kj::addRef(*channelFactory)), kj::mv(newIdFactory),
+          actorCallRetriesAllowed, persistent);
+    }
+  }
+
+  KJ_UNREACHABLE;
+}
+
+kj::Rc<IoChannelFactory::ActorClassChannel> DurableObjectClass::getChannel(IoContext& ioctx) {
+  KJ_SWITCH_ONEOF(channel) {
+    KJ_CASE_ONEOF(number, uint) {
+      return ioctx.getIoChannelFactory().getActorClass(number);
+    }
+    KJ_CASE_ONEOF(object, IoOwn<IoChannelFactory::ActorClassChannel>) {
+      return object->addRef();
+    }
+  }
+  KJ_UNREACHABLE;
+}
+
+void DurableObjectClass::serialize(jsg::Lock& js, jsg::Serializer& serializer) {
+  auto& ioctx = IoContext::current();
+  auto channel = getChannel(ioctx);
+  channel->requireAllowsTransfer();
+
+  KJ_IF_SOME(handler, serializer.getExternalHandler()) {
+    KJ_IF_SOME(frankenvalueHandler, kj::tryDowncast<Frankenvalue::CapTableBuilder>(handler)) {
+      // Encoding a Frankenvalue (e.g. for dynamic loopback props or dynamic isolate env).
+      serializer.writeRawUint32(frankenvalueHandler.add(channel.toOwn()));
+      return;
+    } else KJ_IF_SOME(rpcHandler, kj::tryDowncast<RpcSerializerExternalHandler>(handler)) {
+      KJ_SWITCH_ONEOF(channel->getTokenMaybeSync(IoChannelFactory::ChannelTokenUsage::RPC)) {
+        KJ_CASE_ONEOF(token, kj::Array<byte>) {
+          rpcHandler.write([token = kj::mv(token)](rpc::JsValue::External::Builder builder) {
+            builder.setActorClassChannelToken(token);
+          });
+        }
+        KJ_CASE_ONEOF(promise, kj::Promise<kj::Array<byte>>) {
+          // Token isn't available synchronously, so we have to send a promise.
+          auto paf = kj::newPromiseAndFulfiller<
+              rpc::JsValue::ExternalPusher::DelayedChannelToken::Client>();
+
+          // Arrange to send the token when it's ready.
+          ioctx.addTask(promise.then(
+              [pusher = rpcHandler.getExternalPusher(), fulfiller = kj::mv(paf.fulfiller),
+                  attachedChannel = kj::mv(channel)](kj::Array<byte> token) mutable {
+            auto req = pusher.pushDelayedChannelTokenRequest(
+                capnp::MessageSize{4 + token.size() / sizeof(capnp::word), 0});
+            req.setToken(token);
+            fulfiller->fulfill(req.send().getCap());
+          }));
+
+          // Write the promise for now.
+          rpcHandler.write(
+              [promise = kj::mv(paf.promise)](rpc::JsValue::External::Builder builder) mutable {
+            builder.setDelayedActorClassChannelToken(kj::mv(promise));
+          });
+        }
+      }
+      return;
+    } else KJ_IF_SOME(storedHandler, kj::tryDowncast<StoredExternalHandler::Serializer>(handler)) {
+      // The allow_irrevocable_stub_storage flag allows us to just embed the token inline. This
+      // format is temporary, anyone using this will lose their data later.
+      JSG_REQUIRE(FeatureFlags::get(js).getAllowIrrevocableStubStorage(), DOMDataCloneError,
+          "DurableObjectClass cannot be serialized in this context.");
+      KJ_SWITCH_ONEOF(channel->getTokenMaybeSync(IoChannelFactory::ChannelTokenUsage::STORAGE)) {
+        KJ_CASE_ONEOF(token, kj::Array<byte>) {
+          // Token is available synchronously. For backwards compatibility, write it directly into
+          // the serialized value.
+          // TODO(cleanup): As soon as all of production is updated to understand externals, stop
+          //   writing inline tokens.
+          serializer.writeLengthDelimited(token);
+        }
+        KJ_CASE_ONEOF(promise, kj::Promise<kj::Array<byte>>) {
+          storedHandler.writeChannel(kj::mv(channel), kj::mv(promise));
+
+          // Write an empty array to signal that we're using an external rather than an inline
+          // token.
+          serializer.writeLengthDelimited(kj::ArrayPtr<const byte>());
+        }
+      }
+      return;
+    }
+
+    // TODO(someday): structuredClone() should have special handling that just reproduces the same
+    //   local object. At present we have no way to recognize structuredClone() here though.
+  }
+
+  JSG_FAIL_REQUIRE(DOMDataCloneError, "DurableObjectClass cannot be serialized in this context.");
+}
+
+jsg::Ref<DurableObjectClass> DurableObjectClass::deserialize(
+    jsg::Lock& js, rpc::SerializationTag tag, jsg::Deserializer& deserializer) {
+  KJ_IF_SOME(handler, deserializer.getExternalHandler()) {
+    KJ_IF_SOME(frankenvalueHandler, kj::tryDowncast<Frankenvalue::CapTableReader>(handler)) {
+      // Decoding a Frankenvalue (e.g. for dynamic loopback props or dynamic isolate env).
+      auto& cap = KJ_REQUIRE_NONNULL(frankenvalueHandler.get(deserializer.readRawUint32()),
+          "serialized DurableObjectClass had invalid cap table index");
+
+      KJ_IF_SOME(channel, kj::tryDowncast<IoChannelFactory::ActorClassChannel>(cap)) {
+        // Probably decoding dynamic ctx.props.
+        return js.alloc<DurableObjectClass>(IoContext::current().addObject(channel.addRef()));
+      } else KJ_IF_SOME(channel, kj::tryDowncast<IoChannelCapTableEntry>(cap)) {
+        // Probably decoding dynamic isolate env.
+        return js.alloc<DurableObjectClass>(
+            channel.getChannelNumber(IoChannelCapTableEntry::Type::ACTOR_CLASS));
+      } else {
+        KJ_FAIL_REQUIRE(
+            "DurableObjectClass capability in Frankenvalue is not a ActorClassChannel?");
+      }
+    } else KJ_IF_SOME(rpcHandler, kj::tryDowncast<RpcDeserializerExternalHandler>(handler)) {
+      auto external = rpcHandler.read();
+      auto& ioctx = IoContext::current();
+      kj::Rc<IoChannelFactory::ActorClassChannel> channel;
+
+      if (external.isDelayedActorClassChannelToken()) {
+        auto promise = ioctx.getExternalPusher()->unwrapDelayedChannelToken(
+            external.getDelayedActorClassChannelToken());
+        channel = ioctx.getIoChannelFactory().actorClassFromToken(
+            IoChannelFactory::ChannelTokenUsage::RPC, kj::mv(promise));
+      } else if (external.isActorClassChannelToken()) {
+        channel = ioctx.getIoChannelFactory().actorClassFromToken(
+            IoChannelFactory::ChannelTokenUsage::RPC, external.getActorClassChannelToken());
+      } else {
+        KJ_FAIL_REQUIRE("wrong external type for DurableObjectClass", external.which());
+      }
+
+      return js.alloc<DurableObjectClass>(ioctx.addObject(kj::mv(channel)));
+    } else KJ_IF_SOME(storedHandler,
+        kj::tryDowncast<StoredExternalHandler::Deserializer>(handler)) {
+      // The allow_irrevocable_stub_storage flag allows us to just embed the token inline. This
+      // format is temporary, anyone using this will lose their data later.
+      JSG_REQUIRE(FeatureFlags::get(js).getAllowIrrevocableStubStorage(), DOMDataCloneError,
+          "DurableObjectClass cannot be deserialized in this context.");
+      auto& ioctx = IoContext::current();
+      auto token = deserializer.readLengthDelimitedBytes();
+      kj::Rc<IoChannelFactory::ActorClassChannel> channel;
+      if (token.size() > 0) {
+        // Token embedded inline, just use it.
+        channel = ioctx.getIoChannelFactory().actorClassFromToken(
+            IoChannelFactory::ChannelTokenUsage::STORAGE, token);
+      } else {
+        // Token stored out-of-line as an external.
+        channel = storedHandler.readActorClassChannel(ioctx.getIoChannelFactory());
+      }
+      return js.alloc<DurableObjectClass>(ioctx.addObject(kj::mv(channel)));
+    }
+  }
+
+  JSG_FAIL_REQUIRE(DOMDataCloneError, "DurableObjectClass cannot be deserialized in this context.");
+}
+
+}  // namespace workerd::api

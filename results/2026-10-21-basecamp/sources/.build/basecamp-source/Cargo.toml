@@ -1,0 +1,110 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+publish = false
+
+# Unsafe code only in the items that allow it with a reason (the libvips FFI, and the libc calls std
+# has no wrapper for), with a SAFETY comment on every unsafe block. The vendored html5ever doesn't
+# opt in.
+[workspace.lints.rust]
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+undocumented_unsafe_blocks = "warn"
+
+[workspace.dependencies]
+ruby_compat       = { path = "crates/ruby" }
+rails_compat      = { path = "crates/rails_compat" }
+campfire_kit      = { path = "crates/kit" }
+campfire_routes   = { path = "crates/routes" }
+campfire_db       = { path = "crates/db" }
+campfire_richtext = { path = "crates/richtext" }
+campfire_storage  = { path = "crates/storage" }
+campfire_cable    = { path = "crates/cable" }
+campfire_assets   = { path = "crates/assets" }
+campfire_views    = { path = "crates/views" }
+
+tokio        = { version = "1", features = ["full"] }
+# Router plus ConnectInfo (`tokio`) only: kit parses params and multipart itself, the front server
+# serves over hyper, and the cable does its own WebSocket upgrade and framing. Tests add `http1`
+# (for axum::serve) and `ws` in their dev-dependencies.
+axum         = { version = "0.8", default-features = false, features = ["tokio"] }
+tower        = "0.5"
+hyper        = "1"
+serde        = { version = "1", features = ["derive"] }
+serde_json   = { version = "1", features = ["preserve_order"] }
+serde_yaml   = "0.9"
+# Bundled SQLite 3.53, past 3.51.3's fix for the WAL-reset corruption bug, which the checkpointer
+# thread next to the writer (crates/db/src/database.rs) could hit. `cache` is the statement cache;
+# the other default feature only adds wasm crates to Cargo.lock.
+rusqlite     = { version = "0.40", default-features = false, features = ["bundled", "cache", "hooks"] }
+askama       = "0.14"
+jiff         = { version = "0.2", features = ["serde"] }
+thiserror    = "2"
+anyhow       = "1"
+tracing      = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+base64       = "0.22"
+hmac         = "0.12"
+sha1         = "0.10"
+sha2         = "0.10"
+fancy-regex  = "0.14"
+pbkdf2       = "0.12"
+aes-gcm      = "0.10"
+rand         = "0.9"
+hex          = "0.4"
+# The vendored 0.35 (crates/richtext/vendor/html5ever): a parsing fix backported, which the
+# differential corpus caught diverging from Gumbo, and hooks for enforcing Gumbo's limits while
+# parsing. The views parity tests use its tokenizer too.
+html5ever    = { path = "crates/richtext/vendor/html5ever" }
+bcrypt       = "0.17"
+uuid         = { version = "1", features = ["v4"] }
+percent-encoding = "2"
+url          = "2"
+form_urlencoded = "1"
+regex        = "1"
+async-trait  = "0.1"
+libc         = "0.2"
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
+tokio-tungstenite = "0.29"
+crc32fast    = "1"
+# kit's page parts hash texts of tens of KB by their bytes; already built for hashbrown
+foldhash     = "0.2"
+indexmap     = "2"
+tempfile     = "3"
+md-5         = "0.10"
+multer       = "3"
+http-body-util = "0.1"
+# integrations (crates/campfire/src/integrations): HTTP/1.1 client, TLS, Web Push crypto
+hyper-util   = { version = "0.1", features = ["tokio"] }
+http         = "1"
+bytes        = "1"
+rustls       = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "tls12", "logging"] }
+rustls-native-certs = "0.8"
+p256         = { version = "0.13", features = ["ecdh", "ecdsa"] }
+hkdf         = "0.12"
+# zlib-rs rather than the default miniz_oxide: 2.3x faster at the same level 6 (plans/perf-attribution.md §2).
+# `runtime_detection` gives zlib-rs the `std` its CPU feature detection needs (AVX2 and PCLMULQDQ on
+# x86_64, CRC32 on aarch64); without it only its portable code (and NEON) runs. Same output bytes.
+# No test can tell the difference, so check `cargo tree -e features -i zlib-rs` still lists `std`.
+flate2       = { version = "1", default-features = false, features = ["zlib-rs", "runtime_detection"] }
+# kit's front server (crates/kit/src/front): what Thruster did in front of the app
+instant-acme = { version = "0.8", default-features = false, features = ["ring", "hyper-rustls", "rcgen"] }
+rcgen        = { version = "0.14", default-features = false, features = ["ring", "pem", "crypto"] }
+x509-parser  = "0.18"
+zstd         = "0.13"
+# The global allocator (crates/campfire/src/main.rs)
+tikv-jemallocator = "0.6"
+tikv-jemalloc-sys = "0.6"
+
+# One codegen unit with fat LTO: ~5-10% less CPU on app-bound routes (plans/perf-attribution.md §4)
+# for about twice the build time. Not `panic = "abort"`: the DB writer and the Web Push pool catch
+# panics so one bad job can't take them down, and a panicking request answers 500.
+[profile.release]
+lto = "fat"
+codegen-units = 1

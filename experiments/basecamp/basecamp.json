@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/basecamp/once-campfire-rust.git",
+  "revision": "6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad",
+  "reference_revision": "90b330024dec3e757c79b6a7e6568f93da8e3148",
+  "rust": "1.98.1"
+}
