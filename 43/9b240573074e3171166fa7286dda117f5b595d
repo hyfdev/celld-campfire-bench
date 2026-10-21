@@ -1,0 +1,192 @@
+REPRODUCE.md
+  s_0c67a750076943::t_aa72b94f76101c 3-4
+results/2026-10-21-workerd/sources/bench/aggregate.py
+  s_0c67a750076943::t_8a8e014eaa6096 1-134
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/io/native-wasm.c++
+  s_0c67a750076943::t_38d63aaa2e705e 1-611
+results/2026-10-21-workerd/sources/rust-toolchain.toml
+  s_0c67a750076943::t_6e6da09312092c 1-4
+results/2026-10-21-basecamp/sources/bench/fixture.py
+  s_0c67a750076943::t_a953d8e861a411 1-81
+experiments/workerd/native-worker.js
+  s_0c67a750076943::t_6dad574606d853 1-12
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/api/actor.h
+  s_0c67a750076943::t_178a3a1880ae51 1-558
+results/2026-10-21-basecamp/sources/experiments/basecamp/load.rs
+  s_0c67a750076943::t_ab89a831bdaa5b 1-207
+experiments/basecamp/basecamp.json
+  s_0c67a750076943::t_19d8a8d1c24146 1-6
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/io/worker-entrypoint.c++
+  s_0c67a750076943::t_46f1fdc8455c21 1-1245
+results/2026-10-21-workerd/sources/experiments/workerd/native-worker.js
+  s_0c67a750076943::t_cc96a0fa76824f 1-12
+results/2026-10-21-basecamp/sources/experiments/basecamp/report.py
+  s_0c67a750076943::t_d130658b9f58b8 1-125
+results/2026-10-21-workerd/sources/application/index.html
+  s_0c67a750076943::t_fcd93bfcc94ffd 1-12
+results/2026-10-21-basecamp/sources/bench/metrics.py
+  s_0c67a750076943::t_0d3d1919c4d5cd 1-39
+experiments/basecamp/report.py
+  s_0c67a750076943::t_bf2da4a50d94ac 1-125
+results/2026-10-21-basecamp/sources/.build/basecamp-source/Cargo.toml
+  s_0c67a750076943::t_da257f97823f38 1-110
+experiments/workerd/workerd.json
+  s_0c67a750076943::t_087ac0eac95156 1-6
+results/2026-10-21-workerd/sources/experiments/workerd/report.py
+  s_0c67a750076943::t_c885a63c3beaf2 1-140
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/io/worker.c++
+  s_0c67a750076943::t_abee0a4829256a 1-5268
+results/2026-10-21-basecamp/sources/.build/basecamp-source/crates/db/src/schema.rs
+  s_0c67a750076943::t_619904a633b539 1-244
+NOTICE
+  s_0c67a750076943::t_5f2fc461c069b8 15-23
+  s_0c67a750076943::t_87d27ff4360e8f 24-30,49
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/api/hibernatable-web-socket.c++
+  s_0c67a750076943::t_6cb8fdf11bab18 1-303
+results/2026-10-21-basecamp/sources/.build/basecamp-source/crates/db/src/schema.sql
+  s_0c67a750076943::t_fb52b86a5d29d1 1-72
+results/2026-10-21-workerd/sources/.runs/workerd/js.capnp
+  s_0c67a750076943::t_2a9dc2c571739d 1-16
+results/2026-10-21-workerd/sources/app/schema.json
+  s_0c67a750076943::t_8d70bd21ee9645 1-15
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/io/worker.h
+  s_0c67a750076943::t_588a87b2bf3bdb 1-1286
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/api/actor.c++
+  s_0c67a750076943::t_ef95cc05f6adae 1-541
+patches/workerd.patch
+  s_0c67a750076943::t_f0557bcd5d080b 1-273
+results/2026-10-21-workerd/sources/application/wasm-worker.js
+  s_0c67a750076943::t_ac1c0670496787 1-219
+results/2026-10-21-workerd/sources/application/wrangler.jsonc
+  s_0c67a750076943::t_60cc5534d68b6f 1-21
+experiments/basecamp/build_basecamp.py
+  s_0c67a750076943::t_a9c29c2b045ed5 1-93
+results/2026-10-21-workerd/sources/load/Cargo.lock
+  s_0c67a750076943::t_28a65a9e77a495 1-1576
+results/2026-10-21-workerd/sources/bench/fixture.py
+  s_0c67a750076943::t_136fec930221ae 1-81
+results/2026-10-21-basecamp/sources/experiments/basecamp/basecamp.json
+  s_0c67a750076943::t_9a9d50967d7be2 1-6
+results/2026-10-21-basecamp/sources/.build/basecamp-source/MIT-LICENSE
+  s_0c67a750076943::t_374d6979de5bfd 1-20
+results/2026-10-21-basecamp/sources/experiments/basecamp/build_basecamp.py
+  s_0c67a750076943::t_a064a038719833 1-93
+results/2026-10-21-workerd/sources/app/src/lib.rs
+  s_0c67a750076943::t_9dc37aa3028a11 1-507
+results/2026-10-21-basecamp/sources/load/Cargo.toml
+  s_0c67a750076943::t_5109fd3e0f6bfb 1-29
+results/2026-10-21-basecamp/cold-results.json
+  s_0c67a750076943::t_8b6980c5256551 1-155
+results/2026-10-21-workerd/sources/application/worker.js
+  s_0c67a750076943::t_704b79a0133391 1-198
+results/2026-10-21-workerd/sources/guest/Cargo.toml
+  s_0c67a750076943::t_c1d6351084248f 1-19
+experiments/workerd/native-wasm.c++
+  s_0c67a750076943::t_dc2444e544b54b 1-611
+results/2026-10-21-workerd/sources/bench/metrics.py
+  s_0c67a750076943::t_7417abab4bb50a 1-39
+results/2026-10-21-workerd/sources/app/sql.json
+  s_0c67a750076943::t_826b928edd7592 1-7
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/io/BUILD.bazel
+  s_0c67a750076943::t_bacc7229134f9c 1-776
+results/2026-10-21-workerd/sources/guest/src/lib.rs
+  s_0c67a750076943::t_262e303e9d95a2 1-89
+results/2026-10-21-workerd/validation.json
+  s_0c67a750076943::t_fa27df3a2b344c 1-354
+results/2026-10-21-basecamp/results.json
+  s_0c67a750076943::t_0c8f3e958b555c 1-4301
+results/2026-10-21-basecamp/sources/.build/basecamp-source/Cargo.lock
+  s_0c67a750076943::t_25e601ea053975 1-3302
+experiments/workerd/README.md
+  s_0c67a750076943::t_02ba9aa858b78f 1-60
+results/2026-10-21-workerd/sources/experiments/workerd/workerd.json
+  s_0c67a750076943::t_8185987c1892d7 1-6
+results/2026-10-21-basecamp/sources/.build/basecamp-host/build.json
+  s_0c67a750076943::t_ecb9c46a7fa3c6 1-41
+results/2026-10-21-workerd/sources/app/Cargo.toml
+  s_0c67a750076943::t_1f1777295af2c1 1-12
+results/2026-10-21-workerd/sources/app/Cargo.lock
+  s_0c67a750076943::t_5b8dc43f53980a 1-118
+results/2026-10-21-workerd/sources/.runs/workerd/wasm-v8.capnp
+  s_0c67a750076943::t_c48f8209cf1902 1-16
+results/2026-10-21-workerd/sources/patches/workerd.patch
+  s_0c67a750076943::t_9eee91c6fa50ae 1-273
+results/2026-10-21-workerd/REPORT.md
+  s_0c67a750076943::t_6072bbf3dd1991 1-99
+README.md
+  s_0c67a750076943::t_bd66c0e72986f2 145,150
+  s_0c67a750076943::t_46c9a9f311fa19 63-90,144
+results/2026-10-21-workerd/sources/bench/build.py
+  s_0c67a750076943::t_7a628ec44397ad 1-130
+results/2026-10-21-basecamp/sources/experiments/basecamp/run.py
+  s_0c67a750076943::t_243ef9edd5cc4a 1-429
+results/2026-10-21-workerd/sources/load/Cargo.toml
+  s_0c67a750076943::t_a87661dca92a61 1-25,27
+  s_0c67a750076943::t_fd6a7e8836b1bb 26,28-29
+results/2026-10-21-workerd/sources/.runs/workerd/wasm-js.capnp
+  s_0c67a750076943::t_f94d6f9fc92afb 1-16
+bench/run.py
+  s_0c67a750076943::t_9921bef3908e01 249-253,256,310,318-323,334-335,338,341-342,344,351,355-356
+results/2026-10-21-workerd/sources/.build/workerd-host/build.json
+  s_0c67a750076943::t_2be7183e3696aa 1-59
+results/2026-10-21-workerd/sources/.build/workerd-source/src/workerd/io/native-wasm.h
+  s_0c67a750076943::t_f043ac684bba59 1-51
+load/Cargo.toml
+  s_0c67a750076943::t_a4db577dfa93ed 26-29
+results/2026-10-21-basecamp/REPORT.md
+  s_0c67a750076943::t_621804dfec3dcc 1-40
+results/2026-10-21-workerd/sources/guest/Cargo.lock
+  s_0c67a750076943::t_3f0d046576079c 1-269
+experiments/workerd/native-wasm.h
+  s_0c67a750076943::t_5496ec4de18209 1-51
+experiments/basecamp/README.md
+  s_0c67a750076943::t_b9f8c22892b99e 1-57
+experiments/workerd/build_workerd.py
+  s_0c67a750076943::t_e9fe850f42492c 1-99
+results/2026-10-21-workerd/sources/experiments/workerd/build_workerd.py
+  s_0c67a750076943::t_e80a184f2594c0 1-99
+results/2026-10-21-workerd/results.json
+  s_0c67a750076943::t_fd0ce3145fa3c0 1-25598
+results/2026-10-21-workerd/sources/experiments/workerd/run.py
+  s_0c67a750076943::t_ee01650f84e720 1-219
+results/2026-10-21-workerd/sources/experiments/workerd/native-wasm.c++
+  s_0c67a750076943::t_4df72b5f4f0149 1-611
+results/2026-10-21-workerd/sources/guest/.cargo/config.toml
+  s_0c67a750076943::t_2084df9214ecd9 1-2
+results/2026-10-21-workerd/cold-results.json
+  s_0c67a750076943::t_693e20ace91617 1-654
+results/2026-10-21-basecamp/sources/.build/basecamp-source/.gitmodules
+  s_0c67a750076943::t_56f7d1a25e7a93 1-3
+results/2026-10-21-workerd/sources/load/src/main.rs
+  s_0c67a750076943::t_9df8712bc233f2 1-318
+results/2026-10-21-basecamp/validation.json
+  s_0c67a750076943::t_c54d2a39252672 1-84
+results/2026-10-21-workerd/sources/load/src/ws.rs
+  s_0c67a750076943::t_19dce2212dcd8e 1-246
+results/2026-10-21-basecamp/sources/load/Cargo.lock
+  s_0c67a750076943::t_f548486914e7ba 1-1576
+results/2026-10-21-workerd/sources/experiments/workerd/native-wasm.h
+  s_0c67a750076943::t_547b6340f43b2f 1-51
+results/2026-10-21-workerd/sources/experiments/basecamp/load.rs
+  s_0c67a750076943::t_c9fc71ab1d99e9 1-207
+results/2026-10-21-workerd/sources/bench/run.py
+  s_0c67a750076943::t_c69cc6887bc636 1-571
+experiments/basecamp/load.rs
+  s_0c67a750076943::t_92690a31030384 1-207
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "439b240573074e3171166fa7286dda117f5b595d",
+  "prompts": {},
+  "sessions": {
+    "s_0c67a750076943": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a142b9-dc2a-7cb3-b413-5f7a8193ef7e",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Yunfei He <i.heyunfei@gmail.com>"
+    }
+  }
+}
